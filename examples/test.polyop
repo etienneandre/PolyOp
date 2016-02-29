@@ -1,0 +1,145 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * National University of Singapore
+ *
+ * Author:        Etienne ANDRE
+ * Created:       2011/04/27
+ * Last modified: 2011/05/30
+ *
+ ************************************************************)
+ 
+(* WARNING:
+	only one instruction at a time can be uncommented to call PolyOp
+*)
+
+
+(************************************************************
+  NON RECURSIVE
+ ************************************************************)
+
+(* nothing *)
+
+(* and (p1 <= p2, p2 <= p1) *)
+(* and ((p1 <= p2), (p2 <= p1)) *)
+
+(* elapsing (p1) in (p1 = 1 & p2 = 2) *)
+(* elapsing (p1) in (p1 = 5 & p2 >= 2) *)
+(* elapsing (p1) in (p1 = 5 & p2 >= p1) *)
+(* elapsing (p1, p3) in (p1 = 5 & p2 >= p1 &  p3 = 0) *)
+(* elapsing (x1) in (p1 <= x1 & x1 <= p2 ) *)
+
+(* equal (true, True) *)
+(* equal (true, false) *)
+(* equal (true, p1 = p1) *)
+(* equal (true, p1 = 57) *)
+(* equal (p1 = p2, (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 <= p1 - 2)) *)
+(* equal (p1 = p2, (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2)) *)
+(* equal true, True *)
+
+(* included true in false *)
+(* included false in true *)
+(* included p1 = p2 in (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2) *)
+(* included (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2) in (p1 = p2) *)
+(* included (p1 <= p2 & p3 >= 2) in (p3 >= 1) *)
+(* included p1 <= p2 & p3 >= 2 in p3 >= 1 *)
+(* included (p3 >= 1) in (p1 <= p2 & p3 >= 2) *)
+
+
+(* hide p1 in true *)
+(* hide p1 in False *)
+(* hide (p1) in (False) *)
+(* hide p1 in p1 = 0 *)
+(* hide p1 in p1 = 0 & p2 = 5 *)
+(* hide p2 in (p1 <= p2 & p2 <= p3) *)
+
+(*
+hide (tf, t2, t3) in (
+	  0 <= a & a <= tf & f <= b
+	& 0 <= c & c <= t2 + tf & t2 + tf <= d
+	& 0 <= e & e <= t3 + tf & t3 + tf <= f
+	& tf <= t2
+	& tf <= t3
+	& a >= 0
+	& b >= 0
+	& c >= 0
+	& d >= 0
+	& e >= 0
+	& f >= 0
+	& tf >= 0
+)
+*)
+
+hide p2 in (2.57145 p1 <= 3/2172 p2 + 2.65454354p7 & p2 <= p3)
+
+(* satisfiable True *)
+(* satisfiable (False) *)
+(* satisfiable (p1 <= p2 & p2 <= p3) *)
+(* satisfiable p1 <= p2 & p2 <= p1 & true *)
+(* satisfiable p1 <= p2 & p1 > p2 *)
+
+(* simplify True *)
+(* simplify p1 = p2 *)
+(* simplify p1 = p2 & p2 = p3 *)
+(* simplify p1 <= p2 & p2 >= p3 *)
+(* simplify p1 <= p2 & p1 > p2 *)
+(* simplify p1 <= p3 & p1 > p2 & p1 > 2 *)
+(* simplify (p1 <= p3 & p1 > p2 & (p1 > 2)) *)
+(* simplify p1 <= p2 & p2 <= p1 *)
+(* simplify p1 <= p2 & p2 <= p1 & true *)
+
+
+(************************************************************
+  RECURSIVE
+ ************************************************************)
+
+(* and (p1 <= p2, and (true & p2 <= p1)) *)
+
+(* and (p2 <= p1, hide p3 in (p1 <= p3 & p3 <= p2)) *)
+
+(*and (
+		p1 <= x1 & x1 <= p2 & p4 <= p1
+	,
+ 		hide p3 in (p1 <= p3 & p3 <= p4)
+	)*)
+	
+(*elapsing (x1) in (
+	elapsing (x2) in (x1 = p1 & x2 = p2)
+)*)
+
+(*equal
+	simplify p1 <= p2 & p2 <= p1 & true
+	,
+	hide (x1, p4) in and (
+		p1 <= x1 & x1 <= p2 & p4 <= p1
+	,
+ 		hide p3 in (p2 <= p3 & p3 <= p1)
+	)*)
+	
+(*included
+	hide (x1, p4) in and (
+		p1 <= x1 & x1 <= p2 & p4 <= p1
+	,
+ 		hide p3 in (p2 <= p3 & p3 <= p1)
+	)
+	in
+	simplify p1 <= p2 & p2 <= p1 & true*)
+
+(* hide p1 in (hide p1 in true) *)
+
+(* satisfiable hide p1 in true *)
+(* satisfiable (hide p1 in true) *)
+
+(* included hide p1 in true in hide p1 in true *)
+(* included (hide p1 in true) in (hide p1 in true) *)
+
+(* included (hide p1 in true) in (and  (p2 = p3, p3 = p4)) *)
+
+(*simplify
+	hide (x1, p4) in and (
+		p1 <= x1 & x1 <= p2 & p4 <= p1
+	,
+ 		hide p3 in (p2 <= p3 & p3 <= p1)
+	)*)
+

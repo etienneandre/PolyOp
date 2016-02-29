@@ -1,0 +1,502 @@
+
+
+(********** AB vers CB **********)
+(*
+	true
+	& a <= t1 & t1 <= b
+	& e <= t3 & t3 <= f
+	& g <= t4 & t4 <= h
+	& t3p = t3 - t1 & 0 <= t3p
+	& t4p = t4 - t1 & 0 <= t4p
+	& t1 <= t3
+	& t1 <= t4
+	& 0 <= a & a <= b
+	& 0 <= c & c <= d
+	& 0 <= e & e <= f
+	& 0 <= g & g <= h
+*)
+
+
+(*hide t1,t3,t4 in (
+	true
+	& a <= t1 & t1 <= b
+	& e <= t3 & t3 <= f
+	& g <= t4 & t4 <= h
+	& t3p = t3 - t1 & 0 <= t3p
+	& t4p = t4 - t1 & 0 <= t4p
+	& t1 <= t3
+	& t1 <= t4
+	& 0 <= a & a <= b
+	& 0 <= c & c <= d
+	& 0 <= e & e <= f
+	& 0 <= g & g <= h
+)
+
+=
+
+   h + t3p >= e + t4p
+ & f >= e
+ & b + t3p >= e
+ & b >= a
+ & f >= a + t3p
+ & h >= a + t4p
+ & b + t4p >= g
+ & f + t4p >= g + t3p
+ & h >= g
+ & c >= 0
+ & d >= c
+ & t4p >= 0
+ & t3p >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0*)
+
+(*hide t1,t3,t4,t3p,t4p in (
+	true
+	& a <= t1 & t1 <= b
+	& e <= t3 & t3 <= f
+	& g <= t4 & t4 <= h
+	& t3p = t3 - t1 & 0 <= t3p
+	& t4p = t4 - t1 & 0 <= t4p
+	& t1 <= t3
+	& t1 <= t4
+	& 0 <= a & a <= b
+	& 0 <= c & c <= d
+	& 0 <= e & e <= f
+	& 0 <= g & g <= h
+)
+
+=
+   h >= a
+	& b >= a
+	& f >= e
+ & f >= a
+	& h >= g
+	& c >= 0
+	& d >= c
+	& g >= 0
+	& e >= 0
+	& a >= 0*)
+
+ 
+ 
+
+(********** AB vers AF **********)
+
+(*
+hide t1,t3,t4 in (
+	true
+	& a <= t1 & t1 <= b
+	& e <= t3 & t3 <= f
+	& g <= t4 & t4 <= h
+	& t1p = t1 - t4 & 0 <= t1p
+	& t3p = t3 - t4 & 0 <= t3p
+	& t4 <= t1
+	& t4 <= t3
+	& 0 <= a & a <= b
+	& 0 <= c & c <= d
+	& 0 <= e & e <= f
+	& 0 <= g & g <= h
+)
+=   h + t1p >= a
+ & f + t1p >= a + t3p
+ & b >= a
+ & b >= g + t1p
+ & f >= g + t3p
+ & h >= g
+ & b + t3p >= e + t1p
+ & f >= e
+ & h + t3p >= e
+ & d >= c
+ & c >= 0
+ & t3p >= 0
+ & t1p >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0*)
+
+(*hide t1,t3,t4,t1p,t3p in (
+h + t1p >= a
+ & f + t1p >= a + t3p
+ & b >= a
+ & b >= g + t1p
+ & f >= g + t3p
+ & h >= g
+ & b + t3p >= e + t1p
+ & f >= e
+ & h + t3p >= e
+ & d >= c
+ & c >= 0
+ & t3p >= 0
+ & t1p >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0
+ )
+ =
+   f >= g
+ & b >= g
+	& a >= 0
+	& h >= g
+	& f >= e
+	& g >= 0
+	& e >= 0
+	& c >= 0
+	& d >= c
+	& b >= a*)
+
+ 
+ 
+
+(********** AB vers AE **********)
+
+(*hide t1,t3,t4 in (
+	true
+	& a <= t1 & t1 <= b
+	& e <= t3 & t3 <= f
+	& g <= t4 & t4 <= h
+	& t1p = t1 - t3 & 0 <= t1p
+	& t4p = t4 - t3 & 0 <= t4p
+	& t3 <= t1
+	& t3 <= t4
+	& 0 <= a & a <= b
+	& 0 <= c & c <= d
+	& 0 <= e & e <= f
+	& 0 <= g & g <= h
+)
+=
+   h >= g
+ & f + t4p >= g
+ & b + t4p >= g + t1p
+ & b >= e + t1p
+ & f >= e
+ & h >= e + t4p
+ & b >= a
+ & f + t1p >= a
+ & h + t1p >= a + t4p
+ & d >= c
+ & c >= 0
+ & t1p >= 0
+ & t4p >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0*)
+
+(*hide t1,t3,t4,t1p,t4p in (
+	true
+	& a <= t1 & t1 <= b
+	& e <= t3 & t3 <= f
+	& g <= t4 & t4 <= h
+	& t1p = t1 - t3 & 0 <= t1p
+	& t4p = t4 - t3 & 0 <= t4p
+	& t3 <= t1
+	& t3 <= t4
+	& 0 <= a & a <= b
+	& 0 <= c & c <= d
+	& 0 <= e & e <= f
+	& 0 <= g & g <= h
+)
+
+   h >= e
+ & b >= e
+	& b >= a
+	& h >= g
+	& f >= e
+	& d >= c
+	& c >= 0
+	& g >= 0
+	& e >= 0
+	& a >= 0
+*)
+
+
+
+(********** CB vers CF **********)
+(*hide t2,t3,t4 in (
+   h + t3 >= e + t4
+ & f >= e
+ & b + t3 >= e
+ & b >= a
+ & f >= a + t3
+ & h >= a + t4
+ & b + t4 >= g
+ & f + t4 >= g + t3
+ & h >= g
+ & c >= 0
+ & d >= c
+ & t4 >= 0
+ & t3 >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0
+	& c <= t2 & t2 <= d
+ & t2p = t2 - t4 & 0 <= t2p
+ & t3p = t3 - t4 & 0 <= t3p
+	& t4 <= t2
+	& t4 <= t3
+	& f < g
+)
+
+= FALSE*)
+
+(********** CB vers CE **********)
+(*hide t2,t3,t4 in (
+   h + t3 >= e + t4
+ & f >= e
+ & b + t3 >= e
+ & b >= a
+ & f >= a + t3
+ & h >= a + t4
+ & b + t4 >= g
+ & f + t4 >= g + t3
+ & h >= g
+ & c >= 0
+ & d >= c
+ & t4 >= 0
+ & t3 >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0
+	& c <= t2 & t2 <= d
+ & t2p = t2 - t3 & 0 <= t2p
+ & t4p = t4 - t3 & 0 <= t4p
+	& t3 <= t4
+	& t3 <= t2
+)
+
+=
+
+   b + d >= e + t2p
+ & d >= t2p
+ & f >= a
+ & h >= a + t4p
+ & d >= c
+ & f + t2p >= a + c
+ & h + t2p >= a + c + t4p
+ & b + d + t4p >= g + t2p
+ & h >= g
+ & b >= a
+ & a >= 0
+ & g >= 0
+ & c >= 0
+ & t4p >= 0
+ & f >= e
+ & e >= 0
+ & t2p >= 0
+ & h >= e + t4p
+ & f + t4p >= g*)
+
+(*hide t2,t3,t4,t2p,t4p in (
+   h + t3 >= e + t4
+ & f >= e
+ & b + t3 >= e
+ & b >= a
+ & f >= a + t3
+ & h >= a + t4
+ & b + t4 >= g
+ & f + t4 >= g + t3
+ & h >= g
+ & c >= 0
+ & d >= c
+ & t4 >= 0
+ & t3 >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0
+	& c <= t2 & t2 <= d
+ & t2p = t2 - t3 & 0 <= t2p
+ & t4p = t4 - t3 & 0 <= t4p
+	& t3 <= t4
+	& t3 <= t2
+)
+= 
+h >= a
+ & h >= e
+		& d >= c
+ & f >= a
+		& e >= 0
+		& h >= g
+		& b >= a
+		& a >= 0
+		& g >= 0
+		& c >= 0
+		& f >= e
+ & b + d >= e*)
+
+
+ (********** CB vers CD **********)
+(*hide t2,t3,t4 in (
+h + t3p >= e + t4p
+ & f >= e
+ & b + t3p >= e
+ & b >= a
+ & f >= a + t3p
+ & h >= a + t4p
+ & b + t4p >= g
+ & f + t4p >= g + t3p
+ & h >= g
+ & c >= 0
+ & d >= c
+ & t4p >= 0
+ & t3p >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0
+ 	& c <= t2 & t2 <= d
+ & t3p = t3 - t2 & 0 <= t3p
+ & t4p = t4 - t2 & 0 <= t4p
+	& t2 <= t3
+	& t2 <= t4
+)
+=
+   d >= c
+ & e >= 0
+ & h >= g
+ & t3p >= 0
+ & b >= a
+ & a >= 0
+ & g >= 0
+ & c >= 0
+ & f >= t3p + a
+ & t3p + b >= e
+ & f >= e
+ & h >= t4p + a
+ & h + t3p >= t4p + e
+ & t4p + f >= t3p + g
+ & t4p + b >= g
+ & t4p >= 0*)
+
+(*hide t2,t3,t4,t3p,t4p in (
+h + t3p >= e + t4p
+ & f >= e
+ & b + t3p >= e
+ & b >= a
+ & f >= a + t3p
+ & h >= a + t4p
+ & b + t4p >= g
+ & f + t4p >= g + t3p
+ & h >= g
+ & c >= 0
+ & d >= c
+ & t4p >= 0
+ & t3p >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0
+ 	& c <= t2 & t2 <= d
+ & t3p = t3 - t2 & 0 <= t3p
+ & t4p = t4 - t2 & 0 <= t4p
+	& t2 <= t3
+	& t2 <= t4
+)
+=
+   h >= a
+	& e >= 0
+	& h >= g
+	& b >= a
+	& a >= 0
+	& g >= 0
+	& c >= 0
+	& f >= e
+ & f >= a
+	& d >= c
+*)
+
+
+
+(********** AE vers CE **********)
+
+(* ON ELIMINTE t4, INUTILE ICI *)
+(*hide t4 in (
+   h >= g
+ & f + t4 >= g
+ & b + t4 >= g + t1
+ & b >= e + t1
+ & f >= e
+ & h >= e + t4
+ & b >= a
+ & f + t1 >= a
+ & h + t1 >= a + t4
+ & d >= c
+ & c >= 0
+ & t1 >= 0
+ & t4 >= 0
+ & g >= 0
+ & a >= 0
+ & e >= 0
+)
+=
+
+   h + t1 >= a
+ & h >= e
+ & g >= 0
+ & f + t1 >= a
+ & f >= e
+ & t1 >= 0
+ & b >= a
+ & e >= 0
+ & a >= 0
+ & c >= 0
+ & d >= c
+ & b >= t1 + e
+ & h >= g*)
+
+
+(*hide t1 in (
+
+
+h + t1 >= a
+ & h >= e
+ & g >= 0
+ & f + t1 >= a
+ & f >= e
+ & t1 >= 0
+ & b >= a
+ & e >= 0
+ & a >= 0
+ & c >= 0
+ & d >= c
+ & b >= t1 + e
+ & h >= g
+)
+=
+   b >= e
+	& a >= 0
+	& h >= g
+ & h >= e
+	& e >= 0
+	& g >= 0
+	& c >= 0
+	& d >= c
+	& f >= e
+	& b >= a*)
+
+	
+(********** RESULT **********)
+(*simplify (
+   b >= e
+	& a >= 0
+	& h >= g
+ & h >= e
+  & f >= a
+  & h >= a
+  & b+d >= e
+	& e >= 0
+	& g >= 0
+	& c >= 0
+	& d >= c
+	& f >= e
+	& b >= a
+  & g > f
+)*)
+
+(*   g > f
+	& d >= c
+	& c >= 0
+	& h >= g
+	& a >= 0
+ & f >= a
+	& b >= a
+ & b >= e
+	& e >= 0
+	& f >= e*)
