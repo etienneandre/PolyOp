@@ -3,6 +3,7 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
@@ -172,16 +173,7 @@ write_to_file output_file_name string_error;
 (**************************************************)
 (**************************************************)
 
-print_message Debug_standard
-	( "**************************************************\n"
-	^ "*                     " ^ version_string () ^ "                 *\n"
-	^ "*                            Copyright (c) 2011  *\n"
-	^ "*                                 Etienne ANDRE  *\n"
-	^ "*              National University of Singapore  *\n"
-	^ "**************************************************\n"
-    ^ "This program comes with ABSOLUTELY NO WARRANTY.\n"
-    ^ "This is free software, and you are welcome to redistribute it under certain conditions.\n"
-);
+Global.print_header_string();
 
 
 

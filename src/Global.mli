@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2016/02/29
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,6 +30,8 @@
 
 (* val version_string: string *)
 val version_string: unit -> string
+
+val print_header_string: unit -> unit
 
 
 (****************************************************************)

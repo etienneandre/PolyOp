@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2016/02/29
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,14 +24,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************)
 
-(****************************************************************)
-(** Version string *)
-(****************************************************************)
-
-let version = "0.1"
-
-let version_string () = 
-	("PolyOp " ^ version);
 
 (****************************************************************)
 (** Exceptions *)
@@ -40,6 +33,58 @@ exception Found
 
 (** Parsing exception: starting position of the error symbol, ending position of the error symbol *)
 exception ParsingError of (int * int)
+
+
+(****************************************************************)
+(** Useful functions on string *)
+(****************************************************************)
+(* Convert an array of string into a string *)
+let string_of_array_of_string =
+	Array.fold_left (fun the_string s -> the_string ^ s) ""
+
+(* Returns a fresh string made of 'n' times 's' *)
+let string_n_times n s =
+	string_of_array_of_string (Array.make n s)
+
+
+
+
+(****************************************************************)
+(** Version string *)
+(****************************************************************)
+
+let version = "0.2-alpha"
+
+let version_string () = 
+	("PolyOp " ^ version)
+
+
+
+let print_header_string () =
+
+	let header_string = 
+	
+	(* Build info *)
+	let build_info = "Build: " ^ BuildInfo.build_number ^ " (" ^ BuildInfo.build_time ^ ")" in
+	let length_header = 54 in
+	
+	let program_name = version_string () in
+	
+	"************************************************************\n"
+	^ "*  " ^ program_name ^ (string_n_times (length_header - (String.length program_name)) " ") ^ "  *\n"
+	^ "*                                                          *\n"
+	^ "*                                           Etienne Andre  *\n"
+	^ "*                                             2011 - " ^ (BuildInfo.build_year) ^ "  *\n"
+	^ "*                        National University of Singapore  *\n"
+	^ "*  LIPN, Universite Paris 13, Sorbonne Paris Cite, France  *\n"
+(* 	^ "*  " ^ (string_n_times (length_header - (String.length imitator_url)) " ") ^ imitator_url ^ "  *\n" *)
+	^ "*                                                          *\n"
+	^ "*  " ^ (string_n_times (length_header - (String.length build_info)) " ") ^ build_info ^ "  *\n"
+	^ "************************************************************\n"
+    ^ "This program comes with ABSOLUTELY NO WARRANTY.\n"
+    ^ "This is free software, and you are welcome to redistribute it under certain conditions.\n\n"
+	
+	in print_string header_string
 
 
 

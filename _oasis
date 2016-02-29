@@ -1,0 +1,44 @@
+###############################################################
+#
+#                       IMITATOR
+#
+#  National University of Singapore
+#  Laboratoire d'Informatique de Paris Nord (Paris 13, France)
+#  École Centrale de Nantes
+#
+#  _oasis authors: Etienne Andre
+#  Created:        2016/02/29
+#  Last modified:  2016/02/29
+###############################################################
+
+OASISFormat: 0.3
+Name:        PolyOp
+Version:     0.1
+Synopsis:    shortdescription
+Authors:     Etienne Andre
+License:     GPL-3.0
+
+# Handling build number (using Python)
+PreBuildCommand: python gen_build_info.py
+PostBuildCommand: python incrementer.py ; echo "Copying main binary file to bin/polyop ..." ; cp _build/src/PolyOp.native bin/polyop
+
+
+Executable polyop
+  Path:       .
+  BuildTools: ocamlbuild
+  MainIs:     src/PolyOp.ml
+  BuildDepends: gmp, extlib, ppl, str, unix, threads
+  CCLib: -static '-lppl -ltinfo -lppl_ocaml -lstdc++ -lgmp -lgmpxx'
+
+  CompiledObject: best
+
+
+Test startingcomment
+  Command: echo "\n********** STARTING TESTS **********\n"
+
+Test tes1
+  Command: echo "\n********** TEST 1 **********\n"; \
+       ./bin/polyop examples/test.polyop
+
+Test finalcomment
+  Command: echo "\n********** END TESTS **********\n"
