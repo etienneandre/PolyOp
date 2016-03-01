@@ -359,7 +359,6 @@ let abstract_program_of_parsing_structure parsop =
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Convert the operation *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
-	let convert = linear_constraint_of_convex_predicate index_of_variables in
 	let convert_var = List.map (index_of_variable_name index_of_variables) in
 	
 	let rec convert_constraint = function
@@ -367,7 +366,7 @@ let abstract_program_of_parsing_structure parsop =
 		| Parsop_hide (variable_names, c) -> Op_hide (convert_var variable_names, convert_constraint c)
 		| Parsop_simplify c -> Op_simplify (convert_constraint c)
 		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_var variable_names, convert_constraint c)
-		| Parsop_convex cp -> Op_convex (convert cp)
+		| Parsop_convex cp -> Op_convex (LinearConstraint.nnconvex_constraint_of_linear_constraint (linear_constraint_of_convex_predicate index_of_variables cp))
 	in
 	let convert_bool = function
 		| Parsop_equal (cp1, cp2) -> Op_equal (convert_constraint cp1, convert_constraint cp2)

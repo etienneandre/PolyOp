@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/05/30
+ * Last modified: 2016/03/01
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,7 +35,6 @@ open LinearConstraint
 
 (* Convert a program into a string *)
 let string_of_program program =
-	let convert_cp = string_of_linear_constraint program.variable_names in
 	let convert_vars vars = string_of_list_of_string_with_sep ", " (List.map program.variable_names vars) in
 	
 	let rec string_of_constraint = function
@@ -42,7 +42,7 @@ let string_of_program program =
 		| Op_hide (vars, cp) -> "hide (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		| Op_simplify c -> "simplify(" ^ (string_of_constraint c) ^ ")"
 		| Op_time_elapsing (vars, cp) -> "elapsing (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
-		| Op_convex cp -> convert_cp cp
+		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint program.variable_names cp
 	in
 	let string_of_bool = function
 		| Op_equal (cp1, cp2) -> "equal (" ^ (string_of_constraint cp1) ^ "), (" ^ (string_of_constraint cp2) ^ ")"

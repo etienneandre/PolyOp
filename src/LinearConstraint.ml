@@ -773,21 +773,11 @@ type nnconvex_constraint = Ppl.pointset_powerset_nnc_polyhedron
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 
 (** Create a false constraint *)
-let false_nnconvex_constraint () =
-(*	(* Statistics *)
-	ppl_nb_false_constraint := !ppl_nb_false_constraint + 1;
-	let start = Unix.gettimeofday() in*)
-	(* Actual call to PPL *)
-	let result = ppl_new_Pointset_Powerset_NNC_Polyhedron_from_space_dimension !total_dim Empty in
-	(* Statistics *)
-(* 	ppl_t_false_constraint := !ppl_t_false_constraint +. (Unix.gettimeofday() -. start); *)
-	(* Return result *)
-	result
+let false_nnconvex_constraint () = ppl_new_Pointset_Powerset_NNC_Polyhedron_from_space_dimension !total_dim Empty
 
 
 (** Create a true constraint *)
 let true_nnconvex_constraint () = ppl_new_Pointset_Powerset_NNC_Polyhedron_from_space_dimension !total_dim Universe
-
 
 
 (** Create a new nnconvex_constraint from a linear_constraint *)
@@ -862,15 +852,28 @@ let nnconvex_constraint_is_leq nnconvex_constraint nnconvex_constraint' =
 	ppl_Pointset_Powerset_NNC_Polyhedron_contains_Pointset_Powerset_NNC_Polyhedron nnconvex_constraint' nnconvex_constraint
 
 
+(** Check if a nnconvex_constraint is equal to another one *)
+let nnconvex_constraint_is_equal = ppl_Pointset_Powerset_NNC_Polyhedron_equals_Pointset_Powerset_NNC_Polyhedron
+
+
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Simplification} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-let simplify nnconvex_constraint =
-	(*** TODO: add counters... ***)
+(** Simplify a constraint by applying pairwaise-reduction and omega-reduction *)
+let simplify_assign nnconvex_constraint =
 	ppl_Pointset_Powerset_NNC_Polyhedron_pairwise_reduce nnconvex_constraint;
 	ppl_Pointset_Powerset_NNC_Polyhedron_omega_reduce nnconvex_constraint;
 	()
-	
+
+(** Simplify a constraint by applying pairwaise-reduction and omega-reduction; version with copy (argument is not modified) *)
+let simplify nnconvex_constraint =
+	(* First copy *)
+	let copy = nnconvex_copy nnconvex_constraint in
+	(* Perform simplification with side effects *)
+	simplify_assign copy;
+	(* Return copy *)
+	copy
+
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Conversion to string} *)
@@ -879,7 +882,7 @@ let simplify nnconvex_constraint =
 (** Convert a nnconvex_constraint into a string *)
 let string_of_nnconvex_constraint names nnconvex_constraint =
 	(* First reduce (avoids identical disjuncts) *)
-	simplify nnconvex_constraint;
+	simplify_assign nnconvex_constraint;
 	
 	(* Get the disjuncts *)
 	let disjuncts = get_disjuncts nnconvex_constraint in
@@ -896,12 +899,13 @@ let string_of_nnconvex_constraint names nnconvex_constraint =
 
 
 
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-(** {3 Modifications} *)
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-	
-	
 
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Operations} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(*	(*** NOTE: version nnconvex_constraint ^ linear_constraint ***)
 (** Performs the intersection of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
 let nnconvex_intersection nnconvex_constraint linear_constraint =
 (*	(* Statistics *)
@@ -915,17 +919,46 @@ let nnconvex_intersection nnconvex_constraint linear_constraint =
 	ppl_t_is_true := !ppl_t_is_true +. (Unix.gettimeofday() -. start);*)
 
 	(* Simplify the constraint (avoids identical disjuncts) *)
-	simplify nnconvex_constraint;
+	simplify_assign nnconvex_constraint;
 	
 	(* The end *)
+	()*)
+
+(** Performs the intersection of a nnconvex_constraint with a linear_constraint; the first nnconvex_constraint is modified, the second is not *)
+let nnconvex_intersection_assign nnconvex_constraint nnconvex_constraint' =
+	(* Actual call to PPL *)
+	ppl_Pointset_Powerset_NNC_Polyhedron_intersection_assign nnconvex_constraint nnconvex_constraint';
+	(* Simplify the constraint (avoids identical disjuncts) *)
+	simplify_assign nnconvex_constraint;
+	(* The end *)
 	()
+
+
+(** Performs the intersection of a nnconvex_constraint with a linear_constraint and return a new nnconvex_constraint (none of the arguments is modified) *)
+let nnconvex_intersection nnconvex_constraint nnconvex_constraint' =
+	(* First copy *)
+	let copy = nnconvex_copy nnconvex_constraint in
+	(* Perform intersection with side effects *)
+	nnconvex_intersection_assign copy nnconvex_constraint';
+	(* Return copy *)
+	copy
+
+
+(** Performs the intersection of a list of nnconvex_constraint and return a new nnconvex_constraint (none of the arguments is modified) *)
+let nnconvex_intersection_list nnconvex_constraint_list =
+	(* First create true constraint *)
+	let nnconvex_constraint = true_nnconvex_constraint() in
+	(* Perform intersection with side effects *)
+	List.iter (fun nnconvex_constraint' -> nnconvex_intersection_assign nnconvex_constraint nnconvex_constraint') nnconvex_constraint_list;
+	(* Return copy *)
+	nnconvex_constraint
 
 
 
 (** Performs the union of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
 let nnconvex_union_with_linear_constraint nnconvex_constraint linear_constraint =
 	ppl_Pointset_Powerset_NNC_Polyhedron_add_disjunct nnconvex_constraint linear_constraint;
-	simplify nnconvex_constraint;
+	simplify_assign nnconvex_constraint;
 	(* The end *)
 	()
 
@@ -936,26 +969,49 @@ let nnconvex_union_with_linear_constraint nnconvex_constraint linear_constraint 
 let nnconvex_union nnconvex_constraint nnconvex_constraint' =
 	(* Get the disjuncts of the second nnconvex_constraint *)
 	let disjuncts = get_disjuncts nnconvex_constraint' in
-	
 	(* Add each of them as a union *)
 	List.iter (nnconvex_union_with_linear_constraint nnconvex_constraint) disjuncts
 
 
 (** Performs the difference between a first nnconvex_constraint and a second nnconvex_constraint; the first is modified, the second is not *)
 let nnconvex_difference nnconvex_constraint nnconvex_constraint' =
-(*	(* Statistics *)
-	ppl_nb_is_true := !ppl_nb_is_true + 1;
-	let start = Unix.gettimeofday() in*)
-	(* Actual call to PPL *)
 	ppl_Pointset_Powerset_NNC_Polyhedron_difference_assign nnconvex_constraint nnconvex_constraint';
-(*	(* Statistics *)
-	ppl_t_is_true := !ppl_t_is_true +. (Unix.gettimeofday() -. start);*)
-
 	(* Simplify the constraint (avoids identical disjuncts) *)
-	simplify nnconvex_constraint;
-	
+	simplify_assign nnconvex_constraint;
 	(* The end *)
 	()
+
+
+
+
+(** Apply time elapsing to an nnconvex_constraint with variable_elapse elapsing, and variable_constant remaining constant; version with side effects *)
+(*** NOTE: mostly copied from time_elapse_assign ***)
+let nnconvex_time_elapse_assign variable_elapse variable_constant nnconvex_constraint =
+	(* Create the inequalities var = 1, for var in variable_elapse *)
+	let inequalities_elapse = List.map (fun variable ->
+		(* Create a linear term *)
+		let linear_term = make_linear_term [(NumConst.one, variable)] NumConst.minus_one in
+		(* Create the inequality *)
+		make_linear_inequality linear_term Op_eq
+	) variable_elapse in
+	(* Create the inequalities var = 0, for var in variable_constant *)
+	let inequalities_constant = List.map (fun variable ->
+		(* Create a linear term *)
+		let linear_term = make_linear_term [(NumConst.one, variable)] NumConst.zero in
+		(* Create the inequality *)
+		make_linear_inequality linear_term Op_eq
+	) variable_constant in
+	(* Convert both sets of inequalities to a nnconvex_constraint *)
+	let nnconvex_constraint_time = nnconvex_constraint_of_linear_constraint (make (List.rev_append inequalities_elapse inequalities_constant)) in
+	(* Assign the time elapsing using PPL *)
+	ppl_Pointset_Powerset_NNC_Polyhedron_time_elapse_assign nnconvex_constraint nnconvex_constraint_time
+
+(** Apply time elapsing to an nnconvex_constraint with variable_elapse elapsing, and variable_constant remaining constant *)
+let nnconvex_time_elapse variable_elapse variable_constant nnconvex_constraint =
+	let nnconvex_constraint' = nnconvex_copy nnconvex_constraint in
+	nnconvex_time_elapse_assign variable_elapse variable_constant nnconvex_constraint';
+	nnconvex_constraint'
+
 
 
 

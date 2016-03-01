@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/05/30
+ * Last modified: 2016/03/01
  *
  ************************************************************)
  
@@ -71,7 +72,7 @@ hide (tf, t2, t3) in (
 )
 *)
 
-hide p2 in (2.57145 p1 <= 3/2172 p2 + 2.65454354p7 & p2 <= p3)
+(* hide p2 in (2.57145 p1 <= 3/2172 p2 + 2.65454354p7 & p2 <= p3) *)
 
 (* satisfiable True *)
 (* satisfiable (False) *)

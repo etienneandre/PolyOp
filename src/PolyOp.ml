@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/05/30
+ * Last modified: 2016/03/01
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,6 @@ open Global
 open AbstractStructure
 open Arg
 open ProgramPrinter
-open LinearConstraint
 
 
 
@@ -225,32 +224,36 @@ if program.operation = Op_nothing then(
 	exit 0
 );
 
-let string_of_lc = string_of_linear_constraint program.variable_names in
+
+
+
+
+let string_of_nncc = LinearConstraint.string_of_nnconvex_constraint program.variable_names in
 let string_of_bool b = if b then "yes" else "no" in
 
+
 let rec perform_constraint = function
-	| Op_and lc_list -> (intersection (List.map perform_constraint lc_list))
-	| Op_hide (variables, lc) -> (hide variables (perform_constraint lc))
-(* 	| Op_simplify lc -> string_of_lc (hide [] lc) *)
-	| Op_simplify lc ->  (minimize (perform_constraint lc))
+	| Op_and lc_list -> LinearConstraint.nnconvex_intersection_list (List.map perform_constraint lc_list)
+	| Op_hide (variables, lc) -> LinearConstraint.nnconvex_hide variables (perform_constraint lc)
+	| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)
 	| Op_time_elapsing (variables, lc) ->
 		(* Create the set of all variables *)
 		let all_variables = list_of_interval 0 (program.nb_variables - 1) in
 		(* Perform the intersection *)
 		let other_variables = list_diff all_variables variables in
 		(* Call the function *)
-		time_elapse variables other_variables (perform_constraint lc)
+		LinearConstraint.nnconvex_time_elapse variables other_variables (perform_constraint lc)
 	| Op_convex lc -> lc
 in
 let perform_bool = function
-	| Op_equal (lc1, lc2) -> (is_equal (perform_constraint lc1) (perform_constraint lc2))
-	| Op_included (lc1, lc2) -> (is_leq (perform_constraint lc1) (perform_constraint lc2))
-	| Op_satisfiable lc -> (is_satisfiable (perform_constraint lc))
+	| Op_equal (lc1, lc2) -> LinearConstraint.nnconvex_constraint_is_equal (perform_constraint lc1) (perform_constraint lc2)
+	| Op_included (lc1, lc2) -> LinearConstraint.nnconvex_constraint_is_leq (perform_constraint lc1) (perform_constraint lc2)
+	| Op_satisfiable lc -> not (LinearConstraint.nnconvex_constraint_is_false (perform_constraint lc))
 in
 
 let result = match program.operation with
 	| Op_bool b -> string_of_bool (perform_bool b)
-	| Op_constraint c -> string_of_lc (perform_constraint c)
+	| Op_constraint c -> string_of_nncc (perform_constraint c)
 	| Op_nothing -> print_error ("Internal error: the Op_nothing operation can't happen here.\nPlease insult the developers."); abort_program (); exit 0
 (* 	| _ -> raise (InternalError "not implemented") *)
 in

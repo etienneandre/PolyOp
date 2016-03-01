@@ -139,7 +139,7 @@ val false_constraint : unit -> linear_constraint
 (** Create a true constraint *)
 val true_constraint : unit -> linear_constraint
 
-
+(*
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Tests} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -157,7 +157,7 @@ val is_satisfiable : linear_constraint -> bool
 val is_equal : linear_constraint -> linear_constraint -> bool
 
 (** Check if a constraint is included in another one *)
-val is_leq : linear_constraint -> linear_constraint -> bool
+val is_leq : linear_constraint -> linear_constraint -> bool*)
 
 
 (*
@@ -175,7 +175,7 @@ val partition_pi0_compatible : (variable -> coef) -> linear_constraint -> (linea
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Functions} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-
+(*
 (** makes a copy of a constraint *)
 val copy : linear_constraint -> linear_constraint
 
@@ -208,8 +208,8 @@ val time_elapse  : variable list -> variable list -> linear_constraint -> linear
 
 (** Perform time elapsing on a set of variables; version with side effects *)
 val time_elapse_assign  : variable list -> variable list -> linear_constraint -> unit
-
-
+*)
+(*
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Conversion} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -221,7 +221,7 @@ val string_of_linear_constraint : (variable -> string) -> linear_constraint -> s
 val string_of_false : string
 
 (** String for the true constraint *)
-val string_of_true : string
+val string_of_true : string*)
 
 
 
@@ -276,13 +276,26 @@ val nnconvex_constraint_is_pi0_compatible : (variable -> coef) -> nnconvex_const
 (** Check if a nnconvex_constraint is included in another one *)
 val nnconvex_constraint_is_leq : nnconvex_constraint -> nnconvex_constraint -> bool
 
+(** Check if a nnconvex_constraint is equal to another one *)
+val nnconvex_constraint_is_equal : nnconvex_constraint -> nnconvex_constraint -> bool
+
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Modifications} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 
-(** Performs the intersection of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
-val nnconvex_intersection  : nnconvex_constraint -> linear_constraint -> unit
+(** Simplify a constraint by applying pairwaise-reduction and omega-reduction; version with copy (argument is not modified) *)
+val simplify : nnconvex_constraint -> nnconvex_constraint
+
+(** Performs the intersection of a nnconvex_constraint with a linear_constraint; the first nnconvex_constraint is modified, the second is not *)
+val nnconvex_intersection_assign : nnconvex_constraint -> nnconvex_constraint -> unit
+
+(** Performs the intersection of a nnconvex_constraint with a linear_constraint and return a new nnconvex_constraint (none of the arguments is modified) *)
+val nnconvex_intersection : nnconvex_constraint -> nnconvex_constraint -> nnconvex_constraint
+
+(** Performs the intersection of a list of nnconvex_constraint and return a new nnconvex_constraint (none of the arguments is modified) *)
+val nnconvex_intersection_list : nnconvex_constraint list -> nnconvex_constraint
+
 
 (** Performs the union of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
 
@@ -298,6 +311,9 @@ val nnconvex_difference : nnconvex_constraint -> nnconvex_constraint -> unit
 
 (** Eliminate a set of variables *)
 val nnconvex_hide : variable list -> nnconvex_constraint -> nnconvex_constraint
+
+(** Apply time elapsing to an nnconvex_constraint with variable_elapse elapsing, and variable_constant remaining constant *)
+val nnconvex_time_elapse : variable list -> variable list -> nnconvex_constraint -> nnconvex_constraint
 
 
 

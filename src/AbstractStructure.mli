@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/05/30
+ * Last modified: 2016/03/01
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,7 +30,6 @@
 (* Modules *)
 (****************************************************************)
 open Global
-open LinearConstraint
 
 
 
@@ -53,7 +53,7 @@ and op_constraint =
 	| Op_hide of variable_index list * op_constraint
 	| Op_simplify of op_constraint
 	| Op_time_elapsing of variable_index list * op_constraint
-	| Op_convex of linear_constraint
+	| Op_convex of LinearConstraint.nnconvex_constraint
 
 
 
