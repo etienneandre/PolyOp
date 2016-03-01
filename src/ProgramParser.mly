@@ -91,7 +91,7 @@ opconstraint:
 	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
 	| LPAREN opconstraint RPAREN { $2 }
-	| convex_predicate { Parsop_convex [$1] }
+	| nnconvex_predicate { Parsop_convex $1 }
 ;
 
 
@@ -124,6 +124,12 @@ convex_predicate_list:
 /***********************************************
   RATIONALS, LINEAR TERMS, LINEAR CONSTRAINTS AND CONVEX PREDICATES
 ***********************************************/
+
+nnconvex_predicate:
+	| convex_predicate CT_OR nnconvex_predicate {$1 :: $3}
+	| convex_predicate {[$1]}
+// 	| { [] }
+;
 
 convex_predicate:
 	linear_constraint AMPERSAND convex_predicate { $1 :: $3 }
