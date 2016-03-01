@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2016/03/01
  *
  *
  * This program is free software: you can redistribute it and/or modify

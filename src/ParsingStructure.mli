@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/05/30
+ * Last modified: 2016/03/01
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -78,6 +79,7 @@ and parsop_bool =
 and parsop_constraint =
 	| Parsop_and of parsop_constraint list
 	| Parsop_hide of variable_name list * parsop_constraint
+	| Parsop_not of parsop_constraint
 	| Parsop_simplify of parsop_constraint
 	| Parsop_time_elapsing of variable_name list * parsop_constraint
 	| Parsop_convex of convex_predicate

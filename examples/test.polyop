@@ -90,6 +90,18 @@ hide (tf, t2, t3) in (
 (* simplify p1 <= p2 & p2 <= p1 *)
 (* simplify p1 <= p2 & p2 <= p1 & true *)
 
+(* not True *)
+(* not False *)
+(* not p1 = p2 *)
+(* not (p1 = p2) *)
+(* not (p1 = 5) *)
+(* not (p1 <= 5) *)
+(* not (p1 >= 5) *)
+(* not (p1 > 5) *)
+(* not (p1 < 5) *)
+(* not (p1 < p2 + 3 & p3 = 0) *)
+
+
 
 (************************************************************
   RECURSIVE
@@ -144,3 +156,18 @@ hide (tf, t2, t3) in (
  		hide p3 in (p2 <= p3 & p3 <= p1)
 	)*)
 
+
+(*not (hide (tf, t2, t3) in (
+	  0 <= a & a <= tf & f <= b
+	& 0 <= c & c <= t2 + tf & t2 + tf <= d
+	& 0 <= e & e <= t3 + tf & t3 + tf <= f
+	& tf <= t2
+	& tf <= t3
+	& a >= 0
+	& b >= 0
+	& c >= 0
+	& d >= 0
+	& e >= 0
+	& f >= 0
+	& tf >= 0
+))*)

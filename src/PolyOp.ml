@@ -235,6 +235,7 @@ let string_of_bool b = if b then "yes" else "no" in
 let rec perform_constraint = function
 	| Op_and lc_list -> LinearConstraint.nnconvex_intersection_list (List.map perform_constraint lc_list)
 	| Op_hide (variables, lc) -> LinearConstraint.nnconvex_hide variables (perform_constraint lc)
+	| Op_not lc -> LinearConstraint.negate (perform_constraint lc)
 	| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)
 	| Op_time_elapsing (variables, lc) ->
 		(* Create the set of all variables *)

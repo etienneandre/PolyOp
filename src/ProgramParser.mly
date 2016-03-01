@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/05/30
+ * Last modified: 2016/03/01
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -87,6 +88,7 @@ opconstraint:
 	| CT_AND convex_predicate_list_with_par { Parsop_and $2 }
 	| CT_ELAPSING variable_list_with_par_opt CT_IN opconstraint { Parsop_time_elapsing ($2, $4) }
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }
+	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
 	| LPAREN opconstraint RPAREN { $2 }
 	| convex_predicate { Parsop_convex $1 }

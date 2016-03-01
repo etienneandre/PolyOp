@@ -905,6 +905,8 @@ let string_of_nnconvex_constraint names nnconvex_constraint =
 (** {3 Operations} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 
+
+
 (*	(*** NOTE: version nnconvex_constraint ^ linear_constraint ***)
 (** Performs the intersection of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
 let nnconvex_intersection nnconvex_constraint linear_constraint =
@@ -974,12 +976,23 @@ let nnconvex_union nnconvex_constraint nnconvex_constraint' =
 
 
 (** Performs the difference between a first nnconvex_constraint and a second nnconvex_constraint; the first is modified, the second is not *)
-let nnconvex_difference nnconvex_constraint nnconvex_constraint' =
+let nnconvex_difference_assign nnconvex_constraint nnconvex_constraint' =
 	ppl_Pointset_Powerset_NNC_Polyhedron_difference_assign nnconvex_constraint nnconvex_constraint';
 	(* Simplify the constraint (avoids identical disjuncts) *)
 	simplify_assign nnconvex_constraint;
 	(* The end *)
 	()
+
+(** Negate a nnconvex_constraint *)
+(*** NOTE: not c = true \ c ***)
+let negate nnconvex_constraint =
+	(* First generate true constraint *)
+	let diff = true_nnconvex_constraint () in
+	(* Perform difference with side effects *)
+	nnconvex_difference_assign diff nnconvex_constraint;
+	(* Return diff *)
+	diff
+
 
 
 
@@ -1011,7 +1024,6 @@ let nnconvex_time_elapse variable_elapse variable_constant nnconvex_constraint =
 	let nnconvex_constraint' = nnconvex_copy nnconvex_constraint in
 	nnconvex_time_elapse_assign variable_elapse variable_constant nnconvex_constraint';
 	nnconvex_constraint'
-
 
 
 

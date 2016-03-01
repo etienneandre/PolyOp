@@ -40,6 +40,7 @@ let string_of_program program =
 	let rec string_of_constraint = function
 		| Op_and cp_list -> "and(" ^ (string_of_list_of_string_with_sep " , " (List.map string_of_constraint cp_list)) ^ ")"
 		| Op_hide (vars, cp) -> "hide (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
+		| Op_not c -> "not(" ^ (string_of_constraint c) ^ ")"
 		| Op_simplify c -> "simplify(" ^ (string_of_constraint c) ^ ")"
 		| Op_time_elapsing (vars, cp) -> "elapsing (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint program.variable_names cp

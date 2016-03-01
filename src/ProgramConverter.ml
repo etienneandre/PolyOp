@@ -3,12 +3,13 @@
  *                     PolyOp
  *
  * Convert a parsing structure into an abstract program
+ * École Centrale Nantes, France
  *
  * National University of Singapore
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/05/30
+ * Last modified: 2016/03/01
  *
  ************************************************************)
 
@@ -259,15 +260,12 @@ let rec get_variable_names_in_convex_predicate = function
 let rec get_variable_names_in_constraint = function
 	| Parsop_and cp_list ->
 		List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_constraint b)) [] cp_list
-	| Parsop_hide (vars, c) -> 
+	| Parsop_hide (vars, c) | Parsop_time_elapsing (vars, c) ->
 		List.rev_append
 			vars
 			(get_variable_names_in_constraint c)
+	| Parsop_not c
 	| Parsop_simplify c -> get_variable_names_in_constraint c
-	| Parsop_time_elapsing (vars, c) -> 
-		List.rev_append
-			vars
-			(get_variable_names_in_constraint c)
 	| Parsop_convex cp -> get_variable_names_in_convex_predicate cp
 
 
@@ -365,6 +363,7 @@ let abstract_program_of_parsing_structure parsop =
 		| Parsop_and list_of_cp -> Op_and (List.map convert_constraint list_of_cp)
 		| Parsop_hide (variable_names, c) -> Op_hide (convert_var variable_names, convert_constraint c)
 		| Parsop_simplify c -> Op_simplify (convert_constraint c)
+		| Parsop_not c -> Op_not (convert_constraint c)
 		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_var variable_names, convert_constraint c)
 		| Parsop_convex cp -> Op_convex (LinearConstraint.nnconvex_constraint_of_linear_constraint (linear_constraint_of_convex_predicate index_of_variables cp))
 	in

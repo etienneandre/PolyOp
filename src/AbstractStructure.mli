@@ -51,6 +51,7 @@ and op_bool =
 and op_constraint =
 	| Op_and of op_constraint list
 	| Op_hide of variable_index list * op_constraint
+	| Op_not of op_constraint
 	| Op_simplify of op_constraint
 	| Op_time_elapsing of variable_index list * op_constraint
 	| Op_convex of LinearConstraint.nnconvex_constraint
