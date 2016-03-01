@@ -93,7 +93,7 @@ type linear_inequality = Ppl_ocaml.linear_constraint
 (** Create a linear inequality using linear term and an operator *)
 val make_linear_inequality : linear_term -> op -> linear_inequality
 
-
+(*
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Functions} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -102,7 +102,7 @@ val make_linear_inequality : linear_term -> op -> linear_inequality
 val is_pi0_compatible_inequality : (variable -> coef) -> linear_inequality -> bool
 
 (** Negate a linear inequality; for an equality, perform the pi0-compatible negation *)
-val negate_wrt_pi0 : (variable -> coef) -> linear_inequality -> linear_inequality
+val negate_wrt_pi0 : (variable -> coef) -> linear_inequality -> linear_inequality*)
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -159,6 +159,8 @@ val is_equal : linear_constraint -> linear_constraint -> bool
 (** Check if a constraint is included in another one *)
 val is_leq : linear_constraint -> linear_constraint -> bool
 
+
+(*
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Pi0-compatibility} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -167,7 +169,7 @@ val is_leq : linear_constraint -> linear_constraint -> bool
 val is_pi0_compatible : (variable -> coef) -> linear_constraint -> bool
 
 (** Compute the pi0-compatible and pi0-incompatible inequalities within a constraint *)
-val partition_pi0_compatible : (variable -> coef) -> linear_constraint -> (linear_inequality list * linear_inequality list)
+val partition_pi0_compatible : (variable -> coef) -> linear_constraint -> (linear_inequality list * linear_inequality list)*)
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -268,8 +270,8 @@ val nnconvex_constraint_is_false : nnconvex_constraint -> bool
 (** Check if a nnconvex_constraint is true *)
 val nnconvex_constraint_is_true  : nnconvex_constraint -> bool
 
-(** Check if a nnconvex_constraint is pi0-compatible *)
-val nnconvex_constraint_is_pi0_compatible : (variable -> coef) -> nnconvex_constraint -> bool
+(*(** Check if a nnconvex_constraint is pi0-compatible *)
+val nnconvex_constraint_is_pi0_compatible : (variable -> coef) -> nnconvex_constraint -> bool*)
 
 (** Check if a nnconvex_constraint is included in another one *)
 val nnconvex_constraint_is_leq : nnconvex_constraint -> nnconvex_constraint -> bool

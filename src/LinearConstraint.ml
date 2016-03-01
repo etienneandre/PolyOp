@@ -312,7 +312,7 @@ let build_linear_inequality lterm rterm op =
 		| Greater_Or_Equal_RS -> Greater_Or_Equal (lterm, rterm)
 
 
-(** evaluate a linear inequality for a given valuation *)
+(*(** evaluate a linear inequality for a given valuation *)
 let evaluate_linear_inequality valuation_function linear_inequality =
 	match linear_inequality with 
 		| Less_Than (lterm, rterm) -> (
@@ -334,9 +334,9 @@ let evaluate_linear_inequality valuation_function linear_inequality =
 		| Greater_Or_Equal (lterm, rterm) -> (
 				let lval = evaluate_linear_term_ppl valuation_function lterm in
 				let rval = evaluate_linear_term_ppl valuation_function rterm in
-				NumConst.ge lval rval )
+				NumConst.ge lval rval )*)
 
-
+(*
 (*--------------------------------------------------*)
 (* Pi0-compatibility *)
 (*--------------------------------------------------*)
@@ -364,7 +364,7 @@ let negate_wrt_pi0 pi0 linear_inequality =
 					raise (InternalError "Trying to negate an equality already true w.r.t. pi0")
 				)
 			)
-
+*)
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Conversion} *)
@@ -506,7 +506,7 @@ let is_leq x y = ppl_Polyhedron_contains_Polyhedron y x
 let get_inequalities = ppl_Polyhedron_get_constraints
 
 
-
+(*
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Pi0-compatibility} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -524,7 +524,7 @@ let partition_pi0_compatible pi0 linear_constraint =
 	(* Get a list of linear inequalities *)
 	let list_of_inequalities = get_inequalities linear_constraint in
 	(* Partition *)
-	List.partition (is_pi0_compatible_inequality pi0) list_of_inequalities
+	List.partition (is_pi0_compatible_inequality pi0) list_of_inequalities*)
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -844,7 +844,7 @@ let nnconvex_constraint_is_true = ppl_Pointset_Powerset_NNC_Polyhedron_is_univer
 
 
 
-(** Check if a nnconvex_constraint is pi0-compatible *)
+(*(** Check if a nnconvex_constraint is pi0-compatible *)
 (*** NOTE: here, we split the nnconvex_constraint into a list of convex constraints, and we perform the check; the other option would have been to create a nnconvex_constraint from the point, and check inclusion ***)
 (*** WARNING: function not tested ***)
 let nnconvex_constraint_is_pi0_compatible pval nnconvex_constraint =
@@ -852,7 +852,8 @@ let nnconvex_constraint_is_pi0_compatible pval nnconvex_constraint =
 	let disjuncts = get_disjuncts nnconvex_constraint in
 	
 	(* 2) Check each of them *)
-	List.exists (fun linear_constraint -> is_pi0_compatible pval linear_constraint) disjuncts
+	List.exists (fun linear_constraint -> is_pi0_compatible pval linear_constraint) disjuncts*)
+
 
 
 (** Check if a nnconvex_constraint is included in another one *)

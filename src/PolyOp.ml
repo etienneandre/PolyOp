@@ -192,7 +192,6 @@ let parsing_structure = parser_lexer ProgramParser.main ProgramLexer.token !file
 
 print_message Debug_standard ("\nParsing done " ^ (after_seconds ()) ^ ".");
 
-(* Gc.major (); (*c'est quoi ca ? *) *)
 
 (**************************************************)
 (* Conversion to an abstract program *)
