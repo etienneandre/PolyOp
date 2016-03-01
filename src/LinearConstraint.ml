@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2011/03/01
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -498,13 +499,22 @@ let is_equal = ppl_Polyhedron_equals_Polyhedron
 let is_leq x y = ppl_Polyhedron_contains_Polyhedron y x
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Accesss} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(* Return the list of inequalities that build the polyhedron (interface to PPL) *)
+let get_inequalities = ppl_Polyhedron_get_constraints
+
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Pi0-compatibility} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 
 (** Check if a linear constraint is pi0-compatible *)
 let is_pi0_compatible pi0 linear_constraint =
 	(* Get a list of linear inequalities *)
-	let list_of_inequalities = ppl_Polyhedron_get_constraints linear_constraint in
+	let list_of_inequalities = get_inequalities linear_constraint in
 	(* Check the pi0-compatibility for all *)
 	List.for_all (is_pi0_compatible_inequality pi0) list_of_inequalities
 
@@ -512,7 +522,7 @@ let is_pi0_compatible pi0 linear_constraint =
 (** Compute the pi0-compatible and pi0-incompatible inequalities within a constraint *)
 let partition_pi0_compatible pi0 linear_constraint =
 	(* Get a list of linear inequalities *)
-	let list_of_inequalities = ppl_Polyhedron_get_constraints linear_constraint in
+	let list_of_inequalities = get_inequalities linear_constraint in
 	(* Partition *)
 	List.partition (is_pi0_compatible_inequality pi0) list_of_inequalities
 
@@ -537,7 +547,7 @@ let string_of_linear_constraint names linear_constraint =
 	else if is_false linear_constraint then string_of_false
 	else
 	(* Get an array of linear inequalities *)
-	let list_of_inequalities = ppl_Polyhedron_get_constraints linear_constraint in
+	let list_of_inequalities = get_inequalities linear_constraint in
 	let array_of_inequalities = Array.of_list list_of_inequalities in
 	"  " ^
 	(string_of_array_of_string_with_sep
@@ -743,3 +753,248 @@ let time_elapse variable_elapse variable_constant linear_constraint =
 	linear_constraint
 
 
+
+
+
+(************************************************************)
+(** {2 Non-necessarily convex linear Constraints} *)
+(************************************************************)
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Type} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Non-necessarily convex constraint on the parameters ("pointset powerset" in the underlying PPL implementation) *)
+type nnconvex_constraint = Ppl.pointset_powerset_nnc_polyhedron
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Creation} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Create a false constraint *)
+let false_nnconvex_constraint () =
+(*	(* Statistics *)
+	ppl_nb_false_constraint := !ppl_nb_false_constraint + 1;
+	let start = Unix.gettimeofday() in*)
+	(* Actual call to PPL *)
+	let result = ppl_new_Pointset_Powerset_NNC_Polyhedron_from_space_dimension !total_dim Empty in
+	(* Statistics *)
+(* 	ppl_t_false_constraint := !ppl_t_false_constraint +. (Unix.gettimeofday() -. start); *)
+	(* Return result *)
+	result
+
+
+(** Create a true constraint *)
+let true_nnconvex_constraint () = ppl_new_Pointset_Powerset_NNC_Polyhedron_from_space_dimension !total_dim Universe
+
+
+
+(** Create a new nnconvex_constraint from a linear_constraint *)
+let nnconvex_constraint_of_linear_constraint = ppl_new_Pointset_Powerset_NNC_Polyhedron_from_NNC_Polyhedron
+
+
+(** Copy a nnconvex_constraint *)
+let nnconvex_copy = ppl_new_Pointset_Powerset_NNC_Polyhedron_from_Pointset_Powerset_NNC_Polyhedron
+
+
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Access} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Get the list of linear_constraint the disjunction of which makes a nnconvex_constraint *)
+let get_disjuncts nnconvex_constraint =
+	(* Create ref for the result *)
+	let disjuncts = ref [] in
+
+	(* Create iterator *)
+	let iterator = ppl_Pointset_Powerset_NNC_Polyhedron_begin_iterator nnconvex_constraint in
+	(* Create an iterator for the end *)
+	let end_iterator = ppl_Pointset_Powerset_NNC_Polyhedron_end_iterator nnconvex_constraint in
+	
+	(* Iterate until the end *)
+	(*** NOTE: apparently, ppl_Pointset_Powerset_NNC_Polyhedron_end_iterator represents the index AFTER the last element, hence the following test is correct ***)
+	while not (ppl_Pointset_Powerset_NNC_Polyhedron_iterator_equals_iterator iterator end_iterator) do
+		(* Get the current disjunct *)
+		let disjunct = ppl_Pointset_Powerset_NNC_Polyhedron_get_disjunct iterator in
+		
+		(* Add it to the list of disjuncts *)
+		disjuncts := disjunct :: !disjuncts;
+		
+		(* Increment the iterator *)
+		ppl_Pointset_Powerset_NNC_Polyhedron_increment_iterator iterator;
+	done;
+	
+	(* Return disjuncts *)
+	List.rev (!disjuncts)
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Tests} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Check if a nnconvex_constraint is false *)
+let nnconvex_constraint_is_false = ppl_Pointset_Powerset_NNC_Polyhedron_is_empty
+
+
+(** Check if a nnconvex_constraint is true *)
+let nnconvex_constraint_is_true = ppl_Pointset_Powerset_NNC_Polyhedron_is_universe
+
+
+
+(** Check if a nnconvex_constraint is pi0-compatible *)
+(*** NOTE: here, we split the nnconvex_constraint into a list of convex constraints, and we perform the check; the other option would have been to create a nnconvex_constraint from the point, and check inclusion ***)
+(*** WARNING: function not tested ***)
+let nnconvex_constraint_is_pi0_compatible pval nnconvex_constraint =
+	(* 1) Get the constraints *)
+	let disjuncts = get_disjuncts nnconvex_constraint in
+	
+	(* 2) Check each of them *)
+	List.exists (fun linear_constraint -> is_pi0_compatible pval linear_constraint) disjuncts
+
+
+(** Check if a nnconvex_constraint is included in another one *)
+let nnconvex_constraint_is_leq nnconvex_constraint nnconvex_constraint' =
+	(*** NOTE: PPL works in the reverse order: the 2nd contains the 1st one ***)
+	ppl_Pointset_Powerset_NNC_Polyhedron_contains_Pointset_Powerset_NNC_Polyhedron nnconvex_constraint' nnconvex_constraint
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Simplification} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+let simplify nnconvex_constraint =
+	(*** TODO: add counters... ***)
+	ppl_Pointset_Powerset_NNC_Polyhedron_pairwise_reduce nnconvex_constraint;
+	ppl_Pointset_Powerset_NNC_Polyhedron_omega_reduce nnconvex_constraint;
+	()
+	
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Conversion to string} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Convert a nnconvex_constraint into a string *)
+let string_of_nnconvex_constraint names nnconvex_constraint =
+	(* First reduce (avoids identical disjuncts) *)
+	simplify nnconvex_constraint;
+	
+	(* Get the disjuncts *)
+	let disjuncts = get_disjuncts nnconvex_constraint in
+	
+	(* Case false *)
+	if disjuncts = [] then string_of_false else(
+	
+		(* Convert each disjunct into a string *)
+		let disjuncts_string = List.map (string_of_linear_constraint names) disjuncts in
+		
+		(* Concatenate using an "OR" *)
+		string_of_list_of_string_with_sep "\nOR\n " disjuncts_string
+	)
+
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Modifications} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+	
+	
+
+(** Performs the intersection of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
+let nnconvex_intersection nnconvex_constraint linear_constraint =
+(*	(* Statistics *)
+	ppl_nb_is_true := !ppl_nb_is_true + 1;
+	let start = Unix.gettimeofday() in*)
+	(* First retrieve inequalities *)
+	let constraint_system =  get_inequalities linear_constraint in
+	(* Actual call to PPL *)
+	ppl_Pointset_Powerset_NNC_Polyhedron_add_constraints nnconvex_constraint constraint_system;
+(*	(* Statistics *)
+	ppl_t_is_true := !ppl_t_is_true +. (Unix.gettimeofday() -. start);*)
+
+	(* Simplify the constraint (avoids identical disjuncts) *)
+	simplify nnconvex_constraint;
+	
+	(* The end *)
+	()
+
+
+
+(** Performs the union of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
+let nnconvex_union_with_linear_constraint nnconvex_constraint linear_constraint =
+	ppl_Pointset_Powerset_NNC_Polyhedron_add_disjunct nnconvex_constraint linear_constraint;
+	simplify nnconvex_constraint;
+	(* The end *)
+	()
+
+
+
+
+(** Performs the union of a nnconvex_constraint with another nnconvex_constraint; the first nnconvex_constraint is modified, the second is not *)
+let nnconvex_union nnconvex_constraint nnconvex_constraint' =
+	(* Get the disjuncts of the second nnconvex_constraint *)
+	let disjuncts = get_disjuncts nnconvex_constraint' in
+	
+	(* Add each of them as a union *)
+	List.iter (nnconvex_union_with_linear_constraint nnconvex_constraint) disjuncts
+
+
+(** Performs the difference between a first nnconvex_constraint and a second nnconvex_constraint; the first is modified, the second is not *)
+let nnconvex_difference nnconvex_constraint nnconvex_constraint' =
+(*	(* Statistics *)
+	ppl_nb_is_true := !ppl_nb_is_true + 1;
+	let start = Unix.gettimeofday() in*)
+	(* Actual call to PPL *)
+	ppl_Pointset_Powerset_NNC_Polyhedron_difference_assign nnconvex_constraint nnconvex_constraint';
+(*	(* Statistics *)
+	ppl_t_is_true := !ppl_t_is_true +. (Unix.gettimeofday() -. start);*)
+
+	(* Simplify the constraint (avoids identical disjuncts) *)
+	simplify nnconvex_constraint;
+	
+	(* The end *)
+	()
+
+
+
+(** Create a new nnconvex_constraint from a list of linear_constraint *)
+let nnconvex_constraint_of_linear_constraints (linear_constraints : linear_constraint list) =
+	(* Create a false constraint *)
+	let result = false_nnconvex_constraint() in
+	(* Add each constraint as a disjunction *)
+	List.iter (fun linear_constraint -> 
+		nnconvex_union_with_linear_constraint result linear_constraint;
+	) linear_constraints;
+	(* Return result *)
+	result
+
+
+
+let adhoc_nnconvex_hide variables nnconvex_constraint =
+	(* 1) Get disjuncts *)
+	let disjuncts = get_disjuncts nnconvex_constraint in
+	
+	(* 2) Hide in each disjuncts *)
+	let disjuncts_hidden = List.map (hide variables) disjuncts in
+	
+	(* 3) Recreate the nnconvex_constraint *)
+	nnconvex_constraint_of_linear_constraints disjuncts_hidden
+	
+
+
+let nnconvex_hide = adhoc_nnconvex_hide
+	
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Conversion to a list of linear_constraint} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** Converts a nnconvex_constraint into a list of linear_constraint such that the union of this list is equal to the nnconvex_constraint *)
+let linear_constraint_list_of_nnconvex_constraint =
+	(* Get the disjuncts *)
+	get_disjuncts
+
+
+	
+	

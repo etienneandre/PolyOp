@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * École Centrale Nantes, France
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2016/03/01
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -219,4 +220,96 @@ val string_of_false : string
 
 (** String for the true constraint *)
 val string_of_true : string
+
+
+
+
+
+(************************************************************)
+(** {2 Non-necessarily convex linear Constraints} *)
+(************************************************************)
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Type} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Non-necessarily convex constraint on the parameters ("pointset powerset" in the underlying PPL implementation) *)
+type nnconvex_constraint
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Creation} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Create a false constraint *)
+val false_nnconvex_constraint : unit -> nnconvex_constraint
+
+(** Create a true constraint *)
+val true_nnconvex_constraint  : unit -> nnconvex_constraint
+
+(** Copy a nnconvex_constraint *)
+val nnconvex_copy : nnconvex_constraint -> nnconvex_constraint
+
+
+(** Create a new nnconvex_constraint from a linear_constraint *)
+val nnconvex_constraint_of_linear_constraint : linear_constraint -> nnconvex_constraint
+
+(** Create a new non-convex nnconvex_constraint from a list of linear_constraint *)
+val nnconvex_constraint_of_linear_constraints : linear_constraint list -> nnconvex_constraint
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Tests} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Check if a nnconvex_constraint is false *)
+val nnconvex_constraint_is_false : nnconvex_constraint -> bool
+
+(** Check if a nnconvex_constraint is true *)
+val nnconvex_constraint_is_true  : nnconvex_constraint -> bool
+
+(** Check if a nnconvex_constraint is pi0-compatible *)
+val nnconvex_constraint_is_pi0_compatible : (variable -> coef) -> nnconvex_constraint -> bool
+
+(** Check if a nnconvex_constraint is included in another one *)
+val nnconvex_constraint_is_leq : nnconvex_constraint -> nnconvex_constraint -> bool
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Modifications} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Performs the intersection of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
+val nnconvex_intersection  : nnconvex_constraint -> linear_constraint -> unit
+
+(** Performs the union of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
+
+(** Performs the union of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
+val nnconvex_union_with_linear_constraint : nnconvex_constraint -> linear_constraint -> unit
+
+(** Performs the union of a nnconvex_constraint with another nnconvex_constraint; the first nnconvex_constraint is modified, the second is not *)
+val nnconvex_union : nnconvex_constraint -> nnconvex_constraint -> unit
+
+
+(** Performs the difference between a first px_nnconvex_constraint and a second px_nnconvex_constraint; the first is modified, the second is not *)
+val nnconvex_difference : nnconvex_constraint -> nnconvex_constraint -> unit
+
+(** Eliminate a set of variables *)
+val nnconvex_hide : variable list -> nnconvex_constraint -> nnconvex_constraint
+
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Conversion to a list of linear_constraint} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** Converts a nnconvex_constraint into a list of linear_constraint such that the union of this list is equal to the nnconvex_constraint *)
+val linear_constraint_list_of_nnconvex_constraint : nnconvex_constraint -> linear_constraint list
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Conversion to string} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Convert a nnconvex_constraint into a string *)
+val string_of_nnconvex_constraint : (variable -> string) -> nnconvex_constraint -> string
 
