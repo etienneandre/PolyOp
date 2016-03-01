@@ -62,6 +62,7 @@ type linear_constraint =
 
 type convex_predicate = linear_constraint list
 
+type nnconvex_predicate = convex_predicate list
 
 
 (****************************************************************)
@@ -82,5 +83,5 @@ and parsop_constraint =
 	| Parsop_not of parsop_constraint
 	| Parsop_simplify of parsop_constraint
 	| Parsop_time_elapsing of variable_name list * parsop_constraint
-	| Parsop_convex of convex_predicate
+	| Parsop_convex of nnconvex_predicate
 

@@ -99,7 +99,7 @@ hide (tf, t2, t3) in (
 (* not (p1 >= 5) *)
 (* not (p1 > 5) *)
 (* not (p1 < 5) *)
-(* not (p1 < p2 + 3 & p3 = 0) *)
+not (p1 < p2 + 3 & p3 = 0)
 
 
 

@@ -266,7 +266,8 @@ let rec get_variable_names_in_constraint = function
 			(get_variable_names_in_constraint c)
 	| Parsop_not c
 	| Parsop_simplify c -> get_variable_names_in_constraint c
-	| Parsop_convex cp -> get_variable_names_in_convex_predicate cp
+	| Parsop_convex disjunction_list -> List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_convex_predicate b)) [] disjunction_list
+(* 	List.iter (fun cp ->  get_variable_names_in_convex_predicate cp *)
 
 
 let get_variable_names_in_bool = function
@@ -365,7 +366,15 @@ let abstract_program_of_parsing_structure parsop =
 		| Parsop_simplify c -> Op_simplify (convert_constraint c)
 		| Parsop_not c -> Op_not (convert_constraint c)
 		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_var variable_names, convert_constraint c)
-		| Parsop_convex cp -> Op_convex (LinearConstraint.nnconvex_constraint_of_linear_constraint (linear_constraint_of_convex_predicate index_of_variables cp))
+		| Parsop_convex cp_list ->
+			(* Create false constraint *)
+			let c = LinearConstraint.false_nnconvex_constraint() in
+			(* Add disjunctions *)
+			List.iter (fun cp -> LinearConstraint.nnconvex_union_with_linear_constraint c (linear_constraint_of_convex_predicate index_of_variables cp)) cp_list;
+			(* Return *)
+			Op_convex c
+(* 		Op_convex (LinearConstraint.nnconvex_constraint_of_linear_constraints [linear_constraint_of_convex_predicate index_of_variables cp]) *)
+		
 	in
 	let convert_bool = function
 		| Parsop_equal (cp1, cp2) -> Op_equal (convert_constraint cp1, convert_constraint cp2)
