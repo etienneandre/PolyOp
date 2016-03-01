@@ -1,0 +1,21 @@
+
+*******************************************************
+release 0.2    (2016-03-01, build 34)
+
+Features
+- Allow for "not" operation
+- Allow disjunctions (using "or") in input constraints
+
+Internal
+- Now using _oasis to compile
+- Now PolyOp has a build number
+- Relying entirely on PPL.Pointset_Powerset_NNC_Polyhedron (even when no disjunction is used)
+
+Dissemination
+- Source code on GitHub
+
+
+*******************************************************
+release 0.1    (2011-05-30)
+
+First version of PolyOp
