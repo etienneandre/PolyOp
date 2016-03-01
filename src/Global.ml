@@ -73,10 +73,12 @@ let print_header_string () =
 	"************************************************************\n"
 	^ "*  " ^ program_name ^ (string_n_times (length_header - (String.length program_name)) " ") ^ "  *\n"
 	^ "*                                                          *\n"
+	^ "*          Interface to the Parma Polyhedra Library (PPL)  *\n"
 	^ "*                                           Etienne Andre  *\n"
 	^ "*                                             2011 - " ^ (BuildInfo.build_year) ^ "  *\n"
 	^ "*                        National University of Singapore  *\n"
 	^ "*  LIPN, Universite Paris 13, Sorbonne Paris Cite, France  *\n"
+	^ "*                   IRCCyN, Ecole Centrale Nantes, France  *\n"
 (* 	^ "*  " ^ (string_n_times (length_header - (String.length imitator_url)) " ") ^ imitator_url ^ "  *\n" *)
 	^ "*                                                          *\n"
 	^ "*  " ^ (string_n_times (length_header - (String.length build_info)) " ") ^ build_info ^ "  *\n"
