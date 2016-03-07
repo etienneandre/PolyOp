@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/03/01
+ * Last modified: 2011/03/07
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -894,7 +894,7 @@ let string_of_nnconvex_constraint names nnconvex_constraint =
 		let disjuncts_string = List.map (string_of_linear_constraint names) disjuncts in
 		
 		(* Concatenate using an "OR" *)
-		string_of_list_of_string_with_sep "\nOR\n " disjuncts_string
+		string_of_list_of_string_with_sep "\nor\n " disjuncts_string
 	)
 
 
