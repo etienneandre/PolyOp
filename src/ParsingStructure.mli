@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/03/01
+ * Last modified: 2016/10/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -83,5 +83,6 @@ and parsop_constraint =
 	| Parsop_not of parsop_constraint
 	| Parsop_simplify of parsop_constraint
 	| Parsop_time_elapsing of variable_name list * parsop_constraint
+	| Parsop_time_past of variable_name list * parsop_constraint
 	| Parsop_convex of nnconvex_predicate
 

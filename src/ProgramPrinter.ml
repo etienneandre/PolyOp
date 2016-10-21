@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/03/01
+ * Last modified: 2016/10/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ let string_of_program program =
 		| Op_not c -> "not(" ^ (string_of_constraint c) ^ ")"
 		| Op_simplify c -> "simplify(" ^ (string_of_constraint c) ^ ")"
 		| Op_time_elapsing (vars, cp) -> "elapsing (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
+		| Op_time_past (vars, cp) -> "past (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint program.variable_names cp
 	in
 	let string_of_bool = function

@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/03/01
+ * Last modified: 2016/10/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -62,6 +62,7 @@ rule token = parse
 	| "nothing"        { CT_NOTHING }
 	| "or"             { CT_OR }
 	| "||"             { CT_OR }
+	| "past"           { CT_PAST }
 	| "satisfiable"    { CT_SATISFIABLE }
 	| "simplify"       { CT_SIMPLIFY }
 	| "true"           { CT_TRUE }

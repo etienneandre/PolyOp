@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2011/03/07
+ * Last modified: 2016/10/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -725,7 +725,65 @@ let minimize linear_constraint =
 	make list_of_inequalities
 
 
+(*------------------------------------------------------------*)
+(* Time elapsing and time past *)
+(*------------------------------------------------------------*)
 
+(* Generic time elapsing function *)
+(* 'reverse_direction' should be minus_one for growing, one for decreasing *)
+let time_elapse_gen_assign reverse_direction variables_elapse variables_constant linear_constraint =
+	(* Create the inequalities var = 1, for var in variables_elapse *)
+	let inequalities_elapse = List.map (fun variable ->
+		(* Create a linear term *)
+		let linear_term = make_linear_term [(NumConst.one, variable)] reverse_direction in
+		(* Create the inequality *)
+		make_linear_inequality linear_term Op_eq
+	) variables_elapse in
+	(* Create the inequalities var = 0, for var in variables_constant *)
+	let inequalities_constant = List.map (fun variable ->
+		(* Create a linear term *)
+		let linear_term = make_linear_term [(NumConst.one, variable)] NumConst.zero in
+		(* Create the inequality *)
+		make_linear_inequality linear_term Op_eq
+	) variables_constant in
+	(* Convert both sets of inequalities to a constraint *)
+	let linear_constraint_time = make (List.rev_append inequalities_elapse inequalities_constant) in
+	
+	(* Apply the time elapsing using PPL *)
+	ppl_Polyhedron_time_elapse_assign linear_constraint linear_constraint_time
+
+
+(** Time elapsing function *)
+let time_elapse_assign = time_elapse_gen_assign NumConst.minus_one
+
+
+
+let time_elapse variables_elapse variables_constant linear_constraint =
+	let linear_constraint = copy linear_constraint in
+	time_elapse_assign variables_elapse variables_constant linear_constraint;
+	linear_constraint
+
+
+(** Time elapsing function, in backward direction (corresponds to the "past" operation in, e.g., [JLR15]) *)
+let time_past_assign variables_elapse variables_constant linear_constraint =
+	(* 1) Apply generic function *)
+	time_elapse_gen_assign NumConst.one variables_elapse variables_constant linear_constraint;
+	
+	(* 2) Constrain the elapsing variables to be non-negative! *)
+	(* Create the inequalities var >= 0, for var in variables_elapse *)
+	let inequalities_nonnegative = List.map (fun variable ->
+		(* Create a linear term *)
+		let linear_term = make_linear_term [(NumConst.one, variable)] NumConst.zero in
+		(* Create the inequality *)
+		make_linear_inequality linear_term Op_ge
+	) variables_elapse in
+	(* Take intersection *)
+	intersection_assign linear_constraint [(make inequalities_nonnegative)]
+	
+	
+	
+	
+	(*
 let time_elapse_assign variable_elapse variable_constant linear_constraint =
 	(* Create the inequalities var = 1, for var in variable_elapse *)
 	let inequalities_elapse = List.map (fun variable ->
@@ -750,7 +808,7 @@ let time_elapse_assign variable_elapse variable_constant linear_constraint =
 let time_elapse variable_elapse variable_constant linear_constraint =
 	let linear_constraint = copy linear_constraint in
 	time_elapse_assign variable_elapse variable_constant linear_constraint;
-	linear_constraint
+	linear_constraint*)
 
 
 
@@ -993,13 +1051,13 @@ let negate nnconvex_constraint =
 	(* Return diff *)
 	diff
 
-
-
-
+(*-----------------------------------------------------------*)
+(** Time elapsing and past *)
+(*-----------------------------------------------------------*)
 
 (** Apply time elapsing to an nnconvex_constraint with variable_elapse elapsing, and variable_constant remaining constant; version with side effects *)
-(*** NOTE: mostly copied from time_elapse_assign ***)
-let nnconvex_time_elapse_assign variable_elapse variable_constant nnconvex_constraint =
+(* 'reverse_direction' should be minus_one for growing, one for decreasing *)
+let nnconvex_time_elapse_assign_gen reverse_direction variable_elapse variable_constant nnconvex_constraint =
 	(* Create the inequalities var = 1, for var in variable_elapse *)
 	let inequalities_elapse = List.map (fun variable ->
 		(* Create a linear term *)
@@ -1019,11 +1077,44 @@ let nnconvex_time_elapse_assign variable_elapse variable_constant nnconvex_const
 	(* Assign the time elapsing using PPL *)
 	ppl_Pointset_Powerset_NNC_Polyhedron_time_elapse_assign nnconvex_constraint nnconvex_constraint_time
 
+
+(** Time elapsing function *)
+let nnconvex_time_elapse_assign = nnconvex_time_elapse_assign_gen NumConst.minus_one
+
+
 (** Apply time elapsing to an nnconvex_constraint with variable_elapse elapsing, and variable_constant remaining constant *)
 let nnconvex_time_elapse variable_elapse variable_constant nnconvex_constraint =
 	let nnconvex_constraint' = nnconvex_copy nnconvex_constraint in
 	nnconvex_time_elapse_assign variable_elapse variable_constant nnconvex_constraint';
 	nnconvex_constraint'
+
+
+
+(** Time elapsing function, in backward direction (corresponds to the "past" operation in, e.g., [JLR15]) *)
+let nnconvex_time_past_assign variables_elapse variables_constant nnconvex_constraint =
+	(* 1) Apply generic function *)
+	nnconvex_time_elapse_assign_gen NumConst.one variables_elapse variables_constant nnconvex_constraint;
+	
+	(* 2) Constrain the elapsing variables to be non-negative! *)
+	(* Create the inequalities var >= 0, for var in variables_elapse *)
+	let inequalities_nonnegative = List.map (fun variable ->
+		(* Create a linear term *)
+		let linear_term = make_linear_term [(NumConst.one, variable)] NumConst.zero in
+		(* Create the inequality *)
+		make_linear_inequality linear_term Op_ge
+	) variables_elapse in
+	(* Take intersection *)
+	nnconvex_intersection_assign nnconvex_constraint (nnconvex_constraint_of_linear_constraint (make inequalities_nonnegative))
+
+
+(** Apply time elapsing in backward direction (corresponds to the "past" operation in, e.g., [JLR15]) to an nnconvex_constraint with variable_elapse elapsing, and variable_constant remaining constant *)
+let nnconvex_time_past variable_elapse variable_constant nnconvex_constraint =
+	let nnconvex_constraint' = nnconvex_copy nnconvex_constraint in
+	nnconvex_time_past_assign variable_elapse variable_constant nnconvex_constraint';
+	nnconvex_constraint'
+
+
+
 
 
 

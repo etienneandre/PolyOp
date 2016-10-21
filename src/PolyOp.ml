@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/03/01
+ * Last modified: 2016/10/21
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -244,6 +244,13 @@ let rec perform_constraint = function
 		let other_variables = list_diff all_variables variables in
 		(* Call the function *)
 		LinearConstraint.nnconvex_time_elapse variables other_variables (perform_constraint lc)
+	| Op_time_past (variables, lc) ->
+		(* Create the set of all variables *)
+		let all_variables = list_of_interval 0 (program.nb_variables - 1) in
+		(* Perform the intersection *)
+		let other_variables = list_diff all_variables variables in
+		(* Call the function *)
+		LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
 	| Op_convex lc -> lc
 in
 let perform_bool = function

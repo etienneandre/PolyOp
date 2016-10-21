@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/03/01
+ * Last modified: 2016/10/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -54,6 +54,7 @@ and op_constraint =
 	| Op_not of op_constraint
 	| Op_simplify of op_constraint
 	| Op_time_elapsing of variable_index list * op_constraint
+	| Op_time_past of variable_index list * op_constraint
 	| Op_convex of LinearConstraint.nnconvex_constraint
 
 

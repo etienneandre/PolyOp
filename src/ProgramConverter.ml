@@ -9,7 +9,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/03/01
+ * Last modified: 2016/10/21
  *
  ************************************************************)
 
@@ -260,12 +260,12 @@ let rec get_variable_names_in_convex_predicate = function
 let rec get_variable_names_in_constraint = function
 	| Parsop_and cp_list ->
 		List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_constraint b)) [] cp_list
-	| Parsop_hide (vars, c) | Parsop_time_elapsing (vars, c) ->
+	| Parsop_hide (vars, c) | Parsop_time_elapsing (vars, c)  | Parsop_time_past (vars, c) ->
 		List.rev_append
 			vars
 			(get_variable_names_in_constraint c)
-	| Parsop_not c
-	| Parsop_simplify c -> get_variable_names_in_constraint c
+	| Parsop_not c | Parsop_simplify c ->
+		get_variable_names_in_constraint c
 	| Parsop_convex disjunction_list -> List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_convex_predicate b)) [] disjunction_list
 (* 	List.iter (fun cp ->  get_variable_names_in_convex_predicate cp *)
 
@@ -366,6 +366,7 @@ let abstract_program_of_parsing_structure parsop =
 		| Parsop_simplify c -> Op_simplify (convert_constraint c)
 		| Parsop_not c -> Op_not (convert_constraint c)
 		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_var variable_names, convert_constraint c)
+		| Parsop_time_past (variable_names, c) -> Op_time_past (convert_var variable_names, convert_constraint c)
 		| Parsop_convex cp_list ->
 			(* Create false constraint *)
 			let c = LinearConstraint.false_nnconvex_constraint() in

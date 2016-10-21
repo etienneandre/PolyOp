@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/03/01
+ * Last modified: 2016/10/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -317,6 +317,9 @@ val nnconvex_hide : variable list -> nnconvex_constraint -> nnconvex_constraint
 
 (** Apply time elapsing to an nnconvex_constraint with variable_elapse elapsing, and variable_constant remaining constant *)
 val nnconvex_time_elapse : variable list -> variable list -> nnconvex_constraint -> nnconvex_constraint
+
+(** Time elapsing function, in backward direction (corresponds to the "past" operation in, e.g., [JLR15]) *)
+val nnconvex_time_past : variable list -> variable list -> nnconvex_constraint -> nnconvex_constraint
 
 
 
