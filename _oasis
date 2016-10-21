@@ -8,7 +8,7 @@
 #
 #  _oasis authors: Etienne Andre
 #  Created:        2016/02/29
-#  Last modified:  2016/02/29
+#  Last modified:  2016/10/21
 ###############################################################
 
 OASISFormat: 0.3
@@ -20,7 +20,7 @@ License:     GPL-3.0
 
 # Handling build number (using Python)
 PreBuildCommand: python gen_build_info.py
-PostBuildCommand: python incrementer.py ; echo "Copying main binary file to bin/polyop ..." ; cp _build/src/PolyOp.native bin/polyop
+PostBuildCommand: python incrementer.py ; echo "Copying main binary file to bin/polyop ..." ; cp _build/src/PolyOp.native bin/polyop ; strip bin/polyop
 
 
 Executable polyop
