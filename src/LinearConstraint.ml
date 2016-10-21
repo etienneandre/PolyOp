@@ -1061,7 +1061,7 @@ let nnconvex_time_elapse_assign_gen reverse_direction variable_elapse variable_c
 	(* Create the inequalities var = 1, for var in variable_elapse *)
 	let inequalities_elapse = List.map (fun variable ->
 		(* Create a linear term *)
-		let linear_term = make_linear_term [(NumConst.one, variable)] NumConst.minus_one in
+		let linear_term = make_linear_term [(NumConst.one, variable)] reverse_direction in
 		(* Create the inequality *)
 		make_linear_inequality linear_term Op_eq
 	) variable_elapse in
