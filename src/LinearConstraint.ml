@@ -1041,6 +1041,16 @@ let nnconvex_difference_assign nnconvex_constraint nnconvex_constraint' =
 	(* The end *)
 	()
 
+(** Perform the non-convex difference of two constraints *)
+let nnconvex_difference nnconvex_constraint nnconvex_constraint' =
+	(* First copy the first *)
+	let diff = nnconvex_copy nnconvex_constraint in
+	(* Perform difference with side effects *)
+	nnconvex_difference_assign diff nnconvex_constraint';
+	(* Return diff *)
+	diff
+
+
 (** Negate a nnconvex_constraint *)
 (*** NOTE: not c = true \ c ***)
 let negate nnconvex_constraint =

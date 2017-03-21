@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/10/21
+ * Last modified: 2017/03/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ let parse_error s =
 %token LPAREN RPAREN LBRACE RBRACE LSQBRA RSQBRA
 %token AMPERSAND APOSTROPHE COLON COMMA PIPE SEMICOLON
 
-%token CT_AND CT_ELAPSING CT_EQUAL CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE
+%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE
 
 %token EOF
 
@@ -86,6 +86,7 @@ opbool:
 
 opconstraint:
 	| CT_AND convex_predicate_list_with_par { Parsop_and $2 }
+	| CT_DIFF opconstraint opconstraint { Parsop_diff ($2, $3) }
 	| CT_ELAPSING variable_list_with_par_opt CT_IN opconstraint { Parsop_time_elapsing ($2, $4) }
 	| CT_PAST variable_list_with_par_opt CT_IN opconstraint { Parsop_time_past ($2, $4) }
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }

@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/10/21
+ * Last modified: 2017/03/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -79,6 +79,7 @@ and parsop_bool =
 	| Parsop_satisfiable of parsop_constraint
 and parsop_constraint =
 	| Parsop_and of parsop_constraint list
+	| Parsop_diff of parsop_constraint * parsop_constraint
 	| Parsop_hide of variable_name list * parsop_constraint
 	| Parsop_not of parsop_constraint
 	| Parsop_simplify of parsop_constraint

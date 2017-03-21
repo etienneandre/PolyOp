@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/10/21
+ * Last modified: 2017/03/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ rule token = parse
 		token lexbuf }
 
 	| "and"            { CT_AND }
+	| "diff"           { CT_DIFF }
 	| "elapsing"       { CT_ELAPSING }
 	| "equal"          { CT_EQUAL }
 	| "false"          { CT_FALSE }

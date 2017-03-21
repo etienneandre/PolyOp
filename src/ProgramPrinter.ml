@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/10/21
+ * Last modified: 2017/03/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ let string_of_program program =
 	
 	let rec string_of_constraint = function
 		| Op_and cp_list -> "and(" ^ (string_of_list_of_string_with_sep " , " (List.map string_of_constraint cp_list)) ^ ")"
+		| Op_diff (c1, c2) -> "diff(" ^ (string_of_constraint c1) ^ " , " ^ (string_of_constraint c2) ^ ")"
 		| Op_hide (vars, cp) -> "hide (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		| Op_not c -> "not(" ^ (string_of_constraint c) ^ ")"
 		| Op_simplify c -> "simplify(" ^ (string_of_constraint c) ^ ")"

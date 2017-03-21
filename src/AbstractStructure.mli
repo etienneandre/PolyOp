@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/10/21
+ * Last modified: 2017/03/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -50,6 +50,7 @@ and op_bool =
 	| Op_satisfiable of op_constraint
 and op_constraint =
 	| Op_and of op_constraint list
+	| Op_diff of op_constraint * op_constraint
 	| Op_hide of variable_index list * op_constraint
 	| Op_not of op_constraint
 	| Op_simplify of op_constraint

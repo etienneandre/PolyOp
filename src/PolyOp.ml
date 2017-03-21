@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/10/21
+ * Last modified: 2017/03/21
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -234,6 +234,7 @@ let string_of_bool b = if b then "yes" else "no" in
 
 let rec perform_constraint = function
 	| Op_and lc_list -> LinearConstraint.nnconvex_intersection_list (List.map perform_constraint lc_list)
+	| Op_diff (c1, c2) -> LinearConstraint.nnconvex_difference (perform_constraint c1) (perform_constraint c2)
 	| Op_hide (variables, lc) -> LinearConstraint.nnconvex_hide variables (perform_constraint lc)
 	| Op_not lc -> LinearConstraint.negate (perform_constraint lc)
 	| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)

@@ -32,7 +32,7 @@
 (* elapsing (x1) in (p1 <= x1 & x1 <= p2 ) *)
 
 (* past (x) in (x = 5) *)
-past (x) in (5 <= x & x <= a)
+(*past (x) in (5 <= x & x <= a)*)
 (* past (x, y, z) in (5 <= x & x <= a & x = y & y > 5 & z > 8) *)
 
 (* equal (true, True) *)
@@ -110,6 +110,9 @@ hide (tf, t2, t3) in (
 (* p1 < p2 + 3 or p3 = 0 or p1 < 0 *)
 (* p1 < p2 or p1 = p2 or p1 > p2 *)
 (* p1 < p2 or p1 = p2*)
+
+(* diff (p1 = 1) (p2 = 2) *)
+(* diff (p1 < 2) (p1 < 1) *)
 
 (************************************************************
   RECURSIVE
@@ -217,3 +220,27 @@ not (hide (tf, t2, t3) in (
 	& f >= 0
 	& tf >= 0
 ))*)
+
+
+diff(
+p_add_sugar > 0
+& p_button > p_add_sugar
+& p_add_sugar + p_coffee > p_button
+& 15 > p_button
+OR
+p_add_sugar >= p_button
+& 2*p_button > p_add_sugar
+& p_add_sugar + p_coffee > 2*p_button
+& 15 > 2*p_button
+OR
+p_add_sugar >= 2*p_button
+& p_add_sugar + p_coffee > 3*p_button
+& 3*p_button > p_add_sugar
+& 5 > p_button
+OR
+15 > p_add_sugar + p_coffee
+& p_coffee > 0
+& p_button > 0
+& 5 > p_button
+& p_add_sugar >= 3*p_button
+)

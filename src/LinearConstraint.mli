@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/10/21
+ * Last modified: 2017/03/21
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -310,7 +310,7 @@ val nnconvex_union : nnconvex_constraint -> nnconvex_constraint -> unit
 
 
 (** Performs the difference between a first px_nnconvex_constraint and a second px_nnconvex_constraint; the first is modified, the second is not *)
-(* val nnconvex_difference : nnconvex_constraint -> nnconvex_constraint -> unit *)
+val nnconvex_difference : nnconvex_constraint -> nnconvex_constraint -> nnconvex_constraint
 
 (** Eliminate a set of variables *)
 val nnconvex_hide : variable list -> nnconvex_constraint -> nnconvex_constraint
