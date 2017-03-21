@@ -62,6 +62,7 @@ rule token = parse
 	| "not"            { CT_NOT }
 	| "nothing"        { CT_NOTHING }
 	| "or"             { CT_OR }
+	| "OR"             { CT_OR }
 	| "||"             { CT_OR }
 	| "past"           { CT_PAST }
 	| "satisfiable"    { CT_SATISFIABLE }
