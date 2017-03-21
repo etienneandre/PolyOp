@@ -9,7 +9,7 @@
 # Etienne Andre
 #
 # Laboratoire d'Informatique de Paris Nord
-# Universite Paris 13, Sorbonne Paris Cite, France
+# Université Paris 13, France
 # École Centrale Nantes, France
 #
 # Created      : 2013/09/26
@@ -30,7 +30,7 @@ ml_file_name = "src/BuildInfo.ml"
 mli_file_name = "src/BuildInfo.mli"
 
 
-print "Python is now handling build information..."
+print "Python is now handling build information…"
 
 
 #************************************************************
@@ -80,7 +80,7 @@ write_to_file(ml_file_name, """
  *
  *                       PolyOp
  * 
- * Universite Paris 13, Sorbonne Paris Cite, LIPN (France)
+ * Université Paris 13, LIPN (France)
  * 
  * Author:        python script
  * 
@@ -101,7 +101,7 @@ write_to_file(mli_file_name, """
  *
  *                       PolyOp
  * 
- * Universite Paris 13, Sorbonne Paris Cite, LIPN (France)
+ * Université Paris 13, LIPN (France)
  * 
  * Author:        python script
  * 
