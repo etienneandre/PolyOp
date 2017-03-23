@@ -907,11 +907,14 @@ let nnconvex_constraint_is_pi0_compatible pval nnconvex_constraint =
 (** Check if a nnconvex_constraint is included in another one *)
 let nnconvex_constraint_is_leq nnconvex_constraint nnconvex_constraint' =
 	(*** NOTE: PPL works in the reverse order: the 2nd contains the 1st one ***)
-	ppl_Pointset_Powerset_NNC_Polyhedron_contains_Pointset_Powerset_NNC_Polyhedron nnconvex_constraint' nnconvex_constraint
+	(*** NOTE: ppl_Pointset_Powerset_NNC_Polyhedron_contains_Pointset_Powerset_NNC_Polyhedron Returns <CODE>true</CODE> if and only if each disjunct of p y is contained in a disjunct of p' ***)
+	ppl_Pointset_Powerset_NNC_Polyhedron_geometrically_covers_Pointset_Powerset_NNC_Polyhedron nnconvex_constraint' nnconvex_constraint
 
 
 (** Check if a nnconvex_constraint is equal to another one *)
-let nnconvex_constraint_is_equal = ppl_Pointset_Powerset_NNC_Polyhedron_equals_Pointset_Powerset_NNC_Polyhedron
+let nnconvex_constraint_is_equal =
+	(*** NOTE: ppl_Pointset_Powerset_NNC_Polyhedron_equals_Pointset_Powerset_NNC_Polyhedron does check that each disjunct equals another disjunct ***)
+	ppl_Pointset_Powerset_NNC_Polyhedron_geometrically_equals_Pointset_Powerset_NNC_Polyhedron
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)

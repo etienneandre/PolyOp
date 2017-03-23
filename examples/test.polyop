@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/03/01
+ * Last modified: 2017/03/23
  *
  ************************************************************)
  
@@ -222,7 +222,7 @@ not (hide (tf, t2, t3) in (
 ))*)
 
 
-diff
+(*diff
 	
 (* EXPECTED RESULT *)
 	(simplify
@@ -318,11 +318,11 @@ p_button > p_add_sugar
     & p_add_sugar > 0
     & p_button > 0
     & p_coffee > 0*)
-))
+))*)
 
 
 
-(*diff
+equal
 	
 (* EXPECTED RESULT *)
 	(simplify
@@ -361,6 +361,7 @@ OR
     & p_coffee > 0
 )
 )
+,
 (* ACTUAL RESULT *)
 (simplify
 (
@@ -407,4 +408,3 @@ OR
     & p_button > 0
     & p_coffee > 0
 ))
-)*)
