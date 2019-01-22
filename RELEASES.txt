@@ -1,5 +1,22 @@
 
 *******************************************************
+release 0.3    (2019-01-22, build 55)
+
+Features
+- Allow for "time past"
+- Allow non-convex difference
+
+Bug correction
+- Fix bugs in non-convex inclusion and equality checks
+
+Syntax
+- Allows OR , or , || as disjunction symbol
+
+Internal
+- Strip binary (much smaller size)
+
+
+*******************************************************
 release 0.2    (2016-03-01, build 34)
 
 Features
