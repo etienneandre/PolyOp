@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2017/03/23
+ * Last modified: 2019/01/22
  *
  ************************************************************)
  
@@ -38,6 +38,7 @@
 (* equal (true, True) *)
 (* equal (true, false) *)
 (* equal (true, p1 = p1) *)
+equal (true, 5 p1 = 5 * p1)
 (* equal (true, p1 = 57) *)
 (* equal (p1 = p2, (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 <= p1 - 2)) *)
 (* equal (p1 = p2, (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2)) *)
@@ -321,7 +322,7 @@ p_button > p_add_sugar
 ))*)
 
 
-
+(*
 equal
 	
 (* EXPECTED RESULT *)
@@ -408,3 +409,5 @@ OR
     & p_button > 0
     & p_coffee > 0
 ))
+
+*)
