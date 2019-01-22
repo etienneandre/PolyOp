@@ -7,7 +7,7 @@
  *
  * Author:        Etienne ANDRE
  * Created:       2011/04/27
- * Last modified: 2016/02/29
+ * Last modified: 2019/01/22
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ let string_n_times n s =
 (** Version string *)
 (****************************************************************)
 
-let version = "0.2"
+let version = "0.3"
 
 let version_string () = 
 	("PolyOp " ^ version)
@@ -77,7 +77,7 @@ let print_header_string () =
 	^ "*                                           Etienne Andre  *\n"
 	^ "*                                             2011 - " ^ (BuildInfo.build_year) ^ "  *\n"
 	^ "*                        National University of Singapore  *\n"
-	^ "*  LIPN, Universite Paris 13, Sorbonne Paris Cite, France  *\n"
+	^ "*                       LIPN, Université Paris 13, France  *\n"
 	^ "*                   IRCCyN, Ecole Centrale Nantes, France  *\n"
 (* 	^ "*  " ^ (string_n_times (length_header - (String.length imitator_url)) " ") ^ imitator_url ^ "  *\n" *)
 	^ "*                                                          *\n"
