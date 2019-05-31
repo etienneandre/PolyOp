@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/01/22
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ let string_n_times n s =
 (** Version string *)
 (****************************************************************)
 
-let version = "0.3"
+let version = "0.4"
 
 let version_string () = 
 	("PolyOp " ^ version)
