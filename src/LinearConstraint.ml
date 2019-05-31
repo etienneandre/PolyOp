@@ -878,82 +878,6 @@ let string_of_nnconvex_constraint names nnconvex_constraint =
 
 
 
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-(** {3 Operations without modification} *)
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-
-(** Exhibit a point in a nnconvex_constraint; raise EmptyConstraint if the constraint is empty. *)
-(*** NOTE: we try to exhibit in each dimension the minimum, except if no minimum (infimum) in which case we get either the middle between the infimum and the supremum (if any supremum), or the infimum if no supremum; and dually if no infimum. ***)
-let nnconvex_constraint_exhibit_point nnconvex_constraint =
-	(* Create an array for storing the valuation *)
-	let valuations = Array.make !total_dim NumConst.zero in
-	
-	(* Copy the constraint, as we will restrict it dimension by dimension *)
-	let restricted_nnconvex_constraint = nnconvex_copy nnconvex_constraint in
-	
-	(* Iterate on dimensions *)
-	for dimension = 0 to !total_dim do
-	
-		(* Get infimum *)
-       
-       (* Create linear expression with just the dimension of interest *)
-       let linear_expression : Ppl.linear_expression = ppl_linear_expression_of_linear_term (make_linear_term [(NumConst.one, dimension)] NumConst.zero) in
-       
-		(*** DOC: function signature is val ppl_Pointset_Powerset_NNC_Polyhedron_minimize : pointset_powerset_nnc_polyhedron ->
-       linear_expression -> bool * Gmp.Z.t * Gmp.Z.t * bool ***)
-		let bounded_from_below, infimum_numerator, infimum_denominator, is_minimum = ppl_Pointset_Powerset_NNC_Polyhedron_minimize restricted_nnconvex_constraint linear_expression in
-		
-		(* Build the infimum *)
-		let infimum = NumConst.numconst_of_zfrac infimum_numerator infimum_denominator in
-
-		(* Find the valuation for this dimension *)
-		let valuation =
-		(* If minimum: pick it *)
-		if bounded_from_below && is_minimum then(
-			(* Return the infimum *)
-			infimum
-			
-		)else(
-		(* Otherwise find supremum *)
-			let bounded_from_above, supremum_numerator, supremum_denominator, is_maximum = ppl_Pointset_Powerset_NNC_Polyhedron_maximize restricted_nnconvex_constraint linear_expression in
-			
-			(* Build the supremum *)
-			let supremum = NumConst.numconst_of_zfrac supremum_numerator supremum_denominator in
-			
-			(* Case 1: infimum and no supremum: return infimum + 1 *)
-			if bounded_from_below && not bounded_from_above then
-				NumConst.add infimum NumConst.one
-			
-			(* Case 2: no infimum and supremum: return supremum - 1 *)
-			else if not bounded_from_below && bounded_from_above then
-				NumConst.sub supremum NumConst.one
-			
-			(* Case 3: infimum and supremum: return (infimum + supremum) / 2 *)
-			else(
-				(* If empty constraint: problem, raise exception *)
-				if NumConst.l supremum infimum then raise EmptyConstraint;
-				
-				(* Compute average  *)
-				NumConst.div (
-					NumConst.add infimum supremum
-				) (NumConst.numconst_of_int 2)
-			)
-		)
-		in
-
-		(* Store it *)
-		valuations.(dimension) <- valuation;
-			
-		(* Constrain the constraint with the found valuation *)
-		
-		
-		
-	done;
-	
-	(* Return functional view *)
-	(fun variable -> valuations.(variable))
-
-
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Operations} *)
@@ -1151,6 +1075,87 @@ let adhoc_nnconvex_hide variables nnconvex_constraint =
 
 let nnconvex_hide = adhoc_nnconvex_hide
 	
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Operations without modification} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Exhibit a point in a nnconvex_constraint; raise EmptyConstraint if the constraint is empty. *)
+(*** NOTE: we try to exhibit in each dimension the minimum, except if no minimum (infimum) in which case we get either the middle between the infimum and the supremum (if any supremum), or the infimum if no supremum; and dually if no infimum. ***)
+let nnconvex_constraint_exhibit_point nnconvex_constraint =
+	(* Create an array for storing the valuation *)
+	let valuations = Array.make !total_dim NumConst.zero in
+	
+	(* Copy the constraint, as we will restrict it dimension by dimension *)
+	let restricted_nnconvex_constraint = nnconvex_copy nnconvex_constraint in
+	
+	(* Iterate on dimensions *)
+	for dimension = 0 to !total_dim do
+	
+		(* Get infimum *)
+       
+       (* Create linear expression with just the dimension of interest *)
+       let linear_expression : Ppl.linear_expression = ppl_linear_expression_of_linear_term (make_linear_term [(NumConst.one, dimension)] NumConst.zero) in
+       
+		(*** DOC: function signature is val ppl_Pointset_Powerset_NNC_Polyhedron_minimize : pointset_powerset_nnc_polyhedron ->
+       linear_expression -> bool * Gmp.Z.t * Gmp.Z.t * bool ***)
+		let bounded_from_below, infimum_numerator, infimum_denominator, is_minimum = ppl_Pointset_Powerset_NNC_Polyhedron_minimize restricted_nnconvex_constraint linear_expression in
+		
+		(* Build the infimum *)
+		let infimum = NumConst.numconst_of_zfrac infimum_numerator infimum_denominator in
+
+		(* Find the valuation for this dimension *)
+		let valuation =
+		(* If minimum: pick it *)
+		if bounded_from_below && is_minimum then(
+			(* Return the infimum *)
+			infimum
+			
+		)else(
+		(* Otherwise find supremum *)
+			let bounded_from_above, supremum_numerator, supremum_denominator, is_maximum = ppl_Pointset_Powerset_NNC_Polyhedron_maximize restricted_nnconvex_constraint linear_expression in
+			
+			(* Build the supremum *)
+			let supremum = NumConst.numconst_of_zfrac supremum_numerator supremum_denominator in
+			
+			(* Case 1: infimum and no supremum: return infimum + 1 *)
+			if bounded_from_below && not bounded_from_above then
+				NumConst.add infimum NumConst.one
+			
+			(* Case 2: no infimum and supremum: return supremum - 1 *)
+			else if not bounded_from_below && bounded_from_above then
+				NumConst.sub supremum NumConst.one
+			
+			(* Case 3: infimum and supremum: return (infimum + supremum) / 2 *)
+			else(
+				(* If empty constraint: problem, raise exception *)
+				if NumConst.l supremum infimum then raise EmptyConstraint;
+				
+				(* Compute average  *)
+				NumConst.div (
+					NumConst.add infimum supremum
+				) (NumConst.numconst_of_int 2)
+			)
+		)
+		in
+
+		(* Store it *)
+		valuations.(dimension) <- valuation;
+			
+		(* Constrain the constraint with the found valuation, i.e., dimension = valuation *)
+		let valuation_assignment = nnconvex_constraint_of_linear_constraint (make [
+			make_linear_inequality
+				(make_linear_term [(NumConst.one, dimension)] valuation)
+				Op_eq
+			]) in
+		nnconvex_intersection_assign restricted_nnconvex_constraint valuation_assignment;
+		
+	done;
+	
+	(* Return functional view *)
+	(fun variable -> valuations.(variable))
+
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
