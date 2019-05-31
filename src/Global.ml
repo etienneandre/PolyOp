@@ -54,7 +54,7 @@ let string_n_times n s =
 (** Version string *)
 (****************************************************************)
 
-let version = "0.4"
+let version = "1.0 alpha"
 
 let version_string () = 
 	("PolyOp " ^ version)

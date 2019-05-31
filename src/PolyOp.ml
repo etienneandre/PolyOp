@@ -223,6 +223,10 @@ print_message Debug_standard ("\nInput:\n" ^ (InputPrinter.string_of_input input
 let string_of_nncc = LinearConstraint.string_of_nnconvex_constraint input.variable_names in
 let string_of_bool b = if b then "yes" else "no" in
 
+(* Add markers to parse the result easily *)
+let begin_marker = "BEGIN ANSWER" in
+let end_marker = "END ANSWER" in
+
 
 let rec perform_constraint = function
 	| Op_and lc_list -> LinearConstraint.nnconvex_intersection_list (List.map perform_constraint lc_list)
@@ -257,12 +261,14 @@ let perform_oppoint = function
 	| Op_exhibit lc -> LinearConstraint.nnconvex_constraint_exhibit_point (perform_constraint lc)
 in
 
-let result = string_of_list_of_string_with_sep "\n\n----------\n\n" (List.map (fun operation ->
+let result = string_of_list_of_string_with_sep "\n\n(*--------------------*)\n\n" (List.map (fun operation ->
 	(* First recall the operation in comments *)
 	"(* OPERATION: \n"
 	^ (InputPrinter.string_of_operation input.variable_names operation)
-	^ "\n*)\n" ^
+	^ "\n*)\n"
+	^ begin_marker ^ "\n"
 	
+	^ (
 	(* Solve and print *)
 	match operation with
 		| Op_bool b -> string_of_bool (perform_bool b)
@@ -270,7 +276,12 @@ let result = string_of_list_of_string_with_sep "\n\n----------\n\n" (List.map (f
 		| Op_point op -> InputPrinter.string_of_valuation input.variables input.variable_names (perform_oppoint op)
 		| Op_nothing -> ("I am very proud to do nothing.")
 	(* 	| _ -> raise (InternalError "not implemented") *)
-	) input.operations)
+	)
+	
+	^ "\n" ^ end_marker ^ "\n"
+	
+	)  input.operations
+	)
 in
 
 
