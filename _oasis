@@ -3,19 +3,19 @@
 #                       IMITATOR
 #
 #  National University of Singapore
-#  Laboratoire d'Informatique de Paris Nord (Paris 13, France)
 #  École Centrale de Nantes
+#  Université Paris 13, LIPN, CNRS, France
 #
-#  _oasis authors: Etienne Andre
+#  _oasis authors: Étienne André
 #  Created:        2016/02/29
-#  Last modified:  2016/10/21
+#  Last modified:  2019/05/31
 ###############################################################
 
 OASISFormat: 0.3
 Name:        PolyOp
 Version:     0.1
 Synopsis:    shortdescription
-Authors:     Etienne Andre
+Authors:     Étienne André
 License:     GPL-3.0
 
 # Handling build number (using Python)
@@ -38,7 +38,7 @@ Test startingcomment
 
 Test tes1
   Command: echo "\n********** TEST 1 **********\n"; \
-       ./bin/polyop examples/test.polyop
+       ./bin/polyop examples/example.polyop
 
 Test finalcomment
   Command: echo "\n********** END TESTS **********\n"
