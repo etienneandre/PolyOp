@@ -1,3 +1,13 @@
+*******************************************************
+# FUTURE release 1.0    (2019-??-??, build TODO)
+
+### Features
+* Allow exhibition of a point in a polyhedron
+* Allow for more than one operation at a time
+
+### Internal
+* Renamed most modules
+
 
 *******************************************************
 # release 0.3    (2019-01-22, build 55)
