@@ -4,8 +4,9 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
+ * Université Paris 13, LIPN, CNRS, France
  *
- * Author:        Etienne ANDRE
+ * Author:        Étienne André
  * Created:       2011/04/27
  * Last modified: 2016/10/21
  *

@@ -6,16 +6,15 @@
 #
 #               Generate the build information
 #
-# Etienne Andre
-#
-# Laboratoire d'Informatique de Paris Nord
-# Université Paris 13, France
 # École Centrale Nantes, France
+# Université Paris 13, LIPN, CNRS, France
+#
+# Author       : Étienne André
 #
 # Created      : 2013/09/26
 # Last modified: 2014/03/22
 # Copied from IMITATOR: 2016/02/29
-# Last modified: 2016/02/29
+# Last modified: 2019/05/31
 #************************************************************
 
 
@@ -80,7 +79,7 @@ write_to_file(ml_file_name, """
  *
  *                       PolyOp
  * 
- * Université Paris 13, LIPN (France)
+ * Université Paris 13, LIPN, CNRS, France
  * 
  * Author:        python script
  * 
@@ -101,7 +100,7 @@ write_to_file(mli_file_name, """
  *
  *                       PolyOp
  * 
- * Université Paris 13, LIPN (France)
+ * Université Paris 13, LIPN, CNRS, France
  * 
  * Author:        python script
  * 

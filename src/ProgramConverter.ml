@@ -4,10 +4,11 @@
  *
  * Convert a parsing structure into an abstract program
  * École Centrale Nantes, France
+ * Université Paris 13, LIPN, CNRS, France
  *
  * National University of Singapore
  *
- * Author:        Etienne ANDRE
+ * Author:        Étienne André
  * Created:       2011/04/27
  * Last modified: 2017/03/21
  *

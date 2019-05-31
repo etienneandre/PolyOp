@@ -6,11 +6,10 @@
 #
 #               Increment the build number
 #
-# Etienne ANDRE
-#
-# Laboratoire d'Informatique de Paris Nord
-# Universite Paris 13, Sorbonne Paris Cite, France
 # École Centrale Nantes, France
+# Université Paris 13, LIPN, CNRS, France
+#
+# Author       : Étienne André
 #
 # Created      : 2013/05/22
 # Last modified: 2013/09/25
@@ -27,7 +26,7 @@ from time import gmtime, strftime
 #************************************************************
 build_number_file_name = "build_number.txt"
 
-print "Incrementing build number..."
+print "Incrementing build number…"
 
 
 

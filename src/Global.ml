@@ -4,8 +4,9 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
+ * Université Paris 13, LIPN, CNRS, France
  *
- * Author:        Etienne ANDRE
+ * Author:        Étienne André
  * Created:       2011/04/27
  * Last modified: 2019/01/22
  *
@@ -74,11 +75,11 @@ let print_header_string () =
 	^ "*  " ^ program_name ^ (string_n_times (length_header - (String.length program_name)) " ") ^ "  *\n"
 	^ "*                                                          *\n"
 	^ "*          Interface to the Parma Polyhedra Library (PPL)  *\n"
-	^ "*                                           Etienne Andre  *\n"
+	^ "*                                           Étienne André  *\n"
 	^ "*                                             2011 - " ^ (BuildInfo.build_year) ^ "  *\n"
 	^ "*                        National University of Singapore  *\n"
-	^ "*                       LIPN, Université Paris 13, France  *\n"
-	^ "*                   IRCCyN, Ecole Centrale Nantes, France  *\n"
+	^ "*                   IRCCyN, École Centrale Nantes, France  *\n"
+	^ "*                 Université Paris 13, LIPN, CNRS, France  *\n"
 (* 	^ "*  " ^ (string_n_times (length_header - (String.length imitator_url)) " ") ^ imitator_url ^ "  *\n" *)
 	^ "*                                                          *\n"
 	^ "*  " ^ (string_n_times (length_header - (String.length build_info)) " ") ^ build_info ^ "  *\n"

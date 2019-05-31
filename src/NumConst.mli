@@ -4,7 +4,7 @@
  *
  * National University of Singapore
  *
- * Author:        Etienne ANDRE
+ * Author:        Étienne André
  * Created:       2011/04/27
  * Last modified: 2011/04/27
  *
