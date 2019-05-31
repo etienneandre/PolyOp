@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2017/03/21
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,6 +31,20 @@ open AbstractStructure
 open LinearConstraint
 
 (**************************************************)
+(** Valuation *)
+(**************************************************)
+
+(* Convert a valuation into a string *)
+let string_of_valuation variables variable_names valuation =
+	string_of_list_of_string_with_sep
+	", "
+	(List.map
+		(fun variable_index -> (variable_names variable_index) ^ "=" ^ (NumConst.string_of_numconst (valuation variable_index)) )
+		variables
+	)
+
+
+(**************************************************)
 (** Program *)
 (**************************************************)
 
@@ -48,15 +62,21 @@ let string_of_program program =
 		| Op_time_past (vars, cp) -> "past (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint program.variable_names cp
 	in
+	
 	let string_of_bool = function
 		| Op_equal (cp1, cp2) -> "equal (" ^ (string_of_constraint cp1) ^ "), (" ^ (string_of_constraint cp2) ^ ")"
 		| Op_included (cp1, cp2) -> "included (" ^ (string_of_constraint cp1) ^ ") in (" ^ (string_of_constraint cp2) ^ ")"
 		| Op_satisfiable c -> "satisfiable(" ^ (string_of_constraint c) ^ ")"
 	in
 	
+	let string_of_oppoint = function
+		| Op_exhibit c -> "exhibit(" ^ (string_of_constraint c) ^ ")"
+	in
+	
 	match program.operation with
 		| Op_bool b -> string_of_bool b
 		| Op_constraint c -> string_of_constraint c
+		| Op_point op -> string_of_oppoint op
 		| Op_nothing -> "nothing"
 	
 

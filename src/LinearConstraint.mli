@@ -25,6 +25,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************)
  
+(**************************************************)
+(** {2 Exceptions} *)
+(**************************************************)
+
+exception EmptyConstraint
+
 
 (**************************************************)
 (** {2 Variables and coefficients} *)
@@ -195,6 +201,14 @@ val nnconvex_constraint_is_leq : nnconvex_constraint -> nnconvex_constraint -> b
 
 (** Check if a nnconvex_constraint is equal to another one *)
 val nnconvex_constraint_is_equal : nnconvex_constraint -> nnconvex_constraint -> bool
+
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Operations without modification} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Exhibit a point in a nnconvex_constraint; raise EmptyConstraint if the constraint is empty. *)
+val nnconvex_constraint_exhibit_point : nnconvex_constraint -> (variable -> coef)
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)

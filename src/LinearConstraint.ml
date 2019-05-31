@@ -68,42 +68,15 @@ type linear_inequality = Ppl.linear_constraint
 (*type linear_constraint = Polka.strict Polka.t Abstract0.t *)
 type linear_constraint = Ppl.polyhedron
 
-(* In order to convert a linear_term (with rational coefficients) *)
-(* to the corresponding PPL data structure, it is normalized such *)
-(* that the only non-rational coefficient is outside the term:    *)
-(* p/q * ( ax + by + c ) *)
-let rec normalize_linear_term lt =
-		match lt with
-			| Var v -> Variable v, NumConst.one
-			| Coef c -> (
-				  let p = NumConst.get_num c in
-				  let q = NumConst.get_den c in
-				  Coefficient p, NumConst.numconst_of_zfrac Gmp.Z.one q )
-			| Pl (lterm, rterm) -> (
-					let lterm_norm, fl = normalize_linear_term lterm in
-					let rterm_norm, fr = normalize_linear_term rterm in
-					let pl = NumConst.get_num fl in
-					let ql = NumConst.get_den fl in
-					let pr = NumConst.get_num fr in
-					let qr = NumConst.get_den fr in
-					(Plus (Times (pl *! qr, lterm_norm), (Times (pr *! ql, rterm_norm)))),
-					NumConst.numconst_of_zfrac Gmp.Z.one (ql *! qr))
-			| Mi (lterm, rterm) -> (
-					let lterm_norm, fl = normalize_linear_term lterm in
-					let rterm_norm, fr = normalize_linear_term rterm in
-					let pl = NumConst.get_num fl in
-					let ql = NumConst.get_den fl in
-					let pr = NumConst.get_num fr in
-					let qr = NumConst.get_den fr in
-					(Minus (Times (pl *! qr, lterm_norm), (Times (pr *! ql, rterm_norm)))),
-					NumConst.numconst_of_zfrac Gmp.Z.one (ql *! qr))
-			| Ti (fac, term) -> (
-					let term_norm, r = normalize_linear_term term in
-					let p = NumConst.get_num fac in
-					let q = NumConst.get_den fac in
-					term_norm, NumConst.mul r (NumConst.numconst_of_zfrac p q))				
-					
+
 	
+(**************************************************)
+(** {2 Exceptions} *)
+(**************************************************)
+
+exception EmptyConstraint
+
+
 (**************************************************)
 (** Global variables *)
 (**************************************************)
@@ -150,6 +123,7 @@ let make_linear_term members coef =
 			else
 				Pl ((Ti (c, Var v), term))
 	)	(Coef coef) members
+
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Functions} *)
@@ -265,6 +239,55 @@ let rec string_of_linear_term_ppl names linear_term =
 						| _ -> fstr ^ " * (" ^ tstr ^ ")" ) 				
 				
 
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Conversion to PPL} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(* In order to convert a linear_term (with rational coefficients) *)
+(* to the corresponding PPL data structure (linear_expression), it is normalized such *)
+(* that the only non-rational coefficient is outside the term:    *)
+(* p/q * ( ax + by + c ) *)
+let rec normalize_linear_term (lt : linear_term) : (Ppl.linear_expression * NumConst.t) =
+		match lt with
+			| Var v -> Variable v, NumConst.one
+			| Coef c -> (
+				  let p = NumConst.get_num c in
+				  let q = NumConst.get_den c in
+				  Coefficient p, NumConst.numconst_of_zfrac Gmp.Z.one q )
+			| Pl (lterm, rterm) -> (
+					let lterm_norm, fl = normalize_linear_term lterm in
+					let rterm_norm, fr = normalize_linear_term rterm in
+					let pl = NumConst.get_num fl in
+					let ql = NumConst.get_den fl in
+					let pr = NumConst.get_num fr in
+					let qr = NumConst.get_den fr in
+					(Plus (Times (pl *! qr, lterm_norm), (Times (pr *! ql, rterm_norm)))),
+					NumConst.numconst_of_zfrac Gmp.Z.one (ql *! qr))
+			| Mi (lterm, rterm) -> (
+					let lterm_norm, fl = normalize_linear_term lterm in
+					let rterm_norm, fr = normalize_linear_term rterm in
+					let pl = NumConst.get_num fl in
+					let ql = NumConst.get_den fl in
+					let pr = NumConst.get_num fr in
+					let qr = NumConst.get_den fr in
+					(Minus (Times (pl *! qr, lterm_norm), (Times (pr *! ql, rterm_norm)))),
+					NumConst.numconst_of_zfrac Gmp.Z.one (ql *! qr))
+			| Ti (fac, term) -> (
+					let term_norm, r = normalize_linear_term term in
+					let p = NumConst.get_num fac in
+					let q = NumConst.get_den fac in
+					term_norm, NumConst.mul r (NumConst.numconst_of_zfrac p q))				
+
+
+(** Convert our ad-hoc linear_term into a Ppl.linear_expression *)
+let ppl_linear_expression_of_linear_term linear_term : Ppl.linear_expression =
+	let ppl_term, r = normalize_linear_term linear_term in
+	let p = NumConst.get_num r in
+	(* Simplifies a bit *)
+	if Gmp.Z.equal p Gmp.Z.one then ppl_term
+	else Times (p, ppl_term)
+
+
 (**************************************************)
 (** {2 Linear inequalities} *)
 (**************************************************)
@@ -281,14 +304,14 @@ let rec string_of_linear_term_ppl names linear_term =
 
 (** Create a linear inequality using a linear term and an operator *)
 let make_linear_inequality linear_term op =
-	let ppl_term, r = normalize_linear_term linear_term in
-	let p = NumConst.get_num r in
-	let lin_term = Times (p, ppl_term) in
+	(* Convert to Ppl.linear_expression *)
+	let linear_expression = ppl_linear_expression_of_linear_term linear_term in
+	(* Build zero term for comparison with the operator *)
 	let zero_term = Coefficient Gmp.Z.zero in
 	match op with
-		| Op_g -> Greater_Than (lin_term, zero_term)
-		| Op_ge -> Greater_Or_Equal (lin_term, zero_term)
-		| Op_eq -> Equal (lin_term, zero_term)
+		| Op_g -> Greater_Than (linear_expression, zero_term)
+		| Op_ge -> Greater_Or_Equal (linear_expression, zero_term)
+		| Op_eq -> Equal (linear_expression, zero_term)
 	
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -854,6 +877,81 @@ let string_of_nnconvex_constraint names nnconvex_constraint =
 	)
 
 
+
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+(** {3 Operations without modification} *)
+(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
+
+(** Exhibit a point in a nnconvex_constraint; raise EmptyConstraint if the constraint is empty. *)
+(*** NOTE: we try to exhibit in each dimension the minimum, except if no minimum (infimum) in which case we get either the middle between the infimum and the supremum (if any supremum), or the infimum if no supremum; and dually if no infimum. ***)
+let nnconvex_constraint_exhibit_point nnconvex_constraint =
+	(* Create an array for storing the valuation *)
+	let valuations = Array.make !total_dim NumConst.zero in
+	
+	(* Copy the constraint, as we will restrict it dimension by dimension *)
+	let restricted_nnconvex_constraint = nnconvex_copy nnconvex_constraint in
+	
+	(* Iterate on dimensions *)
+	for dimension = 0 to !total_dim do
+	
+		(* Get infimum *)
+       
+       (* Create linear expression with just the dimension of interest *)
+       let linear_expression : Ppl.linear_expression = ppl_linear_expression_of_linear_term (make_linear_term [(NumConst.one, dimension)] NumConst.zero) in
+       
+		(*** DOC: function signature is val ppl_Pointset_Powerset_NNC_Polyhedron_minimize : pointset_powerset_nnc_polyhedron ->
+       linear_expression -> bool * Gmp.Z.t * Gmp.Z.t * bool ***)
+		let bounded_from_below, infimum_numerator, infimum_denominator, is_minimum = ppl_Pointset_Powerset_NNC_Polyhedron_minimize restricted_nnconvex_constraint linear_expression in
+		
+		(* Build the infimum *)
+		let infimum = NumConst.numconst_of_zfrac infimum_numerator infimum_denominator in
+
+		(* Find the valuation for this dimension *)
+		let valuation =
+		(* If minimum: pick it *)
+		if bounded_from_below && is_minimum then(
+			(* Return the infimum *)
+			infimum
+			
+		)else(
+		(* Otherwise find supremum *)
+			let bounded_from_above, supremum_numerator, supremum_denominator, is_maximum = ppl_Pointset_Powerset_NNC_Polyhedron_maximize restricted_nnconvex_constraint linear_expression in
+			
+			(* Build the supremum *)
+			let supremum = NumConst.numconst_of_zfrac supremum_numerator supremum_denominator in
+			
+			(* Case 1: infimum and no supremum: return infimum + 1 *)
+			if bounded_from_below && not bounded_from_above then
+				NumConst.add infimum NumConst.one
+			
+			(* Case 2: no infimum and supremum: return supremum - 1 *)
+			else if not bounded_from_below && bounded_from_above then
+				NumConst.sub supremum NumConst.one
+			
+			(* Case 3: infimum and supremum: return (infimum + supremum) / 2 *)
+			else(
+				(* If empty constraint: problem, raise exception *)
+				if NumConst.l supremum infimum then raise EmptyConstraint;
+				
+				(* Compute average  *)
+				NumConst.div (
+					NumConst.add infimum supremum
+				) (NumConst.numconst_of_int 2)
+			)
+		)
+		in
+
+		(* Store it *)
+		valuations.(dimension) <- valuation;
+			
+		(* Constrain the constraint with the found valuation *)
+		
+		
+		
+	done;
+	
+	(* Return functional view *)
+	(fun variable -> valuations.(variable))
 
 
 

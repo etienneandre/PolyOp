@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2017/03/21
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ type variable_name	= string
 type operation =
 	| Op_bool of op_bool
 	| Op_constraint of op_constraint
+	| Op_point of op_point
 	| Op_nothing
 and op_bool =
 	| Op_equal of op_constraint * op_constraint
@@ -58,6 +59,8 @@ and op_constraint =
 	| Op_time_elapsing of variable_index list * op_constraint
 	| Op_time_past of variable_index list * op_constraint
 	| Op_convex of LinearConstraint.nnconvex_constraint
+and op_point =
+	| Op_exhibit of op_constraint
 
 
 
@@ -67,6 +70,9 @@ and op_constraint =
 type abstract_program = {
 	(* Cardinality *)
 	nb_variables : int;
+
+	(* All variables *)
+	variables : variable_index list;
 
 	(* Names of the variable *)
 	variable_names : variable_index -> variable_name;

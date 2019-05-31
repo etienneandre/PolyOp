@@ -51,6 +51,7 @@ val numconst_of_string : string -> t
 val numconst_of_int : int -> t
 val numconst_of_float : float -> t
 val numconst_of_frac : int -> int -> t
+(* From num and den *)
 val numconst_of_zfrac : Gmp.Z.t -> Gmp.Z.t -> t
 val numconst_of_mpq : Gmp.Q.t -> t
 val numconst_of_mpz : Gmp.Z.t -> t

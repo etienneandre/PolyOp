@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2017/03/21
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ let parse_error s =
 %token LPAREN RPAREN LBRACE RBRACE LSQBRA RSQBRA
 %token AMPERSAND APOSTROPHE COLON COMMA PIPE SEMICOLON
 
-%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE
+%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE
 
 %token EOF
 
@@ -69,6 +69,7 @@ let parse_error s =
 main:
 	| opbool EOF { Parsop_bool $1 }
 	| opconstraint EOF { Parsop_constraint $1 }
+	| oppoint EOF { Parsop_point $1 }
 	| CT_NOTHING EOF { Parsop_nothing }
 ;
 
@@ -80,9 +81,9 @@ opbool:
 	| CT_EQUAL opconstraint COMMA opconstraint { Parsop_equal ($2, $4) }
 	| CT_EQUAL LPAREN opconstraint COMMA opconstraint RPAREN { Parsop_equal ($3, $5) }
 	| CT_INCLUDED opconstraint CT_IN opconstraint { Parsop_included ($2, $4) }
-// 	| CT_INCLUDED LPAREN opconstraint CT_IN opconstraint RPAREN { Parsop_included ($3, $5) }
+/* 	| CT_INCLUDED LPAREN opconstraint CT_IN opconstraint RPAREN { Parsop_included ($3, $5) } */
 	| CT_SATISFIABLE opconstraint { Parsop_satisfiable $2 }
-// 	| CT_SATISFIABLE LPAREN opconstraint RPAREN { Parsop_satisfiable $3 } // creates conflict, resolved automatically
+/* 	| CT_SATISFIABLE LPAREN opconstraint RPAREN { Parsop_satisfiable $3 } // creates conflict, resolved automatically */
 ;
 
 opconstraint:
@@ -97,6 +98,9 @@ opconstraint:
 	| nnconvex_predicate { Parsop_convex $1 }
 ;
 
+oppoint:
+	| CT_EXHIBIT_POINT opconstraint { Parsop_exhibit $2 }
+;
 
 /**********************************************/
 variable_list_with_par_opt:
@@ -113,7 +117,7 @@ variable_list:
 
 /**********************************************/
 convex_predicate_list_with_par:
-// 	| convex_predicate_list { $1 }
+/* 	| convex_predicate_list { $1 } */
 	| LPAREN convex_predicate_list RPAREN { $2 }
 ;
 
@@ -131,7 +135,7 @@ convex_predicate_list:
 nnconvex_predicate:
 	| convex_predicate CT_OR nnconvex_predicate {$1 :: $3}
 	| convex_predicate {[$1]}
-// 	| { [] }
+/* 	| { [] } */
 ;
 
 convex_predicate:
@@ -165,7 +169,7 @@ linear_term:
 	| rational NAME { Variable ($1, $2) }
 	| rational OP_MUL NAME { Variable ($1, $3) }
 	| NAME { Variable (NumConst.one, $1) }
-// 	| LPAREN linear_expression RPAREN { $2 }
+/* 	| LPAREN linear_expression RPAREN { $2 } */
 	| LPAREN linear_term RPAREN { $2 }
 ;
 

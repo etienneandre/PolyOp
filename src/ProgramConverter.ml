@@ -3,14 +3,14 @@
  *                     PolyOp
  *
  * Convert a parsing structure into an abstract program
+ *
+ * National University of Singapore
  * École Centrale Nantes, France
  * Université Paris 13, LIPN, CNRS, France
  *
- * National University of Singapore
- *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2017/03/21
+ * Last modified: 2019/05/31
  *
  ************************************************************)
 
@@ -287,9 +287,14 @@ let get_variable_names_in_bool = function
 	| Parsop_satisfiable c -> get_variable_names_in_constraint c
 
 
+let get_variable_names_in_oppoint = function
+	| Parsop_exhibit c -> get_variable_names_in_constraint c
+
+
 let get_variable_names = function
 	| Parsop_bool b -> get_variable_names_in_bool b
 	| Parsop_constraint c -> get_variable_names_in_constraint c
+	| Parsop_point op -> get_variable_names_in_oppoint op
 	| Parsop_nothing -> []
 
 
@@ -389,9 +394,14 @@ let abstract_program_of_parsing_structure parsop =
 		| Parsop_satisfiable cp -> Op_satisfiable (convert_constraint cp)
 	in
 	
+	let convert_oppoint = function
+		| Parsop_exhibit cp -> Op_exhibit (convert_constraint cp)
+	in
+	
 	let op = match parsop with
 		| Parsop_bool b -> Op_bool (convert_bool b)
 		| Parsop_constraint c -> Op_constraint (convert_constraint c)
+		| Parsop_point op -> Op_point (convert_oppoint op)
 		| Parsop_nothing -> Op_nothing
 	in
 
@@ -400,6 +410,9 @@ let abstract_program_of_parsing_structure parsop =
 	{
 		(* Cardinality *)
 		nb_variables = nb_variables;
+		
+		(* All variables *)
+		variables = list_of_interval 0 (nb_variables - 1);
 		
 		(* Names of the variable *)
 		variable_names = variable_names;

@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2017/03/21
+ * Last modified: 2017/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -55,6 +55,7 @@ rule token = parse
 	| "diff"           { CT_DIFF }
 	| "elapsing"       { CT_ELAPSING }
 	| "equal"          { CT_EQUAL }
+	| "exhibitpoint"   { CT_EXHIBIT_POINT }
 	| "false"          { CT_FALSE }
 	| "False"          { CT_FALSE }
 	| "hide"           { CT_HIDE }

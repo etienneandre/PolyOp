@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2017/03/21
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -73,6 +73,7 @@ type nnconvex_predicate = convex_predicate list
 type parsing_structure =
 	| Parsop_bool of parsop_bool
 	| Parsop_constraint of parsop_constraint
+	| Parsop_point of parsop_point
 	| Parsop_nothing
 and parsop_bool =
 	| Parsop_equal of parsop_constraint * parsop_constraint
@@ -87,4 +88,5 @@ and parsop_constraint =
 	| Parsop_time_elapsing of variable_name list * parsop_constraint
 	| Parsop_time_past of variable_name list * parsop_constraint
 	| Parsop_convex of nnconvex_predicate
-
+and parsop_point =
+	| Parsop_exhibit of parsop_constraint

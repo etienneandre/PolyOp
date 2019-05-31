@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * Université Paris 13, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,6 +26,15 @@
 
 
 open AbstractStructure
+
+
+
+(**************************************************)
+(** Valuation *)
+(**************************************************)
+
+(* Convert a valuation into a string *)
+val string_of_valuation : (variable_index list) -> (variable_index -> variable_name) -> (variable_index -> NumConst.t) -> string
 
 
 (**************************************************)

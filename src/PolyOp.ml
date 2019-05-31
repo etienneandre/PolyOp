@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2017/03/21
+ * Last modified: 2019/05/31
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -255,15 +255,21 @@ let rec perform_constraint = function
 		LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
 	| Op_convex lc -> lc
 in
+
 let perform_bool = function
 	| Op_equal (lc1, lc2) -> LinearConstraint.nnconvex_constraint_is_equal (perform_constraint lc1) (perform_constraint lc2)
 	| Op_included (lc1, lc2) -> LinearConstraint.nnconvex_constraint_is_leq (perform_constraint lc1) (perform_constraint lc2)
 	| Op_satisfiable lc -> not (LinearConstraint.nnconvex_constraint_is_false (perform_constraint lc))
 in
 
+let perform_oppoint = function
+	| Op_exhibit lc -> LinearConstraint.nnconvex_constraint_exhibit_point (perform_constraint lc)
+in
+
 let result = match program.operation with
 	| Op_bool b -> string_of_bool (perform_bool b)
 	| Op_constraint c -> string_of_nncc (perform_constraint c)
+	| Op_point op -> ProgramPrinter.string_of_valuation program.variables program.variable_names (perform_oppoint op)
 	| Op_nothing -> print_error ("Internal error: the Op_nothing operation can't happen here.\nPlease insult the developers."); abort_program (); exit 0
 (* 	| _ -> raise (InternalError "not implemented") *)
 in
