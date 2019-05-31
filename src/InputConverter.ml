@@ -291,11 +291,14 @@ let get_variable_names_in_oppoint = function
 	| Parsop_exhibit c -> get_variable_names_in_constraint c
 
 
-let get_variable_names = function
+let get_variable_names_in_operation = function
 	| Parsop_bool b -> get_variable_names_in_bool b
 	| Parsop_constraint c -> get_variable_names_in_constraint c
 	| Parsop_point op -> get_variable_names_in_oppoint op
 	| Parsop_nothing -> []
+
+let get_variable_names_in_operations =
+	List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_operation b)) []
 
 
 (****************************************************************)
@@ -306,7 +309,7 @@ let get_variable_names = function
 (*--------------------------------------------------*)
 (* Convert the parsing structure into an abstract input *)
 (*--------------------------------------------------*)
-let abstract_input_of_parsing_structure parsop =
+let abstract_input_of_parsing_structure parsed_operations =
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Debug functions *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
@@ -322,7 +325,7 @@ let abstract_input_of_parsing_structure parsop =
 	(* Get names *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Get the variable names *)
-	let list_of_variable_names = get_variable_names parsop in
+	let list_of_variable_names = get_variable_names_in_operations parsed_operations in
 	
 	(* Remove double names *)
 	let list_of_variable_names = list_only_once list_of_variable_names in
@@ -398,11 +401,12 @@ let abstract_input_of_parsing_structure parsop =
 		| Parsop_exhibit cp -> Op_exhibit (convert_constraint cp)
 	in
 	
-	let op = match parsop with
-		| Parsop_bool b -> Op_bool (convert_bool b)
-		| Parsop_constraint c -> Op_constraint (convert_constraint c)
-		| Parsop_point op -> Op_point (convert_oppoint op)
-		| Parsop_nothing -> Op_nothing
+	let operations = List.map (function
+			| Parsop_bool b -> Op_bool (convert_bool b)
+			| Parsop_constraint c -> Op_constraint (convert_constraint c)
+			| Parsop_point op -> Op_point (convert_oppoint op)
+			| Parsop_nothing -> Op_nothing
+	) parsed_operations
 	in
 
 
@@ -417,7 +421,7 @@ let abstract_input_of_parsing_structure parsop =
 		(* Names of the variable *)
 		variable_names = variable_names;
 
-		(* The operation to perform *)
-		operation = op;
+		(* The list of operations to perform *)
+		operations = operations;
 	}
 

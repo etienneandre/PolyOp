@@ -77,8 +77,7 @@ type abstract_input = {
 	(* Names of the variable *)
 	variable_names : variable_index -> variable_name;
 
-	(* The operation to perform *)
-	operation : operation;
+	(* The list of operations to perform *)
+	operations : operation list;
 }
-
 

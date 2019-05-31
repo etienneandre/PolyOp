@@ -67,15 +67,34 @@ let parse_error s =
 
 /**********************************************/
 main:
-	| opbool EOF { Parsop_bool $1 }
-	| opconstraint EOF { Parsop_constraint $1 }
-	| oppoint EOF { Parsop_point $1 }
-	| CT_NOTHING EOF { Parsop_nothing }
+	| oplist EOF { $1 }
 ;
 
 /***********************************************
   MAIN DEFINITIONS
 ***********************************************/
+
+oplist:
+	| op_nonempty_oplist { $1 }
+	| { [] }
+;
+
+op_nonempty_oplist:
+	| op semicolon_opt op_nonempty_oplist { $1 :: $3 }
+	| op semicolon_opt { [$1] }
+;
+
+op:
+	| opbool { Parsop_bool $1 }
+	| opconstraint { Parsop_constraint $1 }
+	| oppoint { Parsop_point $1 }
+	| CT_NOTHING { Parsop_nothing }
+;
+
+semicolon_opt:
+	| SEMICOLON { }
+	| { }
+;
 
 opbool:
 	| CT_EQUAL opconstraint COMMA opconstraint { Parsop_equal ($2, $4) }

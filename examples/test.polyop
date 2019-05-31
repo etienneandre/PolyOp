@@ -4,63 +4,62 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
+ * Université Paris 13, LIPN, CNRS, France
  *
- * Author:        Etienne ANDRE
+ * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/01/22
+ * Last modified: 2019/05/31
  *
  ************************************************************)
  
-(* WARNING:
-	only one instruction at a time can be uncommented to call PolyOp
-*)
-
 
 (************************************************************
   NON RECURSIVE
  ************************************************************)
 
-(* nothing *)
+nothing ;
+nothing ;
 
-(* and (p1 <= p2, p2 <= p1) *)
-(* and ((p1 <= p2), (p2 <= p1)) *)
+and (p1 <= p2, p2 <= p1)
 
-(* elapsing (p1) in (p1 = 1 & p2 = 2) *)
-(* elapsing (p1) in (p1 = 5 & p2 >= 2) *)
-(* elapsing (p1) in (p1 = 5 & p2 >= p1) *)
-(* elapsing (p1, p3) in (p1 = 5 & p2 >= p1 &  p3 = 0) *)
-(* elapsing (x1) in (p1 <= x1 & x1 <= p2 ) *)
+and ((p1 <= p2), (p2 <= p1))
 
-(* past (x) in (x = 5) *)
-(*past (x) in (5 <= x & x <= a)*)
-(* past (x, y, z) in (5 <= x & x <= a & x = y & y > 5 & z > 8) *)
+elapsing (p1) in (p1 = 1 & p2 = 2)
+elapsing (p1) in (p1 = 5 & p2 >= 2)
+elapsing (p1) in (p1 = 5 & p2 >= p1)
+elapsing (p1, p3) in (p1 = 5 & p2 >= p1 &  p3 = 0)
+elapsing (x1) in (p1 <= x1 & x1 <= p2 )
 
-(* equal (true, True) *)
-(* equal (true, false) *)
-(* equal (true, p1 = p1) *)
+past (x) in (x = 5)
+past (x) in (5 <= x & x <= a)
+past (x, y, z) in (5 <= x & x <= a & x = y & y > 5 & z > 8)
+
+equal (true, True)
+equal (true, false)
+equal (true, p1 = p1)
 equal (true, 5 p1 = 5 * p1)
-(* equal (true, p1 = 57) *)
-(* equal (p1 = p2, (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 <= p1 - 2)) *)
-(* equal (p1 = p2, (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2)) *)
-(* equal true, True *)
+equal (true, p1 = 57)
+equal (p1 = p2, (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 <= p1 - 2))
+equal (p1 = p2, (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2))
+equal true, True
 
-(* included true in false *)
-(* included false in true *)
-(* included p1 = p2 in (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2) *)
-(* included (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2) in (p1 = p2) *)
-(* included (p1 <= p2 & p3 >= 2) in (p3 >= 1) *)
-(* included p1 <= p2 & p3 >= 2 in p3 >= 1 *)
-(* included (p3 >= 1) in (p1 <= p2 & p3 >= 2) *)
+included true in false
+included false in true
+included p1 = p2 in (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2)
+included (p1 <= p2 & p2 <= p1 + 1 & p2 - 2 < p1 - 2) in (p1 = p2)
+included (p1 <= p2 & p3 >= 2) in (p3 >= 1)
+included p1 <= p2 & p3 >= 2 in p3 >= 1
+included (p3 >= 1) in (p1 <= p2 & p3 >= 2)
 
 
-(* hide p1 in true *)
-(* hide p1 in False *)
-(* hide (p1) in (False) *)
-(* hide p1 in p1 = 0 *)
-(* hide p1 in p1 = 0 & p2 = 5 *)
-(* hide p2 in (p1 <= p2 & p2 <= p3) *)
+hide p1 in true
+hide p1 in False
+hide (p1) in (False)
+hide p1 in p1 = 0
+hide p1 in p1 = 0 & p2 = 5
+hide p2 in (p1 <= p2 & p2 <= p3)
 
-(*
+
 hide (tf, t2, t3) in (
 	  0 <= a & a <= tf & f <= b
 	& 0 <= c & c <= t2 + tf & t2 + tf <= d
@@ -75,105 +74,109 @@ hide (tf, t2, t3) in (
 	& f >= 0
 	& tf >= 0
 )
-*)
 
-(* hide p2 in (2.57145 p1 <= 3/2172 p2 + 2.65454354p7 & p2 <= p3) *)
 
-(* satisfiable True *)
-(* satisfiable (False) *)
-(* satisfiable (p1 <= p2 & p2 <= p3) *)
-(* satisfiable p1 <= p2 & p2 <= p1 & true *)
-(* satisfiable p1 <= p2 & p1 > p2 *)
+hide p2 in (2.57145 p1 <= 3/2172 p2 + 2.65454354p7 & p2 <= p3)
 
-(* simplify True *)
-(* simplify p1 = p2 *)
-(* simplify p1 = p2 & p2 = p3 *)
-(* simplify p1 <= p2 & p2 >= p3 *)
-(* simplify p1 <= p2 & p1 > p2 *)
-(* simplify p1 <= p3 & p1 > p2 & p1 > 2 *)
-(* simplify (p1 <= p3 & p1 > p2 & (p1 > 2)) *)
-(* simplify p1 <= p2 & p2 <= p1 *)
-(* simplify p1 <= p2 & p2 <= p1 & true *)
+satisfiable True
+satisfiable (False)
+satisfiable (p1 <= p2 & p2 <= p3)
+satisfiable p1 <= p2 & p2 <= p1 & true
+satisfiable p1 <= p2 & p1 > p2
 
-(* not True *)
-(* not False *)
-(* not p1 = p2 *)
-(* not (p1 = p2) *)
-(* not (p1 = 5) *)
-(* not (p1 <= 5) *)
-(* not (p1 >= 5) *)
-(* not (p1 > 5) *)
-(* not (p1 < 5) *)
-(* not (p1 < p2 + 3 & p3 = 0) *)
+simplify True
+simplify p1 = p2
+simplify p1 = p2 & p2 = p3
+simplify p1 <= p2 & p2 >= p3
+simplify p1 <= p2 & p1 > p2
+simplify p1 <= p3 & p1 > p2 & p1 > 2
+simplify (p1 <= p3 & p1 > p2 & (p1 > 2))
+simplify p1 <= p2 & p2 <= p1
+simplify p1 <= p2 & p2 <= p1 & true
 
-(* p1 < p2 + 3 or p3 = 0 *)
-(* p1 < p2 + 3 || p3 = 0 *)
-(* p1 < p2 + 3 or p3 = 0 or p1 < 0 *)
-(* p1 < p2 or p1 = p2 or p1 > p2 *)
-(* p1 < p2 or p1 = p2*)
+not True
+not False
+not p1 = p2
+not (p1 = p2)
+not (p1 = 5)
+not (p1 <= 5)
+not (p1 >= 5)
+not (p1 > 5)
+not (p1 < 5)
+not (p1 < p2 + 3 & p3 = 0)
 
-(* diff (p1 = 1) (p2 = 2) *)
-(* diff (p1 < 2) (p1 < 1) *)
+p1 < p2 + 3 or p3 = 0
+;
+p1 < p2 + 3 || p3 = 0
+;
+p1 < p2 + 3 or p3 = 0 or p1 < 0
+;
+p1 < p2 or p1 = p2 or p1 > p2
+;
+p1 < p2 or p1 = p2
+
+diff (p1 = 1) (p2 = 2)
+diff (p1 < 2) (p1 < 1)
 
 (************************************************************
   RECURSIVE
  ************************************************************)
 
-(* p1 < p2 + 3 & p4 = 2 or p3 = 0 or p1 < 0 & p4 = 3 *)
-(* not(p1 < p2 + 3 & p4 = 2 or p3 = 0 or p1 < 0 & p4 = 3) *)
+p1 < p2 + 3 & p4 = 2 or p3 = 0 or p1 < 0 & p4 = 3
+not(p1 < p2 + 3 & p4 = 2 or p3 = 0 or p1 < 0 & p4 = 3)
 
-(* and (p1 <= p2, and (true & p2 <= p1)) *)
+and (p1 <= p2, and (true & p2 <= p1))
 
-(* and (p2 <= p1, hide p3 in (p1 <= p3 & p3 <= p2)) *)
+and (p2 <= p1, hide p3 in (p1 <= p3 & p3 <= p2))
 
-(*and (
+and (
 		p1 <= x1 & x1 <= p2 & p4 <= p1
 	,
  		hide p3 in (p1 <= p3 & p3 <= p4)
-	)*)
+	)
 
 
-(*elapsing (x1) in (
+elapsing (x1) in (
 	elapsing (x2) in (x1 = p1 & x2 = p2)
-)*)
+)
 
-(*equal
+equal
 	simplify p1 <= p2 & p2 <= p1 & true
 	,
 	hide (x1, p4) in and (
 		p1 <= x1 & x1 <= p2 & p4 <= p1
 	,
  		hide p3 in (p2 <= p3 & p3 <= p1)
-	)*)
+	)
 	
-(*included
+included
 	hide (x1, p4) in and (
 		p1 <= x1 & x1 <= p2 & p4 <= p1
 	,
  		hide p3 in (p2 <= p3 & p3 <= p1)
 	)
 	in
-	simplify p1 <= p2 & p2 <= p1 & true*)
+	simplify p1 <= p2 & p2 <= p1 & true
 
-(* hide p1 in (hide p1 in true) *)
+hide p1 in (hide p1 in true)
 
-(* satisfiable hide p1 in true *)
-(* satisfiable (hide p1 in true) *)
+satisfiable hide p1 in true
+satisfiable (hide p1 in true)
 
-(* included hide p1 in true in hide p1 in true *)
-(* included (hide p1 in true) in (hide p1 in true) *)
+included hide p1 in true in hide p1 in true
+included (hide p1 in true) in (hide p1 in true)
 
-(* included (hide p1 in true) in (and  (p2 = p3, p3 = p4)) *)
+included (hide p1 in true) in (and  (p2 = p3, p3 = p4))
 
-(*simplify
+simplify
 	hide (x1, p4) in and (
 		p1 <= x1 & x1 <= p2 & p4 <= p1
 	,
  		hide p3 in (p2 <= p3 & p3 <= p1)
-	)*)
+	)
 
 
-(*not (hide (tf, t2, t3) in (
+not (hide (tf, t2, t3) in (
 	  0 <= a & a <= tf & f <= b
 	& 0 <= c & c <= t2 + tf & t2 + tf <= d
 	& 0 <= e & e <= t3 + tf & t3 + tf <= f
@@ -186,12 +189,12 @@ hide (tf, t2, t3) in (
 	& e >= 0
 	& f >= 0
 	& tf >= 0
-))*)
+))
 
 
 
 
-(*not (hide (tf, t2, t3) in (
+not (hide (tf, t2, t3) in (
 	  0 <= a & a <= tf & f <= b
 	& 0 <= c & c <= t2 + tf & t2 + tf <= d
 	(*& 0 <= e*) & e <= t3 + tf & t3 + tf <= f
@@ -204,9 +207,9 @@ hide (tf, t2, t3) in (
 	& e >= 0
 	& f >= 0
 	& tf >= 0
-))*)
+))
 
-(*
+
 not (hide (tf, t2, t3) in (
 	  0 <= a & a <= tf & f <= b
 	& 0 <= c & c <= t2 + tf & t2 + tf <= d
@@ -220,10 +223,10 @@ not (hide (tf, t2, t3) in (
 	or e >= 0
 	& f >= 0
 	& tf >= 0
-))*)
+))
 
 
-(*diff
+diff
 	
 (* EXPECTED RESULT *)
 	(simplify
@@ -319,10 +322,10 @@ p_button > p_add_sugar
     & p_add_sugar > 0
     & p_button > 0
     & p_coffee > 0*)
-))*)
+))
 
 
-(*
+
 equal
 	
 (* EXPECTED RESULT *)
@@ -410,4 +413,3 @@ OR
     & p_coffee > 0
 ))
 
-*)

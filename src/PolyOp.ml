@@ -217,17 +217,8 @@ print_message Debug_standard ("\nInput:\n" ^ (InputPrinter.string_of_input input
 
 
 (**************************************************)
-(* PERFORM THE OPERATION *)
+(* PERFORM THE OPERATIONS *)
 (**************************************************)
-if input.operation = Op_nothing then(
-	print_message Debug_standard ("\nI am very proud to do nothing.");
-	terminate_program();
-	exit 0
-);
-
-
-
-
 
 let string_of_nncc = LinearConstraint.string_of_nnconvex_constraint input.variable_names in
 let string_of_bool b = if b then "yes" else "no" in
@@ -266,12 +257,20 @@ let perform_oppoint = function
 	| Op_exhibit lc -> LinearConstraint.nnconvex_constraint_exhibit_point (perform_constraint lc)
 in
 
-let result = match input.operation with
-	| Op_bool b -> string_of_bool (perform_bool b)
-	| Op_constraint c -> string_of_nncc (perform_constraint c)
-	| Op_point op -> InputPrinter.string_of_valuation input.variables input.variable_names (perform_oppoint op)
-	| Op_nothing -> print_error ("Internal error: the Op_nothing operation can't happen here.\nPlease insult the developers."); abort_program (); exit 0
-(* 	| _ -> raise (InternalError "not implemented") *)
+let result = string_of_list_of_string_with_sep "\n\n----------\n\n" (List.map (fun operation ->
+	(* First recall the operation in comments *)
+	"(* OPERATION: \n"
+	^ (InputPrinter.string_of_operation input.variable_names operation)
+	^ "\n*)\n" ^
+	
+	(* Solve and print *)
+	match operation with
+		| Op_bool b -> string_of_bool (perform_bool b)
+		| Op_constraint c -> string_of_nncc (perform_constraint c)
+		| Op_point op -> InputPrinter.string_of_valuation input.variables input.variable_names (perform_oppoint op)
+		| Op_nothing -> ("I am very proud to do nothing.")
+	(* 	| _ -> raise (InternalError "not implemented") *)
+	) input.operations)
 in
 
 

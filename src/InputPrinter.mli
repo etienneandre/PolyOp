@@ -41,6 +41,9 @@ val string_of_valuation : (variable_index list) -> (variable_index -> variable_n
 (** Input *)
 (**************************************************)
 
+(* Convert an operation into a string *)
+val string_of_operation : (variable_index -> variable_name) -> operation -> string
+
 (* Convert a input into a string *)
 val string_of_input : abstract_input -> string
 

@@ -48,9 +48,9 @@ let string_of_valuation variables variable_names valuation =
 (** Input *)
 (**************************************************)
 
-(* Convert a input into a string *)
-let string_of_input input =
-	let convert_vars vars = string_of_list_of_string_with_sep ", " (List.map input.variable_names vars) in
+(* Convert an operation into a string *)
+let string_of_operation variable_names operation =
+	let convert_vars vars = string_of_list_of_string_with_sep ", " (List.map variable_names vars) in
 	
 	let rec string_of_constraint = function
 		| Op_and cp_list -> "and(" ^ (string_of_list_of_string_with_sep " , " (List.map string_of_constraint cp_list)) ^ ")"
@@ -60,7 +60,7 @@ let string_of_input input =
 		| Op_simplify c -> "simplify(" ^ (string_of_constraint c) ^ ")"
 		| Op_time_elapsing (vars, cp) -> "elapsing (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		| Op_time_past (vars, cp) -> "past (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
-		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint input.variable_names cp
+		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint variable_names cp
 	in
 	
 	let string_of_bool = function
@@ -73,11 +73,16 @@ let string_of_input input =
 		| Op_exhibit c -> "exhibit(" ^ (string_of_constraint c) ^ ")"
 	in
 	
-	match input.operation with
+	match operation with
 		| Op_bool b -> string_of_bool b
 		| Op_constraint c -> string_of_constraint c
 		| Op_point op -> string_of_oppoint op
 		| Op_nothing -> "nothing"
 	
+
+(* Convert a input into a string *)
+let string_of_input input =
+	(* Iterate and convert all operations to string *)
+	string_of_list_of_string_with_sep "\n\n(**----------**)\n\n" (List.map (string_of_operation input.variable_names) input.operations)
 
 

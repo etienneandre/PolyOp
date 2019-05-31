@@ -70,7 +70,7 @@ type nnconvex_predicate = convex_predicate list
 (** Input *)
 (****************************************************************)
 
-type parsing_structure =
+type parsed_op =
 	| Parsop_bool of parsop_bool
 	| Parsop_constraint of parsop_constraint
 	| Parsop_point of parsop_point
@@ -90,3 +90,5 @@ and parsop_constraint =
 	| Parsop_convex of nnconvex_predicate
 and parsop_point =
 	| Parsop_exhibit of parsop_constraint
+
+type parsing_structure = parsed_op list
