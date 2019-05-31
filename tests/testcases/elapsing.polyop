@@ -1,0 +1,22 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Paris 13, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2019/05/31
+ * Last modified: 2019/05/31
+ *
+ ************************************************************)
+ 
+
+elapsing (p1) in (p1 = 1 & p2 = 2)
+
+elapsing (p1) in (p1 = 5 & p2 >= 2)
+
+elapsing (p1) in (p1 = 5 & p2 >= p1)
+
+elapsing (p1, p3) in (p1 = 5 & p2 >= p1 &  p3 = 0)
+
+elapsing (x1) in (p1 <= x1 & x1 <= p2 )
