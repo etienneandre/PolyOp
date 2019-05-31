@@ -120,19 +120,19 @@ let file = ref "" in
 
 let nb_args = ref 0 in
 			
-(* Get the debug mode *)
-let rec set_debug_mode_ref debug_mode =
-		let mode = try debug_mode_of_string debug_mode
+(* Get the verbose mode *)
+let rec set_verbose_mode_ref verbose_mode =
+		let mode = try verbose_mode_of_string verbose_mode
 			with Not_found ->
-			print_error ("The debug mode '" ^ debug_mode ^ "' is not valid.");
+			print_error ("The verbose mode '" ^ verbose_mode ^ "' is not valid.");
 			Arg.usage speclist usage_msg;
 			abort_program ();
 			exit(0); in
-		set_debug_mode mode
+		set_verbose_mode mode
 
 (* Options *)
 and speclist = [
-	("-debug", String set_debug_mode_ref, " Print more or less information. Can be set to 'nodebug', 'standard', 'low', 'medium', 'high', 'total'. Default: 'nodebug'");
+	("-verbose", String set_verbose_mode_ref, " Print more or less information. Can be set to 'nodebug', 'standard', 'low', 'medium', 'high', 'total'. Default: 'nodebug'");
 	("-version", Unit (fun _ -> print_string (version_string ()); exit 0), " Print version string and exit.");
 
 ] in
@@ -187,10 +187,10 @@ Global.print_header_string();
 (**************************************************)
 
 (* Parsing the main input *)
-print_message Debug_standard ("Considering file " ^ !file ^ ".");
+print_message Verbose_standard ("Considering file " ^ !file ^ ".");
 let parsing_structure = parser_lexer InputParser.main InputLexer.token !file in 
 
-print_message Debug_standard ("\nParsing done " ^ (after_seconds ()) ^ ".");
+print_message Verbose_standard ("\nParsing done " ^ (after_seconds ()) ^ ".");
 
 
 (**************************************************)
@@ -206,14 +206,14 @@ try (
 	| InternalError e -> (print_error ("Internal error: " ^ e ^ "\nPlease insult the developers."); abort_program (); exit 0)
 	in
 
-print_message Debug_standard ("Input checked and converted " ^ (after_seconds ()) ^ ".\n");
+print_message Verbose_standard ("Input checked and converted " ^ (after_seconds ()) ^ ".\n");
 (* Gc.major (); (*c'est quoi ca ? *) *)
 
 
 (**************************************************)
 (* Debug print: input *)
 (**************************************************)
-print_message Debug_standard ("\nInput:\n" ^ (InputPrinter.string_of_input input) ^ "\n");
+print_message Verbose_standard ("\nInput:\n" ^ (InputPrinter.string_of_input input) ^ "\n");
 
 
 (**************************************************)
@@ -288,8 +288,8 @@ in
 (**************************************************)
 (* Print the result *)
 (**************************************************)
-print_message Debug_standard ("\nResult:\n");
-print_message Debug_nodebug (result);
+print_message Verbose_standard ("\nResult:\n");
+print_message Verbose_nodebug (result);
 
 
 (**************************************************)

@@ -46,29 +46,29 @@ exception ParsingError of (int * int)
 
 
 (****************************************************************)
-(** Debug modes *)
+(** Verbose modes *)
 (****************************************************************)
 
-type debug_mode =
-	| Debug_nodebug
-	| Debug_standard
-	| Debug_low
-	| Debug_medium
-	| Debug_high
-	| Debug_total
+type verbose_mode =
+	| Verbose_nodebug
+	| Verbose_standard
+	| Verbose_low
+	| Verbose_medium
+	| Verbose_high
+	| Verbose_total
 
 
-(* Return true if the global debug mode is greater than 'debug_mode', false otherwise *)
-val debug_mode_greater : debug_mode -> bool
+(* Return true if the global verbose mode is greater than 'verbose_mode', false otherwise *)
+val verbose_mode_greater : verbose_mode -> bool
 
-(* Convert a string into a debug_mode; raise Not_found if not found *)
-val debug_mode_of_string : string -> debug_mode
+(* Convert a string into a verbose_mode; raise Not_found if not found *)
+val verbose_mode_of_string : string -> verbose_mode
 
-(* Set the debug mode *)
-val set_debug_mode : debug_mode -> unit
+(* Set the verbose mode *)
+val set_verbose_mode : verbose_mode -> unit
 
-(* Get the debug mode *)
-val get_debug_mode : unit -> debug_mode
+(* Get the verbose mode *)
+val get_verbose_mode : unit -> verbose_mode
 
 
 
@@ -185,11 +185,11 @@ val evaluate_or : bool -> bool -> bool
 (****************************************************************)
 (** Messages *)
 (****************************************************************)
-(*(* Print a message if global_debug_mode >= message_debug_mode *)
-val print_debug_message : debug_mode -> debug_mode -> string -> unit*)
+(*(* Print a message if global_verbose_mode >= message_verbose_mode *)
+val print_verbose_message : verbose_mode -> verbose_mode -> string -> unit*)
 
-(* Print a message if global_debug_mode >= message_debug_mode *)
-val print_message : debug_mode -> string -> unit
+(* Print a message if global_verbose_mode >= message_verbose_mode *)
+val print_message : verbose_mode -> string -> unit
 
 (* Print a warning *)
 val print_warning : string -> unit

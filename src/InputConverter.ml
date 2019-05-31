@@ -311,12 +311,12 @@ let get_variable_names_in_operations =
 (*--------------------------------------------------*)
 let abstract_input_of_parsing_structure parsed_operations =
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
-	(* Debug functions *) 
+	(* Verbose functions *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Debug print function for arrays *)
 	let debug_print_array =
 		Array.iteri (fun i e ->
-			print_message Debug_high ((string_of_int i) ^ " -> " ^ e)
+			print_message Verbose_high ((string_of_int i) ^ " -> " ^ e)
 		)
 	in
 
@@ -347,14 +347,14 @@ let abstract_input_of_parsing_structure parsed_operations =
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Debug prints *)
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
-	if (debug_mode_greater Debug_low) then (
+	if (verbose_mode_greater Verbose_low) then (
 		(* Number *)
-		print_message Debug_low (
+		print_message Verbose_low (
 			(string_of_int nb_variables) ^ " variable" ^ (s_of_int nb_variables) ^ "."
 		);
 		
 		(* Array *)
-		print_message Debug_low ("\n*** Array of variable names:");
+		print_message Verbose_low ("\n*** Array of variable names:");
 		debug_print_array variables;
 	);
 

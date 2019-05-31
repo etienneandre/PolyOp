@@ -528,9 +528,9 @@ let intersection_assign linear_constraint constrs =
 
 (** Eliminate (using existential quantification) a set of variables in a linear constraint *)
 let hide variables linear_constraint =
-	(* debug output *)
-	if debug_mode_greater Debug_total then (
-		List.iter (fun v ->	print_message Debug_high ("hide v" ^ string_of_int v)) variables;
+	(* Print some information *)
+	if verbose_mode_greater Verbose_total then (
+		List.iter (fun v ->	print_message Verbose_high ("hide v" ^ string_of_int v)) variables;
 	);
 	(* copy polyhedron, as PPL function has sideeffects *)
 	let poly = ppl_new_NNC_Polyhedron_from_NNC_Polyhedron linear_constraint in
@@ -541,9 +541,9 @@ let hide variables linear_constraint =
 	
 (** Eliminate a set of variables, side effects version *)
 let hide_assign variables linear_constraint =
-	(* debug output *)
-	if debug_mode_greater Debug_total then (
-		List.iter (fun v ->	print_message Debug_high ("hide v" ^ string_of_int v)) variables;
+	(* Print some information *)
+	if verbose_mode_greater Verbose_total then (
+		List.iter (fun v ->	print_message Verbose_high ("hide v" ^ string_of_int v)) variables;
 	);
 	ppl_Polyhedron_unconstrain_space_dimensions linear_constraint variables;
 	assert_dimensions linear_constraint
@@ -567,11 +567,11 @@ let rename_variables list_of_couples linear_constraint =
 				add_id list (i-1)
 		in 
 	let complete_list = add_id joined_couples (!total_dim - 1) in
-  (* debug output *)
-	if debug_mode_greater Debug_high then (
+  (* Print some information *)
+	if verbose_mode_greater Verbose_high then (
 		let ndim = ppl_Polyhedron_space_dimension poly in
-		print_message Debug_high ("mapping space dimensions, no. dimensions is " ^ string_of_int ndim);
-		List.iter (fun (a,b) -> (print_message Debug_high ("map v" ^ string_of_int a ^ " -> v" ^ string_of_int b))) complete_list;
+		print_message Verbose_high ("mapping space dimensions, no. dimensions is " ^ string_of_int ndim);
+		List.iter (fun (a,b) -> (print_message Verbose_high ("map v" ^ string_of_int a ^ " -> v" ^ string_of_int b))) complete_list;
 	);
 	(* perfom the mapping *)
 	ppl_Polyhedron_map_space_dimensions poly complete_list;
@@ -595,11 +595,11 @@ let rename_variables_assign list_of_couples linear_constraint =
 				add_id list (i-1)
 		in 
 	let complete_list = add_id joined_couples (!total_dim - 1) in
-  (* debug output *)
-	if debug_mode_greater Debug_high then (
+  (* Print some information *)
+	if verbose_mode_greater Verbose_high then (
 		let ndim = ppl_Polyhedron_space_dimension linear_constraint in
-		print_message Debug_high ("mapping space dimensions, no. dimensions is " ^ string_of_int ndim);
-		List.iter (fun (a,b) -> (print_message Debug_high ("map v" ^ string_of_int a ^ " -> v" ^ string_of_int b))) complete_list;
+		print_message Verbose_high ("mapping space dimensions, no. dimensions is " ^ string_of_int ndim);
+		List.iter (fun (a,b) -> (print_message Verbose_high ("map v" ^ string_of_int a ^ " -> v" ^ string_of_int b))) complete_list;
 	);
 	(* perfom the mapping *)
 	ppl_Polyhedron_map_space_dimensions linear_constraint complete_list;

@@ -5,6 +5,9 @@
 * Allow exhibition of a point in a polyhedron
 * Allow for more than one operation at a time
 
+### Options
+* Option `-debug` becomes `-verbose`
+
 ### Internal
 * Renamed most modules
 
