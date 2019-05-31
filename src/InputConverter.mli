@@ -6,7 +6,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,16 +27,16 @@
 (** Modules *)
 (****************************************************************)
 open Global
-open AbstractStructure
+open AbstractInput
 
 (****************************************************************)
 (** Exceptions *)
 (****************************************************************)
-exception InvalidProgram
+exception InvalidInput
 
 
 (****************************************************************)
 (** Functions *)
 (****************************************************************)
-(* Convert the parsing structure into an abstract program *)
-val abstract_program_of_parsing_structure : ParsingStructure.parsing_structure -> abstract_program
+(* Convert the parsing structure into an abstract input *)
+val abstract_input_of_parsing_structure : ParsingStructure.parsing_structure -> abstract_input

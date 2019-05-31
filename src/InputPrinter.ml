@@ -27,7 +27,7 @@
 
 
 open Global
-open AbstractStructure
+open AbstractInput
 open LinearConstraint
 
 (**************************************************)
@@ -45,12 +45,12 @@ let string_of_valuation variables variable_names valuation =
 
 
 (**************************************************)
-(** Program *)
+(** Input *)
 (**************************************************)
 
-(* Convert a program into a string *)
-let string_of_program program =
-	let convert_vars vars = string_of_list_of_string_with_sep ", " (List.map program.variable_names vars) in
+(* Convert a input into a string *)
+let string_of_input input =
+	let convert_vars vars = string_of_list_of_string_with_sep ", " (List.map input.variable_names vars) in
 	
 	let rec string_of_constraint = function
 		| Op_and cp_list -> "and(" ^ (string_of_list_of_string_with_sep " , " (List.map string_of_constraint cp_list)) ^ ")"
@@ -60,7 +60,7 @@ let string_of_program program =
 		| Op_simplify c -> "simplify(" ^ (string_of_constraint c) ^ ")"
 		| Op_time_elapsing (vars, cp) -> "elapsing (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		| Op_time_past (vars, cp) -> "past (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
-		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint program.variable_names cp
+		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint input.variable_names cp
 	in
 	
 	let string_of_bool = function
@@ -73,7 +73,7 @@ let string_of_program program =
 		| Op_exhibit c -> "exhibit(" ^ (string_of_constraint c) ^ ")"
 	in
 	
-	match program.operation with
+	match input.operation with
 		| Op_bool b -> string_of_bool b
 		| Op_constraint c -> string_of_constraint c
 		| Op_point op -> string_of_oppoint op

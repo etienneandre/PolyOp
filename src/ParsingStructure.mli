@@ -67,7 +67,7 @@ type nnconvex_predicate = convex_predicate list
 
 
 (****************************************************************)
-(** Input program *)
+(** Input *)
 (****************************************************************)
 
 type parsing_structure =

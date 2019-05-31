@@ -65,9 +65,9 @@ and op_point =
 
 
 (****************************************************************)
-(** The abstract program *)
+(** The abstract input *)
 (****************************************************************)
-type abstract_program = {
+type abstract_input = {
 	(* Cardinality *)
 	nb_variables : int;
 

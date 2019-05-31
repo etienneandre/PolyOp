@@ -25,7 +25,7 @@
  ************************************************************)
 
 
-open AbstractStructure
+open AbstractInput
 
 
 
@@ -38,9 +38,9 @@ val string_of_valuation : (variable_index list) -> (variable_index -> variable_n
 
 
 (**************************************************)
-(** Program *)
+(** Input *)
 (**************************************************)
 
-(* Convert a program into a string *)
-val string_of_program : abstract_program -> string
+(* Convert a input into a string *)
+val string_of_input : abstract_input -> string
 

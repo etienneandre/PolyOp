@@ -30,9 +30,9 @@
 (* Modules *)
 (**************************************************)
 open Global
-open AbstractStructure
+open AbstractInput
 open Arg
-open ProgramPrinter
+open InputPrinter
 
 
 
@@ -113,9 +113,9 @@ let write_to_file file_name file_content =
 (**************************************************)
 (* Get the arguments *)
 (**************************************************)
-let usage_msg = "Usage: PolyOp program_file [options]" in
+let usage_msg = "Usage: PolyOp input_file [options]" in
 
-(* Program file *)
+(* Input file *)
 let file = ref "" in
 
 let nb_args = ref 0 in
@@ -146,7 +146,7 @@ let anon_fun = (fun arg ->
 	)
 	(* If more than one argument : warns *)
 	else (
-		print_warning ("The program argument '" ^ arg ^ "' will be ignored.");
+		print_warning ("The input argument '" ^ arg ^ "' will be ignored.");
 	)
 ) in
 
@@ -163,7 +163,7 @@ if !nb_args < 1 then(
 (* Definition of output *)
 let output_file_name = !file ^ ".res" in
 
-(* If the program does not succeed: *)
+(* If the input does not succeed: *)
 write_to_file output_file_name string_error;
 
 
@@ -186,40 +186,40 @@ Global.print_header_string();
 (* Parsing *)
 (**************************************************)
 
-(* Parsing the main program *)
+(* Parsing the main input *)
 print_message Debug_standard ("Considering file " ^ !file ^ ".");
-let parsing_structure = parser_lexer ProgramParser.main ProgramLexer.token !file in 
+let parsing_structure = parser_lexer InputParser.main InputLexer.token !file in 
 
 print_message Debug_standard ("\nParsing done " ^ (after_seconds ()) ^ ".");
 
 
 (**************************************************)
-(* Conversion to an abstract program *)
+(* Conversion to an abstract input *)
 (**************************************************)
 
-let program = 
+let input = 
 try (
-	ProgramConverter.abstract_program_of_parsing_structure
+	InputConverter.abstract_input_of_parsing_structure
 		parsing_structure
 ) with 
-	| ProgramConverter.InvalidProgram -> (print_error ("The input program contains errors. Please check it again."); abort_program (); exit 0)
+	| InputConverter.InvalidInput -> (print_error ("The input input contains errors. Please check it again."); abort_program (); exit 0)
 	| InternalError e -> (print_error ("Internal error: " ^ e ^ "\nPlease insult the developers."); abort_program (); exit 0)
 	in
 
-print_message Debug_standard ("Program checked and converted " ^ (after_seconds ()) ^ ".\n");
+print_message Debug_standard ("Input checked and converted " ^ (after_seconds ()) ^ ".\n");
 (* Gc.major (); (*c'est quoi ca ? *) *)
 
 
 (**************************************************)
-(* Debug print: program *)
+(* Debug print: input *)
 (**************************************************)
-print_message Debug_standard ("\nProgram:\n" ^ (ProgramPrinter.string_of_program program) ^ "\n");
+print_message Debug_standard ("\nInput:\n" ^ (InputPrinter.string_of_input input) ^ "\n");
 
 
 (**************************************************)
 (* PERFORM THE OPERATION *)
 (**************************************************)
-if program.operation = Op_nothing then(
+if input.operation = Op_nothing then(
 	print_message Debug_standard ("\nI am very proud to do nothing.");
 	terminate_program();
 	exit 0
@@ -229,7 +229,7 @@ if program.operation = Op_nothing then(
 
 
 
-let string_of_nncc = LinearConstraint.string_of_nnconvex_constraint program.variable_names in
+let string_of_nncc = LinearConstraint.string_of_nnconvex_constraint input.variable_names in
 let string_of_bool b = if b then "yes" else "no" in
 
 
@@ -241,14 +241,14 @@ let rec perform_constraint = function
 	| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)
 	| Op_time_elapsing (variables, lc) ->
 		(* Create the set of all variables *)
-		let all_variables = list_of_interval 0 (program.nb_variables - 1) in
+		let all_variables = list_of_interval 0 (input.nb_variables - 1) in
 		(* Perform the intersection *)
 		let other_variables = list_diff all_variables variables in
 		(* Call the function *)
 		LinearConstraint.nnconvex_time_elapse variables other_variables (perform_constraint lc)
 	| Op_time_past (variables, lc) ->
 		(* Create the set of all variables *)
-		let all_variables = list_of_interval 0 (program.nb_variables - 1) in
+		let all_variables = list_of_interval 0 (input.nb_variables - 1) in
 		(* Perform the intersection *)
 		let other_variables = list_diff all_variables variables in
 		(* Call the function *)
@@ -266,10 +266,10 @@ let perform_oppoint = function
 	| Op_exhibit lc -> LinearConstraint.nnconvex_constraint_exhibit_point (perform_constraint lc)
 in
 
-let result = match program.operation with
+let result = match input.operation with
 	| Op_bool b -> string_of_bool (perform_bool b)
 	| Op_constraint c -> string_of_nncc (perform_constraint c)
-	| Op_point op -> ProgramPrinter.string_of_valuation program.variables program.variable_names (perform_oppoint op)
+	| Op_point op -> InputPrinter.string_of_valuation input.variables input.variable_names (perform_oppoint op)
 	| Op_nothing -> print_error ("Internal error: the Op_nothing operation can't happen here.\nPlease insult the developers."); abort_program (); exit 0
 (* 	| _ -> raise (InternalError "not implemented") *)
 in

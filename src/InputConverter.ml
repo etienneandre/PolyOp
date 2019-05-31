@@ -2,7 +2,7 @@
  *
  *                     PolyOp
  *
- * Convert a parsing structure into an abstract program
+ * Convert a parsing structure into an abstract input
  *
  * National University of Singapore
  * École Centrale Nantes, France
@@ -19,14 +19,14 @@
 (****************************************************************)
 open Global
 open ParsingStructure
-open AbstractStructure
-open ProgramPrinter
+open AbstractInput
+open InputPrinter
 
 
 (****************************************************************)
 (** Exceptions *)
 (****************************************************************)
-exception InvalidProgram
+exception InvalidInput
 
 
 
@@ -299,14 +299,14 @@ let get_variable_names = function
 
 
 (****************************************************************)
-(** Program conversion *)
+(** Input conversion *)
 (****************************************************************)
 
 
 (*--------------------------------------------------*)
-(* Convert the parsing structure into an abstract program *)
+(* Convert the parsing structure into an abstract input *)
 (*--------------------------------------------------*)
-let abstract_program_of_parsing_structure parsop =
+let abstract_input_of_parsing_structure parsop =
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Debug functions *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
