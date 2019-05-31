@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2016/10/21
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -313,59 +313,6 @@ let build_linear_inequality lterm rterm op =
 		| Greater_Or_Equal_RS -> Greater_Or_Equal (lterm, rterm)
 
 
-(*(** evaluate a linear inequality for a given valuation *)
-let evaluate_linear_inequality valuation_function linear_inequality =
-	match linear_inequality with 
-		| Less_Than (lterm, rterm) -> (
-				let lval = evaluate_linear_term_ppl valuation_function lterm in
-				let rval = evaluate_linear_term_ppl valuation_function rterm in
-				NumConst.l lval rval )
-		| Less_Or_Equal (lterm, rterm) -> (
-				let lval = evaluate_linear_term_ppl valuation_function lterm in
-				let rval = evaluate_linear_term_ppl valuation_function rterm in
-				NumConst.le lval rval )
-		| Equal (lterm, rterm) -> (
-				let lval = evaluate_linear_term_ppl valuation_function lterm in
-				let rval = evaluate_linear_term_ppl valuation_function rterm in
-				NumConst.equal lval rval )
-		| Greater_Than (lterm, rterm) -> (
-				let lval = evaluate_linear_term_ppl valuation_function lterm in
-				let rval = evaluate_linear_term_ppl valuation_function rterm in
-				NumConst.g lval rval )
-		| Greater_Or_Equal (lterm, rterm) -> (
-				let lval = evaluate_linear_term_ppl valuation_function lterm in
-				let rval = evaluate_linear_term_ppl valuation_function rterm in
-				NumConst.ge lval rval )*)
-
-(*
-(*--------------------------------------------------*)
-(* Pi0-compatibility *)
-(*--------------------------------------------------*)
-
-(** Check if a linear inequality is pi0-compatible *)
-let is_pi0_compatible_inequality pi0 linear_inequality =
-	evaluate_linear_inequality pi0 linear_inequality
-
-(** Negate a linear inequality; for an equality, perform the pi0-compatible negation *)
-let negate_wrt_pi0 pi0 linear_inequality = 
-	match linear_inequality with
-		| Less_Than (lterm, rterm) -> Greater_Or_Equal (lterm, rterm)
-		| Less_Or_Equal (lterm, rterm) -> Greater_Than (lterm, rterm)
-		| Greater_Than (lterm, rterm) -> Less_Or_Equal (lterm, rterm)
-		| Greater_Or_Equal (lterm, rterm) -> Less_Than (lterm, rterm)
-		| Equal (lterm, rterm) -> (
-				(* perform the negation compatible with pi0 *)
-				let lval = evaluate_linear_term_ppl pi0 lterm in
-				let rval = evaluate_linear_term_ppl pi0 rterm in
-				if NumConst.g lval rval then
-					Greater_Than (lterm, rterm)
-				else if NumConst.l lval rval then
-					Less_Than (lterm, rterm)
-				else(
-					raise (InternalError "Trying to negate an equality already true w.r.t. pi0")
-				)
-			)
-*)
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Conversion} *)
@@ -505,27 +452,6 @@ let is_leq x y = ppl_Polyhedron_contains_Polyhedron y x
 
 (* Return the list of inequalities that build the polyhedron (interface to PPL) *)
 let get_inequalities = ppl_Polyhedron_get_constraints
-
-
-(*
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-(** {3 Pi0-compatibility} *)
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-
-(** Check if a linear constraint is pi0-compatible *)
-let is_pi0_compatible pi0 linear_constraint =
-	(* Get a list of linear inequalities *)
-	let list_of_inequalities = get_inequalities linear_constraint in
-	(* Check the pi0-compatibility for all *)
-	List.for_all (is_pi0_compatible_inequality pi0) list_of_inequalities
-
-
-(** Compute the pi0-compatible and pi0-incompatible inequalities within a constraint *)
-let partition_pi0_compatible pi0 linear_constraint =
-	(* Get a list of linear inequalities *)
-	let list_of_inequalities = get_inequalities linear_constraint in
-	(* Partition *)
-	List.partition (is_pi0_compatible_inequality pi0) list_of_inequalities*)
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -781,38 +707,6 @@ let time_past_assign variables_elapse variables_constant linear_constraint =
 	(* Take intersection *)
 	intersection_assign linear_constraint [(make inequalities_nonnegative)]
 	
-	
-	
-	
-	(*
-let time_elapse_assign variable_elapse variable_constant linear_constraint =
-	(* Create the inequalities var = 1, for var in variable_elapse *)
-	let inequalities_elapse = List.map (fun variable ->
-		(* Create a linear term *)
-		let linear_term = make_linear_term [(NumConst.one, variable)] NumConst.minus_one in
-		(* Create the inequality *)
-		make_linear_inequality linear_term Op_eq
-	) variable_elapse in
-	(* Create the inequalities var = 0, for var in variable_constant *)
-	let inequalities_constant = List.map (fun variable ->
-		(* Create a linear term *)
-		let linear_term = make_linear_term [(NumConst.one, variable)] NumConst.zero in
-		(* Create the inequality *)
-		make_linear_inequality linear_term Op_eq
-	) variable_constant in
-	(* Convert both sets of inequalities to a constraint *)
-	let linear_constraint_time = make (List.rev_append inequalities_elapse inequalities_constant) in
-(* 	print_string (string_of_linear_constraint (fun a -> "p" ^ string_of_int a) linear_constraint_time); *)
-	(* Assign the time elapsing using PPL *)
-	ppl_Polyhedron_time_elapse_assign linear_constraint linear_constraint_time
-
-let time_elapse variable_elapse variable_constant linear_constraint =
-	let linear_constraint = copy linear_constraint in
-	time_elapse_assign variable_elapse variable_constant linear_constraint;
-	linear_constraint*)
-
-
-
 
 
 (************************************************************)

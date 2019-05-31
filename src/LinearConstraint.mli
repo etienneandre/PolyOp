@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2017/03/21
+ * Last modified: 2019/05/31
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -139,90 +139,6 @@ val false_constraint : unit -> linear_constraint
 
 (** Create a true constraint *)
 val true_constraint : unit -> linear_constraint
-
-(*
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-(** {3 Tests} *)
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-
-(** Check if a constraint is false *)
-val is_false : linear_constraint -> bool
-
-(** Check if a constraint is true *)
-val is_true : linear_constraint -> bool
-
-(** Check if a constraint is satisfiable *)
-val is_satisfiable : linear_constraint -> bool
-
-(** Check if 2 constraints are equal *)
-val is_equal : linear_constraint -> linear_constraint -> bool
-
-(** Check if a constraint is included in another one *)
-val is_leq : linear_constraint -> linear_constraint -> bool*)
-
-
-(*
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-(** {3 Pi0-compatibility} *)
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-
-(** Check if a linear constraint is pi0-compatible *)
-val is_pi0_compatible : (variable -> coef) -> linear_constraint -> bool
-
-(** Compute the pi0-compatible and pi0-incompatible inequalities within a constraint *)
-val partition_pi0_compatible : (variable -> coef) -> linear_constraint -> (linear_inequality list * linear_inequality list)*)
-
-
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-(** {3 Functions} *)
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-(*
-(** makes a copy of a constraint *)
-val copy : linear_constraint -> linear_constraint
-
-(** Performs the intersection of a list of linear constraints *)
-val intersection : linear_constraint list -> linear_constraint
-
-(** Performs the intersection of a list of linear constraints with sideeffect *)
-val intersection_assign : linear_constraint -> linear_constraint list -> unit
-
-(** Eliminate (using existential quantification) a set of variables in a linear constraint *)
-val hide : variable list -> linear_constraint -> linear_constraint
-
-(** Eliminate (using existential quantification) a set of variables in a linear constraint, with side effects *)
-val hide_assign : variable list -> linear_constraint -> unit
-
-(** 'rename_variables renaming_couples c' renames all variables according to the couples of the form (old, new) *)
-val rename_variables : (variable * variable) list -> linear_constraint -> linear_constraint
-
-(** 'rename_variables renaming_couples c' renames all variables according to the couples of the form (old, new), with side effects *)
-val rename_variables_assign : (variable * variable) list -> linear_constraint -> unit
-
-(** 'add_d d coef variables c' adds a variable 'coef * d' to any variable in 'variables' *)
-val add_d : variable -> coef -> variable list -> linear_constraint -> linear_constraint
-
-(** Minimize a linear constraints *)
-val minimize : linear_constraint -> linear_constraint
-
-(** Perform time elapsing on a set of variables: the first variable list will elapse, the second will remain constant *)
-val time_elapse  : variable list -> variable list -> linear_constraint -> linear_constraint
-
-(** Perform time elapsing on a set of variables; version with side effects *)
-val time_elapse_assign  : variable list -> variable list -> linear_constraint -> unit
-*)
-(*
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-(** {3 Conversion} *)
-(*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
-
-(** Convert a linear constraint into a string *)
-val string_of_linear_constraint : (variable -> string) -> linear_constraint -> string
-
-(** String for the false constraint *)
-val string_of_false : string
-
-(** String for the true constraint *)
-val string_of_true : string*)
 
 
 
