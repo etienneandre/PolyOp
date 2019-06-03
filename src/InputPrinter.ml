@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/05/31
+ * Last modified: 2019/06/03
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -82,7 +82,9 @@ let string_of_operation variable_names operation =
 
 (* Convert a input into a string *)
 let string_of_input input =
-	(* Iterate and convert all operations to string *)
-	string_of_list_of_string_with_sep "\n\n(**----------**)\n\n" (List.map (string_of_operation input.variable_names) input.operations)
+(*	(* Iterate and convert all operations to string *)
+	string_of_list_of_string_with_sep "\n\n(**----------**)\n\n" (List.map (string_of_operation input.variable_names) input.operations)*)
 
+	(* Iterate and convert all operations to string *)
+	string_of_operation input.variable_names input.operation
 

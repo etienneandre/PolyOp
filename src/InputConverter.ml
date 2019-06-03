@@ -10,7 +10,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/05/31
+ * Last modified: 2019/06/03
  *
  ************************************************************)
 
@@ -297,8 +297,8 @@ let get_variable_names_in_operation = function
 	| Parsop_point op -> get_variable_names_in_oppoint op
 	| Parsop_nothing -> []
 
-let get_variable_names_in_operations =
-	List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_operation b)) []
+(*let get_variable_names_in_operations =
+	List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_operation b)) []*)
 
 
 (****************************************************************)
@@ -309,7 +309,7 @@ let get_variable_names_in_operations =
 (*--------------------------------------------------*)
 (* Convert the parsing structure into an abstract input *)
 (*--------------------------------------------------*)
-let abstract_input_of_parsing_structure parsed_operations =
+let abstract_input_of_parsed_operation parsed_operation =
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Verbose functions *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
@@ -325,7 +325,7 @@ let abstract_input_of_parsing_structure parsed_operations =
 	(* Get names *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Get the variable names *)
-	let list_of_variable_names = get_variable_names_in_operations parsed_operations in
+	let list_of_variable_names = get_variable_names_in_operation parsed_operation in
 	
 	(* Remove double names *)
 	let list_of_variable_names = list_only_once list_of_variable_names in
@@ -401,12 +401,11 @@ let abstract_input_of_parsing_structure parsed_operations =
 		| Parsop_exhibit cp -> Op_exhibit (convert_constraint cp)
 	in
 	
-	let operations = List.map (function
+	let operation = match parsed_operation with
 			| Parsop_bool b -> Op_bool (convert_bool b)
 			| Parsop_constraint c -> Op_constraint (convert_constraint c)
 			| Parsop_point op -> Op_point (convert_oppoint op)
 			| Parsop_nothing -> Op_nothing
-	) parsed_operations
 	in
 
 
@@ -421,7 +420,7 @@ let abstract_input_of_parsing_structure parsed_operations =
 		(* Names of the variable *)
 		variable_names = variable_names;
 
-		(* The list of operations to perform *)
-		operations = operations;
+		(* The operation to perform *)
+		operation = operation;
 	}
 

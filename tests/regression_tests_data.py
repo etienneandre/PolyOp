@@ -13,7 +13,7 @@
 # File contributors : Étienne André
 #
 # Created           : 2019/05/31
-# Last modified     : 2019/05/31
+# Last modified     : 2019/06/03
 #************************************************************
 
 
@@ -26,6 +26,7 @@ tests = [
 	{
 		# Test version             : 1
 		# Test since               : 2019/05/31
+		# Test last modified       : 2019/05/31
 		# Test for PolyOp version  : 1.0
 		'purpose'    : 'Test the nothing operation',
 		'input_files': ['nothing.polyop'],
@@ -46,20 +47,21 @@ tests = [
 	{
 		# Test version             : 1
 		# Test since               : 2019/05/31
+		# Test last modified       : 2019/06/03
 		# Test for PolyOp version  : 1.0
-		'purpose'    : 'Simple and tests',
+		'purpose'    : 'Simple conjunction tests',
 		'input_files': ['simpletests.polyop'],
 		'options'    : '',
 		'expectations' : [
 			{'file': 'simpletests.polyop.res' , 'content' : """
 (* and (p1 <= p2, p2 <= p1) *)
 BEGIN ANSWER
-p2 = p1
+p1 = p2
 END ANSWER
 
 (* and ((p1 <= p2), (p2 <= p1)) *)
 BEGIN ANSWER
-p2 = p1
+p1 = p2
 END ANSWER
 			"""
 			} #end statespace file
@@ -72,6 +74,7 @@ END ANSWER
 	{
 		# Test version             : 1
 		# Test since               : 2019/05/31
+		# Test last modified       : 2019/05/31
 		# Test for PolyOp version  : 1.0
 		'purpose'    : 'Test the time-elapsing',
 		'input_files': ['elapsing.polyop'],

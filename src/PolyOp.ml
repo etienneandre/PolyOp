@@ -194,87 +194,97 @@ print_message Verbose_standard ("\nParsing done " ^ (after_seconds ()) ^ ".");
 
 
 (**************************************************)
-(* Conversion to an abstract input *)
+(* For each operation: *)
 (**************************************************)
 
-let input = 
-try (
-	InputConverter.abstract_input_of_parsing_structure
-		parsing_structure
-) with 
-	| InputConverter.InvalidInput -> (print_error ("The input input contains errors. Please check it again."); abort_program (); exit 0)
-	| InternalError e -> (print_error ("Internal error: " ^ e ^ "\nPlease insult the developers."); abort_program (); exit 0)
+(* Count the number of operations *)
+let debug_nb_operation = ref 0 in
+
+let results =
+List.map (fun parsed_operation -> 
+	(* Increment *)
+	incr debug_nb_operation;
+	
+	(**************************************************)
+	(* Conversion to an abstract input *)
+	(**************************************************)
+	let abstract_input = 
+	try (
+		InputConverter.abstract_input_of_parsed_operation parsed_operation
+	) with 
+		| InputConverter.InvalidInput -> (print_error ("The input contains errors. Please check it again."); abort_program (); exit 0)
+		| InternalError e -> (print_error ("Internal error: " ^ e ^ "\nPlease insult the developers."); abort_program (); exit 0)
+		in
+
+	print_message Verbose_low ("Operation " ^ (string_of_int !debug_nb_operation) ^ " checked and converted " ^ (after_seconds ()) ^ ".\n");
+	(* Gc.major (); (*c'est quoi ca ? *) *)
+
+
+	(**************************************************)
+	(* Debug print: input *)
+	(**************************************************)
+	print_message Verbose_low ("\nInput:\n" ^ (InputPrinter.string_of_input abstract_input) ^ "\n");
+
+
+	(**************************************************)
+	(* PERFORM THE OPERATION *)
+	(**************************************************)
+
+	let string_of_nncc = LinearConstraint.string_of_nnconvex_constraint abstract_input.variable_names in
+	let string_of_bool b = if b then "yes" else "no" in
+
+	(* Add markers to parse the result easily *)
+	let begin_marker = "BEGIN ANSWER" in
+	let end_marker = "END ANSWER" in
+
+
+	let rec perform_constraint = function
+		| Op_and lc_list -> LinearConstraint.nnconvex_intersection_list (List.map perform_constraint lc_list)
+		| Op_diff (c1, c2) -> LinearConstraint.nnconvex_difference (perform_constraint c1) (perform_constraint c2)
+		| Op_hide (variables, lc) -> LinearConstraint.nnconvex_hide variables (perform_constraint lc)
+		| Op_not lc -> LinearConstraint.negate (perform_constraint lc)
+		| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)
+		| Op_time_elapsing (variables, lc) ->
+			(* Create the set of all variables *)
+			let all_variables = list_of_interval 0 (abstract_input.nb_variables - 1) in
+			(* Perform the intersection *)
+			let other_variables = list_diff all_variables variables in
+			(* Call the function *)
+			LinearConstraint.nnconvex_time_elapse variables other_variables (perform_constraint lc)
+		| Op_time_past (variables, lc) ->
+			(* Create the set of all variables *)
+			let all_variables = list_of_interval 0 (abstract_input.nb_variables - 1) in
+			(* Perform the intersection *)
+			let other_variables = list_diff all_variables variables in
+			(* Call the function *)
+			LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
+		| Op_convex lc -> lc
 	in
 
-print_message Verbose_standard ("Input checked and converted " ^ (after_seconds ()) ^ ".\n");
-(* Gc.major (); (*c'est quoi ca ? *) *)
+	let perform_bool = function
+		| Op_equal (lc1, lc2) -> LinearConstraint.nnconvex_constraint_is_equal (perform_constraint lc1) (perform_constraint lc2)
+		| Op_included (lc1, lc2) -> LinearConstraint.nnconvex_constraint_is_leq (perform_constraint lc1) (perform_constraint lc2)
+		| Op_satisfiable lc -> not (LinearConstraint.nnconvex_constraint_is_false (perform_constraint lc))
+	in
 
+	let perform_oppoint = function
+		| Op_exhibit lc -> LinearConstraint.nnconvex_constraint_exhibit_point (perform_constraint lc)
+	in
 
-(**************************************************)
-(* Debug print: input *)
-(**************************************************)
-print_message Verbose_standard ("\nInput:\n" ^ (InputPrinter.string_of_input input) ^ "\n");
-
-
-(**************************************************)
-(* PERFORM THE OPERATIONS *)
-(**************************************************)
-
-let string_of_nncc = LinearConstraint.string_of_nnconvex_constraint input.variable_names in
-let string_of_bool b = if b then "yes" else "no" in
-
-(* Add markers to parse the result easily *)
-let begin_marker = "BEGIN ANSWER" in
-let end_marker = "END ANSWER" in
-
-
-let rec perform_constraint = function
-	| Op_and lc_list -> LinearConstraint.nnconvex_intersection_list (List.map perform_constraint lc_list)
-	| Op_diff (c1, c2) -> LinearConstraint.nnconvex_difference (perform_constraint c1) (perform_constraint c2)
-	| Op_hide (variables, lc) -> LinearConstraint.nnconvex_hide variables (perform_constraint lc)
-	| Op_not lc -> LinearConstraint.negate (perform_constraint lc)
-	| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)
-	| Op_time_elapsing (variables, lc) ->
-		(* Create the set of all variables *)
-		let all_variables = list_of_interval 0 (input.nb_variables - 1) in
-		(* Perform the intersection *)
-		let other_variables = list_diff all_variables variables in
-		(* Call the function *)
-		LinearConstraint.nnconvex_time_elapse variables other_variables (perform_constraint lc)
-	| Op_time_past (variables, lc) ->
-		(* Create the set of all variables *)
-		let all_variables = list_of_interval 0 (input.nb_variables - 1) in
-		(* Perform the intersection *)
-		let other_variables = list_diff all_variables variables in
-		(* Call the function *)
-		LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
-	| Op_convex lc -> lc
-in
-
-let perform_bool = function
-	| Op_equal (lc1, lc2) -> LinearConstraint.nnconvex_constraint_is_equal (perform_constraint lc1) (perform_constraint lc2)
-	| Op_included (lc1, lc2) -> LinearConstraint.nnconvex_constraint_is_leq (perform_constraint lc1) (perform_constraint lc2)
-	| Op_satisfiable lc -> not (LinearConstraint.nnconvex_constraint_is_false (perform_constraint lc))
-in
-
-let perform_oppoint = function
-	| Op_exhibit lc -> LinearConstraint.nnconvex_constraint_exhibit_point (perform_constraint lc)
-in
-
-let result = string_of_list_of_string_with_sep "\n\n(*--------------------*)\n\n" (List.map (fun operation ->
+	let result =
 	(* First recall the operation in comments *)
-	"(* OPERATION: \n"
-	^ (InputPrinter.string_of_operation input.variable_names operation)
+	"(* OPERATION " ^ (string_of_int !debug_nb_operation) ^ ": \n"
+	^ (InputPrinter.string_of_operation abstract_input.variable_names abstract_input.operation)
 	^ "\n*)\n"
 	^ begin_marker ^ "\n"
 	
 	^ (
 	(* Solve and print *)
-	match operation with
+	match abstract_input.operation with
 		| Op_bool b -> string_of_bool (perform_bool b)
 		| Op_constraint c -> string_of_nncc (perform_constraint c)
 		| Op_point op -> let result = try(
-			InputPrinter.string_of_valuation input.variables input.variable_names (perform_oppoint op)
+			InputPrinter.string_of_valuation abstract_input.variables abstract_input.variable_names (perform_oppoint op)
 			) with LinearConstraint.EmptyConstraint -> "ERROR! Empty constraint"
 			in result
 		| Op_nothing -> ("I am very proud to do nothing.")
@@ -283,16 +293,22 @@ let result = string_of_list_of_string_with_sep "\n\n(*--------------------*)\n\n
 	
 	^ "\n" ^ end_marker ^ "\n"
 	
-	)  input.operations
-	)
+	in
+	(**************************************************)
+	(* Print the result *)
+	(**************************************************)
+	print_message Verbose_standard ("\nResult " ^ (string_of_int !debug_nb_operation) ^ ":\n");
+	print_message Verbose_nodebug (result);
+
+	(* Return result *)
+	result
+
+) parsing_structure
 in
 
 
-(**************************************************)
-(* Print the result *)
-(**************************************************)
-print_message Verbose_standard ("\nResult:\n");
-print_message Verbose_nodebug (result);
+let result = string_of_list_of_string_with_sep "\n\n(*--------------------*)\n\n" results in
+
 
 
 (**************************************************)
