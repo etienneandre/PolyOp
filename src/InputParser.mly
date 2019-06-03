@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/05/31
+ * Last modified: 2019/06/03
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -48,15 +48,15 @@ let parse_error s =
 %token OP_L OP_LEQ OP_EQ OP_GEQ OP_G OP_ASSIGN
 
 %token LPAREN RPAREN LBRACE RBRACE LSQBRA RSQBRA
-%token AMPERSAND APOSTROPHE COLON COMMA PIPE SEMICOLON
+%token AMPERSAND APOSTROPHE COLON COMMA DOUBLEAMPERSAND /* DOUBLEPIPE PIPE */ SEMICOLON
 
 %token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE
 
 %token EOF
 
 /*%left OP_L OP_LEQ OP_EQ OP_GEQ OP_G*/
-%left PIPE CT_OR        /* lowest precedence */
-%left AMPERSAND CT_AND  /* medium precedence */
+%left DOUBLEPIPE PIPE CT_OR        /* lowest precedence */
+%left AMPERSAND DOUBLEAMPERSAND CT_AND  /* medium precedence */
 %nonassoc CT_NOT        /* highest precedence */
 
 
@@ -158,7 +158,8 @@ nnconvex_predicate:
 ;
 
 convex_predicate:
-	linear_constraint AMPERSAND convex_predicate { $1 :: $3 }
+	| linear_constraint AMPERSAND convex_predicate { $1 :: $3 }
+	| linear_constraint DOUBLEAMPERSAND convex_predicate { $1 :: $3 }
 	| linear_constraint { [$1] }
  	| LPAREN convex_predicate RPAREN { $2 }
 ;
