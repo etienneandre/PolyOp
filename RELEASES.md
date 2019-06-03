@@ -1,5 +1,5 @@
 *******************************************************
-# FUTURE release 1.0    (2019-06-03, build 117)
+# release 1.0    (2019-06-03, build 117)
 
 ### Features
 * Allow exhibition of a point in a polyhedron
