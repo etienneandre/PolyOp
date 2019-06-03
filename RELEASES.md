@@ -1,5 +1,5 @@
 *******************************************************
-# FUTURE release 1.0    (2019-??-??, build TODO)
+# FUTURE release 1.0    (2019-06-03, build 117)
 
 ### Features
 * Allow exhibition of a point in a polyhedron
@@ -8,8 +8,13 @@
 ### Options
 * Option `-debug` becomes `-verbose`
 
+### Output
+* Results are better organized
+* Minor corrections in display (fractions, time)
+
 ### Internal
 * Renamed most modules
+* Added basic non-regression tests
 
 
 *******************************************************
