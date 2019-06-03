@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/05/31
+ * Last modified: 2019/06/03
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -47,6 +47,29 @@ let string_of_array_of_string =
 let string_n_times n s =
 	string_of_array_of_string (Array.make n s)
 
+(* 'add_digits n i' adds (m-n) '0' in front of 'i', if 'i' is an integer with only 'm' digits; result is always a string *)
+let add_digits n i =
+	(* Convert to string *)
+	let str_i = string_of_int i in
+	(* Count the number of digits *)
+	let size_i = String.length str_i in
+	(
+		(* Add more *)
+		if size_i <= n then
+			(string_n_times (n - size_i) "0")
+		(* Otherwise keep unchanged *)
+		else ""
+	) ^ str_i
+
+(* Round a float with 3 digits after comma, and convert to string *)
+let round3_float d =
+(* 	((float_of_int) (int_of_float (d *. 1000.0))) /. 1000.0 *)
+	(* Integer part *)
+	let int_part = string_of_int (int_of_float (floor d)) in
+	(* Floating part on 3 digits *)
+	let real_part = add_digits 3 ((int_of_float (d *. 1000.0)) mod 1000) in
+	(* Concatenate both *)
+	int_part ^ "." ^ real_part
 
 
 
@@ -179,9 +202,9 @@ let time_from t =
 
 (* Print a number of seconds *)
 let string_of_seconds nb_seconds =
-	let duration = duration_of_float nb_seconds in
-	let plural = (if duration <= 1.0 then "" else "s") in
-	(string_of_float duration) ^ " second" ^ plural
+	let duration = round3_float nb_seconds in
+	let plural = (if nb_seconds <= 1.0 then "" else "s") in
+	duration ^ " second" ^ plural
 
 
 (* Create a string of the form 'after x seconds', where x is the time since the program started *)
