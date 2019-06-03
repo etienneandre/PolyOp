@@ -231,19 +231,12 @@ let random_element l =
 	let nth = Random.int (List.length l) in
 	List.nth l nth
 
-(* list_of_interval a b Create a fresh new list filled with elements [a, a+1, ..., b-1, b] *)
-let list_of_interval a b =
-	(* Check if the interval is valid *)
-	if a > b then [] else(
-		(* Create an array (more efficient?) *)
-		let ar = Array.make (b - a + 1) a in
-		(* Fill it (no need to update index 0) *)
-		for index = 1 to b - a do
-			ar.(index) <- index + a
-		done;
-		(* Return a list *)
-		Array.to_list ar
-	)
+(** list_of_interval l u Create a fresh new list filled with elements [l, l+1, ..., u-1, u] *)
+let rec list_of_interval l u =
+	if ( l > u )
+		then []
+	else l :: (list_of_interval ( l + 1 ) u)
+
 
 (* Intersection of 2 lists (keeps the order of the elements as in l1) *)
 let list_inter l1 l2 =
