@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * Université Paris 13, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2019/06/03
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -72,6 +73,10 @@ val mul : t -> t -> t
 val div : t -> t -> t
 val neg : t -> t
 val abs : t -> t
+
+val min : t -> t -> t
+val max : t -> t -> t
+
 
 (**************************************************)
 (** {2 Comparison Functions} *)

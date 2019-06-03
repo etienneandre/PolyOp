@@ -141,6 +141,9 @@ let abs a =
 	if Gmp.Q.cmp (get_mpq a) (Gmp.Q.zero) >= 0 then a
 	else neg a
 
+
+
+
 (**************************************************)
 (** {2 Comparison Functions} *)
 (**************************************************)
@@ -165,6 +168,12 @@ let g  = ( >/ )
 (*let ge = comparison_gen (>=)*)
 (*                            *)
 (*let g = comparison_gen (>)  *)
+
+let min a b =
+	if le a b then a else b
+
+let max a b =
+	if ge a b then a else b
 
 
 (**************************************************)
