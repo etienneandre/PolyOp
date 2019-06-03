@@ -3,10 +3,11 @@
  *                     PolyOp
  *
  * National University of Singapore
+ * Université Paris 13, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2011/04/27
+ * Last modified: 2019/06/03
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -84,7 +85,17 @@ let numconst_of_mpz z = Gmp.Q.from_z z
 
 let mpq_of_numconst = get_mpq
 
-let string_of_numconst a = Gmp.Q.to_string (get_mpq a)
+let string_of_numconst a =
+	(* Avoid 0/1 *)
+	if a =/ (Gmp.Q.zero) then "0" else(
+		(* Avoid 1/1 *)
+		let den = get_den a in 
+		if den = (Gmp.Z.from_int 1) then
+			Gmp.Z.to_string (get_num a)
+		else
+			(* Nice predefined function *)
+			Gmp.Q.to_string (get_mpq a)
+	)
 
 
 (**************************************************)
