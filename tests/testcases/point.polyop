@@ -13,3 +13,36 @@
 
 exhibitpoint (p1 = 2)
 
+exhibitpoint (1 <= p1 & p1 <= 2)
+
+exhibitpoint (1 < p1 & p1 <= 2)
+
+exhibitpoint (1 < p1 & p1 < 2)
+
+exhibitpoint (p1 > 2)
+
+exhibitpoint (p1 >= 2)
+
+exhibitpoint (p1 <= 5)
+
+exhibitpoint (p1 < 5)
+
+exhibitpoint (p1 < 1)
+
+exhibitpoint (p1 <= 0)
+
+exhibitpoint (p1 < 0)
+
+exhibitpoint (p1 < -2045)
+
+exhibitpoint (p1 <= 1 & p1 > 1)
+
+exhibitpoint (p1 <= 1 & p1 >= 1)
+
+exhibitpoint (p1 < 1 & p1 > 1)
+
+exhibitpoint (p1 < 1 & p1 >= 1)
+
+
+exhibitpoint (p1 > p2 & p2 > 3)
+
