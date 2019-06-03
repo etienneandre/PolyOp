@@ -154,10 +154,10 @@ Arg.parse speclist anon_fun usage_msg;
 
 (* Case no file *)
 if !nb_args < 1 then(
-	(* print_error ("Please give a source file name."); 
+	 print_error ("Please give a source file name."); 
 	Arg.usage speclist usage_msg;
-	abort_program (); exit(0)*)
-	file := "test.polyop"
+	abort_program (); exit(0)
+(* 	file := "test.polyop" *)
 );
 
 (* Definition of output *)
