@@ -1084,6 +1084,9 @@ let nnconvex_hide = adhoc_nnconvex_hide
 (** Exhibit a point in a nnconvex_constraint; raise EmptyConstraint if the constraint is empty. *)
 (*** NOTE: we try to exhibit in each dimension the minimum, except if no minimum (infimum) in which case we get either the middle between the infimum and the supremum (if any supremum), or the infimum if no supremum; and dually if no infimum. ***)
 let nnconvex_constraint_exhibit_point nnconvex_constraint =
+	(* First quick check that the constraint is satisfiable *)
+	if nnconvex_constraint_is_false nnconvex_constraint then raise EmptyConstraint;
+	
 	(* Create an array for storing the valuation *)
 	let valuations = Array.make !total_dim NumConst.zero in
 	
@@ -1147,9 +1150,18 @@ let nnconvex_constraint_exhibit_point nnconvex_constraint =
 				(* Print some information *)
 				if verbose_mode_greater Verbose_high then
 					print_message Verbose_high ("Supremum of dimension " ^ (string_of_int dimension) ^ " is " ^ (NumConst.string_of_numconst supremum) ^ ". Is it a maximum? " ^ (string_of_bool is_maximum));
-			
+					
+				(* Case 0: bounded from neither below nor above: return 1 (arbitrarily) *)
+				if not bounded_from_below && not bounded_from_above then(
+					(* Print some information *)
+					print_message Verbose_high ("Dimension " ^ (string_of_int dimension) ^ " is bounded from neither below nor above: pick 1");
+					
+					(* Return 1 *)
+					NumConst.one
+				)
+
 				(* Case 1: infimum and no supremum: return infimum + 1 *)
-				if bounded_from_below && not bounded_from_above then
+				else if bounded_from_below && not bounded_from_above then
 					NumConst.add infimum NumConst.one
 				
 				(* Case 2: no infimum and supremum: return 1 if 1 is allowed, otherwise supremum - 1, i.e., min(1, supremum - 1) *)
@@ -1159,7 +1171,7 @@ let nnconvex_constraint_exhibit_point nnconvex_constraint =
 				(* Case 3: infimum and supremum: return (infimum + supremum) / 2 *)
 				else(
 					(* If empty constraint: problem, raise exception *)
-					if NumConst.l supremum infimum || (NumConst.le supremum infimum && (not is_maximum || not is_minimum)) then raise EmptyConstraint;
+					if NumConst.l supremum infimum || (NumConst.le supremum infimum && (not is_maximum || not is_minimum)) then raise (InternalError "This situation is not supposed to happen, as the constraint was shown to be non-empty");
 					
 					(* Compute average  *)
 					NumConst.div (
