@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/05/31
+ * Last modified: 2019/06/03
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -273,7 +273,10 @@ let result = string_of_list_of_string_with_sep "\n\n(*--------------------*)\n\n
 	match operation with
 		| Op_bool b -> string_of_bool (perform_bool b)
 		| Op_constraint c -> string_of_nncc (perform_constraint c)
-		| Op_point op -> InputPrinter.string_of_valuation input.variables input.variable_names (perform_oppoint op)
+		| Op_point op -> let result = try(
+			InputPrinter.string_of_valuation input.variables input.variable_names (perform_oppoint op)
+			) with LinearConstraint.EmptyConstraint -> "ERROR! Empty constraint"
+			in result
 		| Op_nothing -> ("I am very proud to do nothing.")
 	(* 	| _ -> raise (InternalError "not implemented") *)
 	)
