@@ -77,7 +77,7 @@ let round3_float d =
 (** Version string *)
 (****************************************************************)
 
-let version = "1.0 alpha"
+let version = "1.0"
 
 let version_string () = 
 	("PolyOp " ^ version)
@@ -103,7 +103,6 @@ let print_header_string () =
 	^ "*                        National University of Singapore  *\n"
 	^ "*                   IRCCyN, École Centrale Nantes, France  *\n"
 	^ "*                 Université Paris 13, LIPN, CNRS, France  *\n"
-(* 	^ "*  " ^ (string_n_times (length_header - (String.length imitator_url)) " ") ^ imitator_url ^ "  *\n" *)
 	^ "*                                                          *\n"
 	^ "*  " ^ (string_n_times (length_header - (String.length build_info)) " ") ^ build_info ^ "  *\n"
 	^ "************************************************************\n"
