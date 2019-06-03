@@ -1074,7 +1074,6 @@ let adhoc_nnconvex_hide variables nnconvex_constraint =
 
 
 let nnconvex_hide = adhoc_nnconvex_hide
-	
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
