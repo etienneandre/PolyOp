@@ -120,5 +120,403 @@ END ANSWER
 	,
 	
 	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2019/06/03
+		# Test last modified       : 2019/06/03
+		# Test for PolyOp version  : 1.0
+		'purpose'    : 'Test the point exhibition operation (1 dimension)',
+		'input_files': ['point-1dim.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'point-1dim.polyop.res' , 'content' : """
+(* OPERATION 1: 
+exhibit(  p1 = 2)
+*)
+BEGIN ANSWER
+p1=2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 2: 
+exhibit(  p1 >= 1
+& 2 >= p1)
+*)
+BEGIN ANSWER
+p1=1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 3: 
+exhibit(  p1 > 1
+& 2 >= p1)
+*)
+BEGIN ANSWER
+p1=3/2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 4: 
+exhibit(  p1 > 1
+& 2 > p1)
+*)
+BEGIN ANSWER
+p1=3/2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 5: 
+exhibit(  p1 > 2)
+*)
+BEGIN ANSWER
+p1=3
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 6: 
+exhibit(  p1 >= 2)
+*)
+BEGIN ANSWER
+p1=2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 7: 
+exhibit(  5 >= p1)
+*)
+BEGIN ANSWER
+p1=1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 8: 
+exhibit(  5 > p1)
+*)
+BEGIN ANSWER
+p1=1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 9: 
+exhibit(  1 > p1)
+*)
+BEGIN ANSWER
+p1=0
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 10: 
+exhibit(  0 >= p1)
+*)
+BEGIN ANSWER
+p1=-1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 11: 
+exhibit(  0 > p1)
+*)
+BEGIN ANSWER
+p1=-1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 12: 
+exhibit(  0 > 2045 + p1)
+*)
+BEGIN ANSWER
+p1=-2046
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 13: 
+exhibit(false)
+*)
+BEGIN ANSWER
+ERROR! Empty constraint
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 14: 
+exhibit(  p1 = 1)
+*)
+BEGIN ANSWER
+p1=1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 15: 
+exhibit(false)
+*)
+BEGIN ANSWER
+ERROR! Empty constraint
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 16: 
+exhibit(false)
+*)
+BEGIN ANSWER
+ERROR! Empty constraint
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 17: 
+exhibit(true)
+*)
+BEGIN ANSWER
+p1=1
+END ANSWER
+
+			"""
+			} #end statespace file
+		] # end expectations
+	} # end test case
+			
+	,
+	
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2019/06/03
+		# Test last modified       : 2019/06/03
+		# Test for PolyOp version  : 1.0
+		'purpose'    : 'Test the point exhibition operation (2 dimensions)',
+		'input_files': ['point-2dim.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'point-2dim.polyop.res' , 'content' : """
+(* OPERATION 1: 
+exhibit(  p1 = 2)
+*)
+BEGIN ANSWER
+p1=2, p2=1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 2: 
+exhibit(  p1 > 2)
+*)
+BEGIN ANSWER
+p1=3, p2=1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 3: 
+exhibit(  0 > p1)
+*)
+BEGIN ANSWER
+p1=-1, p2=1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 4: 
+exhibit(  p2 > 3
+& p1 > p2)
+*)
+BEGIN ANSWER
+p2=4, p1=5
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 5: 
+exhibit(  5 > p1
+& p1 > p2)
+*)
+BEGIN ANSWER
+p2=1, p1=3
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 6: 
+exhibit(  p1 > 3
+& p1 = p2)
+*)
+BEGIN ANSWER
+p1=4, p2=4
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 7: 
+exhibit(  p1 > 5
+& p1 + 2 = p2)
+*)
+BEGIN ANSWER
+p1=6, p2=8
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 8: 
+exhibit(  p1 + 1 > p2
+& p1 > 5
+& p2 > p1)
+*)
+BEGIN ANSWER
+p1=6, p2=13/2
+END ANSWER
+
+
+			"""
+			} #end statespace file
+		] # end expectations
+	} # end test case
+			
+
+	,
+	
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2019/06/03
+		# Test last modified       : 2019/06/03
+		# Test for PolyOp version  : 1.0
+		'purpose'    : 'Test the point exhibition operation (3 dimensions)',
+		'input_files': ['point-3dim.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'point-3dim.polyop.res' , 'content' : """
+(* OPERATION 1: 
+exhibit(  p2 > p3
+& p1 > p2)
+*)
+BEGIN ANSWER
+p2=1, p1=2, p3=0
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 2: 
+exhibit(  p1 > p2
+& p2 = p3)
+*)
+BEGIN ANSWER
+p2=1, p1=2, p3=1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 3: 
+exhibit(  p1 > p2
+& p3 > p2)
+*)
+BEGIN ANSWER
+p2=1, p1=2, p3=2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 4: 
+exhibit(  p2 + p3 > p1
+& p1 > p2)
+*)
+BEGIN ANSWER
+p2=1, p1=2, p3=2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 5: 
+exhibit(  p2 > p3
+& p3 > 5
+& p1 > p2)
+*)
+BEGIN ANSWER
+p2=6, p1=7, p3=11/2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 6: 
+exhibit(  p2 > p3
+& 2 > p1
+& p1 > p2)
+*)
+BEGIN ANSWER
+p2=1, p1=3/2, p3=0
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 7: 
+exhibit(  p2 > 0
+& p2 > p3
+& p1 > p2)
+*)
+BEGIN ANSWER
+p2=1, p1=2, p3=0
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 8: 
+exhibit(  0 > p3
+& p1 > 0
+& p2 = 0)
+*)
+BEGIN ANSWER
+p2=0, p1=1, p3=-1
+END ANSWER
+
+
+
+			"""
+			} #end statespace file
+		] # end expectations
+	} # end test case
+			
+	#------------------------------------------------------------
 ### THE END
 ]

@@ -1,0 +1,33 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Paris 13, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2019/05/31
+ * Last modified: 2019/06/03
+ *
+ ************************************************************)
+ 
+(*** Tests in 1.5 dimension (i.e. 1 dimension with second unused variable ***)
+
+exhibitpoint (p1 = 2 & p2 = p2)
+
+exhibitpoint (p1 > 2 & p2 = p2)
+
+exhibitpoint (p1 < 0 & p2 = p2)
+
+
+(*** Tests in 2 dimensions ***)
+
+exhibitpoint (p1 > p2 & p2 > 3)
+
+exhibitpoint (p1 > p2 & p1 < 5)
+
+exhibitpoint (p1 > 3 & p2 = p1)
+
+exhibitpoint (p1 > 5 & p2 - p1 = 2)
+
+exhibitpoint (p1 > 5 & p2 - p1 > 0 & p2 - p1 < 1)
+

@@ -6,10 +6,11 @@
  *
  * Author:        Étienne André
  * Created:       2019/05/31
- * Last modified: 2019/05/31
+ * Last modified: 2019/06/03
  *
  ************************************************************)
  
+(*** Tests in 1 dimension ***)
 
 exhibitpoint (p1 = 2)
 
@@ -43,6 +44,4 @@ exhibitpoint (p1 < 1 & p1 > 1)
 
 exhibitpoint (p1 < 1 & p1 >= 1)
 
-
-exhibitpoint (p1 > p2 & p2 > 3)
-
+exhibitpoint (p1 = p1)

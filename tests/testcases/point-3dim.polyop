@@ -1,0 +1,29 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Paris 13, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2019/05/31
+ * Last modified: 2019/06/03
+ *
+ ************************************************************)
+ 
+(*** Tests in 3 dimensions ***)
+
+exhibitpoint (p1 > p2 & p2 > p3)
+
+exhibitpoint (p1 > p2 & p2 = p3)
+
+exhibitpoint (p1 > p2 & p2 < p3)
+
+exhibitpoint (p1 > p2 & p1 < p3 + p2)
+
+exhibitpoint (p1 > p2 & p2 > p3 & p3 > 5)
+
+exhibitpoint (p1 > p2 & p2 > p3 & p1 < 2)
+
+exhibitpoint (p1 > p2 & p2 > p3 & p2 > 0)
+
+exhibitpoint (p1 > p2 & p2 > p3 & p2 = 0)
