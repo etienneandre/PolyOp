@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/05/31
+ * Last modified: 2019/06/03
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -530,7 +530,7 @@ let intersection_assign linear_constraint constrs =
 let hide variables linear_constraint =
 	(* Print some information *)
 	if verbose_mode_greater Verbose_total then (
-		List.iter (fun v ->	print_message Verbose_high ("hide v" ^ string_of_int v)) variables;
+		List.iter (fun v -> print_message Verbose_high ("hide v" ^ string_of_int v)) variables;
 	);
 	(* copy polyhedron, as PPL function has sideeffects *)
 	let poly = ppl_new_NNC_Polyhedron_from_NNC_Polyhedron linear_constraint in
@@ -543,7 +543,7 @@ let hide variables linear_constraint =
 let hide_assign variables linear_constraint =
 	(* Print some information *)
 	if verbose_mode_greater Verbose_total then (
-		List.iter (fun v ->	print_message Verbose_high ("hide v" ^ string_of_int v)) variables;
+		List.iter (fun v -> print_message Verbose_high ("hide v" ^ string_of_int v)) variables;
 	);
 	ppl_Polyhedron_unconstrain_space_dimensions linear_constraint variables;
 	assert_dimensions linear_constraint
@@ -1087,57 +1087,87 @@ let nnconvex_constraint_exhibit_point nnconvex_constraint =
 	(* Create an array for storing the valuation *)
 	let valuations = Array.make !total_dim NumConst.zero in
 	
+	(* Print some information *)
+	print_message Verbose_high "Entering nnconvex_constraint_exhibit_point…";
+	
+	(* Print some information *)
+	print_message Verbose_high "Copying the constraint…";
+	
 	(* Copy the constraint, as we will restrict it dimension by dimension *)
 	let restricted_nnconvex_constraint = nnconvex_copy nnconvex_constraint in
 	
 	(* Iterate on dimensions *)
-	for dimension = 0 to !total_dim do
+	for dimension = 0 to !total_dim - 1 do
 	
-		(* Get infimum *)
-       
-       (* Create linear expression with just the dimension of interest *)
-       let linear_expression : Ppl.linear_expression = ppl_linear_expression_of_linear_term (make_linear_term [(NumConst.one, dimension)] NumConst.zero) in
-       
-		(*** DOC: function signature is val ppl_Pointset_Powerset_NNC_Polyhedron_minimize : pointset_powerset_nnc_polyhedron ->
-       linear_expression -> bool * Gmp.Z.t * Gmp.Z.t * bool ***)
-		let bounded_from_below, infimum_numerator, infimum_denominator, is_minimum = ppl_Pointset_Powerset_NNC_Polyhedron_minimize restricted_nnconvex_constraint linear_expression in
-		
-		(* Build the infimum *)
-		let infimum = NumConst.numconst_of_zfrac infimum_numerator infimum_denominator in
-
 		(* Find the valuation for this dimension *)
 		let valuation =
-		(* If minimum: pick it *)
-		if bounded_from_below && is_minimum then(
-			(* Return the infimum *)
-			infimum
+
+		(* If variable unbound: arbitrarily return 1 *)
+		if not (ppl_Pointset_Powerset_NNC_Polyhedron_constrains restricted_nnconvex_constraint dimension) then(
 			
-		)else(
-		(* Otherwise find supremum *)
-			let bounded_from_above, supremum_numerator, supremum_denominator, is_maximum = ppl_Pointset_Powerset_NNC_Polyhedron_maximize restricted_nnconvex_constraint linear_expression in
-			
-			(* Build the supremum *)
-			let supremum = NumConst.numconst_of_zfrac supremum_numerator supremum_denominator in
-			
-			(* Case 1: infimum and no supremum: return infimum + 1 *)
-			if bounded_from_below && not bounded_from_above then
-				NumConst.add infimum NumConst.one
-			
-			(* Case 2: no infimum and supremum: return supremum - 1 *)
-			else if not bounded_from_below && bounded_from_above then
-				NumConst.sub supremum NumConst.one
-			
-			(* Case 3: infimum and supremum: return (infimum + supremum) / 2 *)
-			else(
-				(* If empty constraint: problem, raise exception *)
-				if NumConst.l supremum infimum then raise EmptyConstraint;
+			(* Print some information *)
+			print_message Verbose_high ("Dimension " ^ (string_of_int dimension) ^ " is unconstrained here.");
 				
-				(* Compute average  *)
-				NumConst.div (
-					NumConst.add infimum supremum
-				) (NumConst.numconst_of_int 2)
-			)
+			(* return 1 *)
+			NumConst.one
 		)
+		else(
+			
+			(* Print some information *)
+			print_message Verbose_high ("Getting infimum of dimension " ^ (string_of_int dimension) ^ "…");
+		
+			(* Get infimum *)
+		
+		(* Create linear expression with just the dimension of interest *)
+		let linear_expression : Ppl.linear_expression = ppl_linear_expression_of_linear_term (make_linear_term [(NumConst.one, dimension)] NumConst.zero) in
+		
+			(*** DOC: function signature is val ppl_Pointset_Powerset_NNC_Polyhedron_minimize : pointset_powerset_nnc_polyhedron ->
+		linear_expression -> bool * Gmp.Z.t * Gmp.Z.t * bool ***)
+			let bounded_from_below, infimum_numerator, infimum_denominator, is_minimum = ppl_Pointset_Powerset_NNC_Polyhedron_minimize restricted_nnconvex_constraint linear_expression in
+			
+			(* Build the infimum *)
+			let infimum = NumConst.numconst_of_zfrac infimum_numerator infimum_denominator in
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then
+				print_message Verbose_high ("Infimum of dimension " ^ (string_of_int dimension) ^ " is " ^ (NumConst.string_of_numconst infimum) ^ ". Is it a minimum? " ^ (string_of_bool is_minimum));
+		
+			(* If minimum: pick it *)
+			if bounded_from_below && is_minimum then(
+				(* Return the infimum *)
+				infimum
+				
+			)else(
+			(* Otherwise find supremum *)
+				let bounded_from_above, supremum_numerator, supremum_denominator, is_maximum = ppl_Pointset_Powerset_NNC_Polyhedron_maximize restricted_nnconvex_constraint linear_expression in
+				
+				(* Build the supremum *)
+				let supremum = NumConst.numconst_of_zfrac supremum_numerator supremum_denominator in
+				
+				(* Print some information *)
+				if verbose_mode_greater Verbose_high then
+					print_message Verbose_high ("Supremum of dimension " ^ (string_of_int dimension) ^ " is " ^ (NumConst.string_of_numconst supremum) ^ ". Is it a maximum? " ^ (string_of_bool is_maximum));
+			
+				(* Case 1: infimum and no supremum: return infimum + 1 *)
+				if bounded_from_below && not bounded_from_above then
+					NumConst.add infimum NumConst.one
+				
+				(* Case 2: no infimum and supremum: return 1 if 1 is allowed, otherwise supremum - 1, i.e., min(1, supremum - 1) *)
+				else if not bounded_from_below && bounded_from_above then
+					NumConst.min NumConst.one (NumConst.sub supremum NumConst.one)
+				
+				(* Case 3: infimum and supremum: return (infimum + supremum) / 2 *)
+				else(
+					(* If empty constraint: problem, raise exception *)
+					if NumConst.l supremum infimum || (NumConst.le supremum infimum && (not is_maximum || not is_minimum)) then raise EmptyConstraint;
+					
+					(* Compute average  *)
+					NumConst.div (
+						NumConst.add infimum supremum
+					) (NumConst.numconst_of_int 2)
+				)
+			) (* end else if no minimum *)
+		) (* end else if not unbound *)
 		in
 
 		(* Store it *)
