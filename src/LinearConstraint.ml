@@ -1170,16 +1170,27 @@ let nnconvex_constraint_exhibit_point nnconvex_constraint =
 		) (* end else if not unbound *)
 		in
 
+		(* Print some information *)
+		if verbose_mode_greater Verbose_medium then(
+			print_message Verbose_medium ("Valuation found for dimension " ^ (string_of_int dimension) ^ ": " ^ (NumConst.string_of_numconst valuation) ^ "");
+		);
+	
 		(* Store it *)
 		valuations.(dimension) <- valuation;
 			
 		(* Constrain the constraint with the found valuation, i.e., dimension = valuation *)
 		let valuation_assignment = nnconvex_constraint_of_linear_constraint (make [
 			make_linear_inequality
-				(make_linear_term [(NumConst.one, dimension)] valuation)
+				(* "dimension - valuation = 0" *)
+				(make_linear_term [(NumConst.one, dimension)] (NumConst.neg valuation))
 				Op_eq
 			]) in
 		nnconvex_intersection_assign restricted_nnconvex_constraint valuation_assignment;
+	
+		(* Print some information *)
+		if verbose_mode_greater Verbose_high then(
+			print_message Verbose_high ("Current constraint after handling dimension " ^ (string_of_int dimension) ^ " is: " ^ (string_of_nnconvex_constraint (fun v -> "v_" ^ (string_of_int v)) restricted_nnconvex_constraint ) ^ "");
+		);
 		
 	done;
 	
@@ -1197,5 +1208,3 @@ let linear_constraint_list_of_nnconvex_constraint =
 	get_disjuncts
 
 
-	
-	
