@@ -8,7 +8,7 @@
 #
 #  _oasis authors: Étienne André
 #  Created:        2016/02/29
-#  Last modified:  2019/05/31
+#  Last modified:  2019/06/04
 ###############################################################
 
 OASISFormat: 0.3
@@ -37,8 +37,9 @@ Test startingcomment
   Command: echo "\n********** STARTING TESTS **********\n"
 
 Test tes1
-  Command: echo "\n********** TEST 1 **********\n"; \
-       ./bin/polyop examples/example.polyop
+ # Command: echo "\n********** TEST 1 **********\n"; \
+ #      ./bin/polyop examples/example.polyop
+  Command: python ./tests/test.py
 
 Test finalcomment
   Command: echo "\n********** END TESTS **********\n"
