@@ -1,0 +1,78 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Paris 13, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2019/06/04
+ * Last modified: 2019/06/04
+ *
+ ************************************************************)
+
+(* Basic operation *)
+zonepred
+	(x = y & x >= 0)
+	( x - y = 2 & x >= 2)
+	( x = 2 & y = 0 )
+	(x, y)
+	y
+
+(* Basic operation, syntax slightly changed to test the parser *)
+zonepred
+	(x = y & x >= 0)
+	( x - y = 2 & x >= 2)
+	( x = 2 & y = 0 )
+	x, y
+	y
+
+(* Parsing error *)
+(*zonepred
+	(x = y & x >= 0)
+	( x - y = 2 & x >= 2)
+	 x = 2 & y = 0 
+	x, y
+	x*)
+
+(* Basic operation with some time-elapsing *)
+zonepred
+	(x = y & x >= 0)
+	( x - y = 2 & x >= 2)
+	( x = 4 & y = 0 )
+	(x, y)
+	y
+
+(* Basic operation with some time-elapsing *)
+zonepred
+	(x = y & x >= 0)
+	( x - y = 2 & x >= 2)
+	( x = 4 & y = 1 )
+	(x, y)
+	y
+
+(* Basic operation with one parameter *)
+zonepred
+	(x = y & x >= 0 & p >= 0)
+	( x - y = p & x >= p & p >= 0)
+	( x = 5 & y = 0  & p >= 0)
+	(x, y)
+	y
+
+
+(* Basic operation with one parameter and an invariant in z1 *)
+zonepred
+	(x = y & x >= 0 & p >= 0 & x <= 8)
+	( x - y = p & x >= p & p >= 0 & x - y <= 8 )
+	( x = 5 & y = 0  & p >= 0)
+	(x, y)
+	y
+
+
+(* Basic operation with one parameter and an invariant in z1 and a constraint over p*)
+zonepred
+	(x = y & x >= 0 & p >= 0 & x <= 8)
+	( x - y = p & x >= p & p >= 0 & x - y <= 8 )
+	( x = 10 & y = 4 & p = 6)
+	(x, y)
+	y
+

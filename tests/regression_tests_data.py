@@ -581,5 +581,139 @@ END ANSWER
 	} # end test case
 			
 	#------------------------------------------------------------
-### THE END
+	
+	,
+	
+	
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2019/06/04
+		# Test last modified       : 2019/06/04
+		# Test for PolyOp version  : 1.0
+		'purpose'    : 'Test the zonepred operation',
+		'input_files': ['zonepred.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'zonepred.polyop.res' , 'content' : """
+(* OPERATION 1: 
+zonepred (  x >= 0
+& x = y,   x >= 2
+& x = 2 + y,   x = 2
+& y = 0, x, y, y)
+*)
+BEGIN ANSWER
+  x = 2
+& y = 2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 2: 
+zonepred (  x >= 0
+& x = y,   x >= 2
+& x = 2 + y,   x = 2
+& y = 0, x, y, y)
+*)
+BEGIN ANSWER
+  x = 2
+& y = 2
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 3: 
+zonepred (  x >= 0
+& x = y,   x >= 2
+& x = 2 + y,   x = 4
+& y = 0, x, y, y)
+*)
+BEGIN ANSWER
+  x = 4
+& y = 4
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 4: 
+zonepred (  x >= 0
+& x = y,   x >= 2
+& x = 2 + y,   x = 4
+& y = 1, x, y, y)
+*)
+BEGIN ANSWER
+  4 >= x
+& x >= 3
+& x = y
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 5: 
+zonepred (  p >= 0
+& x >= 0
+& x = y,   p >= 0
+& x >= p
+& p + y = x,   p >= 0
+& x = 5
+& y = 0, x, y, y)
+*)
+BEGIN ANSWER
+  p >= 0
+& x = 5
+& y = 5
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 6: 
+zonepred (  x >= 0
+& p >= 0
+& 8 >= x
+& x = y,   x >= p
+& p >= 0
+& 8 >= p
+& x = p + y,   p >= 0
+& x = 5
+& y = 0, x, y, y)
+*)
+BEGIN ANSWER
+  p >= 0
+& x = 5
+& y = 5
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 7: 
+zonepred (  x >= 0
+& p >= 0
+& 8 >= x
+& x = y,   x >= p
+& p >= 0
+& 8 >= p
+& x = p + y,   x = 10
+& p = 6
+& y = 4, x, y, y)
+*)
+BEGIN ANSWER
+  8 >= x
+& x >= 6
+& p = 6
+& x = y
+END ANSWER
+
+			"""
+			} #end statespace file
+		] # end expectations
+	} # end test case
+			
+	,
+	### THE END
 ]
