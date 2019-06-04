@@ -21,7 +21,6 @@ then
   ocaml setup.ml -distclean
 fi
 
-# … -configure  --enable-tests 
 oasis setup \
-&& ocaml setup.ml -configure  \
+&& ocaml setup.ml -configure --enable-tests \
 && ocaml setup.ml -all
