@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/03
+ * Last modified: 2019/06/04
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -60,6 +60,7 @@ let string_of_operation variable_names operation =
 		| Op_simplify c -> "simplify(" ^ (string_of_constraint c) ^ ")"
 		| Op_time_elapsing (vars, cp) -> "elapsing (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		| Op_time_past (vars, cp) -> "past (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
+		| Op_zonepred (z1, z2, z, t, r) -> "zonepred (" ^ (string_of_constraint z1) ^ ", " ^ (string_of_constraint z2) ^ ", " ^ (string_of_constraint z) ^ ", " ^ (convert_vars t) ^ ", " ^ (convert_vars r) ^ ")"
 		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint variable_names cp
 	in
 	

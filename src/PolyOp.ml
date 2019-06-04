@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/03
+ * Last modified: 2019/06/04
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -245,19 +245,20 @@ List.map (fun parsed_operation ->
 		| Op_not lc -> LinearConstraint.negate (perform_constraint lc)
 		| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)
 		| Op_time_elapsing (variables, lc) ->
-			(* Create the set of all variables *)
-			let all_variables = list_of_interval 0 (abstract_input.nb_variables - 1) in
-			(* Perform the intersection *)
-			let other_variables = list_diff all_variables variables in
-			(* Call the function *)
+			(* Find constant (non elapsing) variables *)
+			let other_variables = list_diff abstract_input.variables variables in
+			(* Call the time elapsing function *)
 			LinearConstraint.nnconvex_time_elapse variables other_variables (perform_constraint lc)
 		| Op_time_past (variables, lc) ->
-			(* Create the set of all variables *)
-			let all_variables = list_of_interval 0 (abstract_input.nb_variables - 1) in
-			(* Perform the intersection *)
-			let other_variables = list_diff all_variables variables in
-			(* Call the function *)
+			(* Find constant (non elapsing) variables *)
+			let other_variables = list_diff abstract_input.variables variables in
+			(* Call the time past function *)
 			LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
+		| Op_zonepred(z1, z2, z, t, r) ->
+			(* Find constant (non elapsing) variables *)
+			let other_variables = list_diff abstract_input.variables t in
+			(* Call the dedicated function *)
+			LinearConstraint.nnconvex_constraint_zone_predecessor (perform_constraint z1) (perform_constraint z2) (perform_constraint z) t other_variables r
 		| Op_convex lc -> lc
 	in
 
@@ -285,7 +286,9 @@ List.map (fun parsed_operation ->
 		| Op_constraint c -> string_of_nncc (perform_constraint c)
 		| Op_point op -> let result = try(
 			InputPrinter.string_of_valuation abstract_input.variables abstract_input.variable_names (perform_oppoint op)
-			) with LinearConstraint.EmptyConstraint -> "ERROR! Empty constraint"
+			) with LinearConstraint.EmptyConstraint ->
+				print_warning "Empty constraint found in point operation";
+				"ERROR! Empty constraint"
 			in result
 		| Op_nothing -> ("I am very proud to do nothing.")
 	(* 	| _ -> raise (InternalError "not implemented") *)

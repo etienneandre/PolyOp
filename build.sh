@@ -6,13 +6,13 @@
  # 
  # Script to build PolyOp
  #
- # Universite Paris 13, Sorbonne Paris Cite, LIPN (France)
  # École Centrale Nantes, France
+ # Université Paris 13, LIPN, CNRS, France
  # 
- # Author:        Etienne Andre
+ # Author:        Étienne André
  # 
  # Created:       2016/02/29
- # Last modified: 2016/02/29
+ # Last modified: 2019/06/04
  #
 ################################################################
 

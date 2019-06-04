@@ -1,4 +1,11 @@
 *******************************************************
+# release 1.1    (2019-06-04, build 135)
+
+### Features
+* New operation to compute the predecessors of a subset of a zone within a source zone (given the set of variables subject to time-elapsing (typically clocks), and the set of variables reset between the two zones); this function is typically useful to reason about parametric zones in parametric timed automata or parametric time Petri nets
+
+
+*******************************************************
 # release 1.0    (2019-06-03, build 117)
 
 ### Features

@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/03
+ * Last modified: 2019/06/04
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -48,15 +48,15 @@ let parse_error s =
 %token OP_L OP_LEQ OP_EQ OP_GEQ OP_G OP_ASSIGN
 
 %token LPAREN RPAREN LBRACE RBRACE LSQBRA RSQBRA
-%token AMPERSAND APOSTROPHE COLON COMMA DOUBLEAMPERSAND /* DOUBLEPIPE PIPE */ SEMICOLON
+%token AMPERSAND APOSTROPHE COLON COMMA /* DOUBLEPIPE PIPE */ SEMICOLON
 
-%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE
+%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE CT_ZONEPRED
 
 %token EOF
 
 /*%left OP_L OP_LEQ OP_EQ OP_GEQ OP_G*/
 %left DOUBLEPIPE PIPE CT_OR        /* lowest precedence */
-%left AMPERSAND DOUBLEAMPERSAND CT_AND  /* medium precedence */
+%left AMPERSAND CT_AND  /* medium precedence */
 %nonassoc CT_NOT        /* highest precedence */
 
 
@@ -113,6 +113,7 @@ opconstraint:
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }
 	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
+	| CT_ZONEPRED opconstraint opconstraint opconstraint variable_list_with_par_opt variable_list_with_par_opt { Parsop_zonepred ($2 , $3, $4, $5, $6) }
 	| LPAREN opconstraint RPAREN { $2 }
 	| nnconvex_predicate { Parsop_convex $1 }
 ;
@@ -159,7 +160,6 @@ nnconvex_predicate:
 
 convex_predicate:
 	| linear_constraint AMPERSAND convex_predicate { $1 :: $3 }
-	| linear_constraint DOUBLEAMPERSAND convex_predicate { $1 :: $3 }
 	| linear_constraint { [$1] }
  	| LPAREN convex_predicate RPAREN { $2 }
 ;

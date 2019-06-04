@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/03
+ * Last modified: 2019/06/04
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -71,6 +71,7 @@ rule token = parse
 	| "simplify"       { CT_SIMPLIFY }
 	| "true"           { CT_TRUE }
 	| "True"           { CT_TRUE }
+	| "zonepred"       { CT_ZONEPRED }
 
 	| ['a'-'z''A'-'Z']['a'-'z''A'-'Z''_''0'-'9']* as lxm { NAME lxm }
 	| ['0'-'9']*'.'['0'-'9']+ as lxm { FLOAT lxm } 
@@ -97,7 +98,7 @@ rule token = parse
 	| ']'              { RSQBRA }
 
 	| '&'              { AMPERSAND }
-	| "&&"             { DOUBLEAMPERSAND }
+	| "&&"             { AMPERSAND }
 	| ','              { COMMA }
 	| '\''             { APOSTROPHE }
 (* 	| '|'              { PIPE } *)
