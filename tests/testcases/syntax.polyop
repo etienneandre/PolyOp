@@ -1,0 +1,20 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Paris 13, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2019/06/04
+ * Last modified: 2019/06/04
+ *
+ ************************************************************)
+
+simplify (a = 0 & b = 1)
+
+simplify (a = 0 && b = 1)
+
+simplify (a = 0 or b = 1)
+
+simplify (a = 0 || b = 1)
+

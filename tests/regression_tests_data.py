@@ -13,7 +13,7 @@
 # File contributors : Étienne André
 #
 # Created           : 2019/05/31
-# Last modified     : 2019/06/03
+# Last modified     : 2019/06/04
 #************************************************************
 
 
@@ -36,6 +36,69 @@ tests = [
 		BEGIN ANSWER
 		I am very proud to do nothing.
 		END ANSWER
+			"""
+			} #end statespace file
+		] # end expectations
+	} # end test case
+			
+	,
+	
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2019/06/04
+		# Test last modified       : 2019/06/04
+		# Test for PolyOp version  : 1.0
+		'purpose'    : 'Test very basic syntax',
+		'input_files': ['syntax.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'syntax.polyop.res' , 'content' : """
+BEGIN ANSWER
+  a = 0
+& b = 1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 2: 
+simplify(  a = 0
+& b = 1)
+*)
+BEGIN ANSWER
+  a = 0
+& b = 1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 3: 
+simplify(  a = 0
+or
+   b = 1)
+*)
+BEGIN ANSWER
+  a = 0
+or
+   b = 1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 4: 
+simplify(  a = 0
+or
+   b = 1)
+*)
+BEGIN ANSWER
+  a = 0
+or
+   b = 1
+END ANSWER
+
 			"""
 			} #end statespace file
 		] # end expectations
