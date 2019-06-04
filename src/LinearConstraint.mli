@@ -210,8 +210,8 @@ val nnconvex_constraint_is_equal : nnconvex_constraint -> nnconvex_constraint ->
 (** Exhibit a point in a nnconvex_constraint; raise EmptyConstraint if the constraint is empty. *)
 val nnconvex_constraint_exhibit_point : nnconvex_constraint -> (variable -> coef)
 
-(** Given two zones z1 and z2, such that z2 is the successor of z1, and given z a subset of z2, then nnconvex_constraint_zone_predecessor z1 z2 z t r computes the zone predecessor of z within z1, given the set t of variables sensitive to time-elapsing, and r the variables reset between z1 and z2. *)
-val nnconvex_constraint_zone_predecessor : nnconvex_constraint -> nnconvex_constraint -> nnconvex_constraint -> (variable list) -> (variable list) -> nnconvex_constraint
+(** Given two zones z1 and z2, such that z2 is the successor of z1, and given z a subset of z2, then nnconvex_constraint_zone_predecessor z1 z2 z t nott r computes the zone predecessor of z within z1, given the set t (nott) of variables sensitive (resp. insensitive) to time-elapsing, and r the variables reset between z1 and z2. *)
+val nnconvex_constraint_zone_predecessor : nnconvex_constraint -> nnconvex_constraint -> nnconvex_constraint -> (variable list) -> (variable list) -> (variable list) -> nnconvex_constraint
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
