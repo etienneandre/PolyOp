@@ -10,7 +10,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/03
+ * Last modified: 2019/06/04
  *
  ************************************************************)
 
@@ -272,6 +272,15 @@ let rec get_variable_names_in_constraint = function
 	| Parsop_not c | Parsop_simplify c ->
 		get_variable_names_in_constraint c
 	| Parsop_convex disjunction_list -> List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_convex_predicate b)) [] disjunction_list
+	| Parsop_zonepred (z1, z2, z, t, r) -> List.rev_append
+		(get_variable_names_in_constraint z1)
+		(List.rev_append 
+			(get_variable_names_in_constraint z2)
+			(List.rev_append 
+				(get_variable_names_in_constraint z)
+				(List.rev_append t r)
+			)
+		)
 (* 	List.iter (fun cp ->  get_variable_names_in_convex_predicate cp *)
 
 
@@ -381,6 +390,7 @@ let abstract_input_of_parsed_operation parsed_operation =
 		| Parsop_not c -> Op_not (convert_constraint c)
 		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_var variable_names, convert_constraint c)
 		| Parsop_time_past (variable_names, c) -> Op_time_past (convert_var variable_names, convert_constraint c)
+		| Parsop_zonepred (z1, z2, z, t, r) -> Op_zonepred (convert_constraint z1, convert_constraint z2, convert_constraint z, convert_var t, convert_var r)
 		| Parsop_convex cp_list ->
 			(* Create false constraint *)
 			let c = LinearConstraint.false_nnconvex_constraint() in

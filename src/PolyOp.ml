@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/03
+ * Last modified: 2019/06/04
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -249,15 +249,18 @@ List.map (fun parsed_operation ->
 			let all_variables = list_of_interval 0 (abstract_input.nb_variables - 1) in
 			(* Perform the intersection *)
 			let other_variables = list_diff all_variables variables in
-			(* Call the function *)
+			(* Call the time elapsing function *)
 			LinearConstraint.nnconvex_time_elapse variables other_variables (perform_constraint lc)
 		| Op_time_past (variables, lc) ->
 			(* Create the set of all variables *)
 			let all_variables = list_of_interval 0 (abstract_input.nb_variables - 1) in
 			(* Perform the intersection *)
 			let other_variables = list_diff all_variables variables in
-			(* Call the function *)
+			(* Call the time past function *)
 			LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
+		| Op_zonepred(z1, z2, z, t, r) ->
+			(* Call the dedicated function *)
+			LinearConstraint.nnconvex_constraint_zone_predecessor (perform_constraint z1) (perform_constraint z2) (perform_constraint z) t r
 		| Op_convex lc -> lc
 	in
 

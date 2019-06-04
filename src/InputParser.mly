@@ -50,7 +50,7 @@ let parse_error s =
 %token LPAREN RPAREN LBRACE RBRACE LSQBRA RSQBRA
 %token AMPERSAND APOSTROPHE COLON COMMA /* DOUBLEPIPE PIPE */ SEMICOLON
 
-%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE
+%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE CT_ZONEPRED
 
 %token EOF
 
@@ -113,6 +113,7 @@ opconstraint:
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }
 	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
+	| CT_ZONEPRED opconstraint COMMA opconstraint COMMA opconstraint COMMA variable_list_with_par_opt COMMA variable_list_with_par_opt { Parsop_zonepred ($2 , $4, $6, $8, $10) }
 	| LPAREN opconstraint RPAREN { $2 }
 	| nnconvex_predicate { Parsop_convex $1 }
 ;
