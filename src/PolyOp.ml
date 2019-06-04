@@ -286,7 +286,9 @@ List.map (fun parsed_operation ->
 		| Op_constraint c -> string_of_nncc (perform_constraint c)
 		| Op_point op -> let result = try(
 			InputPrinter.string_of_valuation abstract_input.variables abstract_input.variable_names (perform_oppoint op)
-			) with LinearConstraint.EmptyConstraint -> "ERROR! Empty constraint"
+			) with LinearConstraint.EmptyConstraint ->
+				print_warning "Empty constraint found in point operation";
+				"ERROR! Empty constraint"
 			in result
 		| Op_nothing -> ("I am very proud to do nothing.")
 	(* 	| _ -> raise (InternalError "not implemented") *)
