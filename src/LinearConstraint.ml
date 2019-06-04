@@ -105,7 +105,12 @@ let assert_dimensions poly =
 	if not (ndim = !total_dim) then (
 		print_error ("Polyhedron has too few dimensions (" ^ (string_of_int ndim) ^ " / " ^ (string_of_int !total_dim) ^ ")");
 		raise (InternalError "Inconsistent polyhedron found")	
-	)			 	
+	)
+
+
+(* For verbose print *)
+let debug_variable_names = fun v -> "v_" ^ (string_of_int v)
+
 
 (**************************************************)
 (** {2 Linear terms} *)
@@ -1200,7 +1205,7 @@ let nnconvex_constraint_exhibit_point nnconvex_constraint =
 	
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("Current constraint after handling dimension " ^ (string_of_int dimension) ^ " is: " ^ (string_of_nnconvex_constraint (fun v -> "v_" ^ (string_of_int v)) restricted_nnconvex_constraint ) ^ "");
+			print_message Verbose_high ("Current constraint after handling dimension " ^ (string_of_int dimension) ^ " is: " ^ (string_of_nnconvex_constraint debug_variable_names restricted_nnconvex_constraint ) ^ "");
 		);
 		
 	done;
@@ -1218,8 +1223,18 @@ let nnconvex_constraint_zone_predecessor z1 z2 z variables_elapse variables_cons
 	(* Compute time-past of z *)
 	nnconvex_time_past_assign variables_elapse variables_constant nnconvex_constraint;
 	
+	(* Print some information *)
+	if verbose_mode_greater Verbose_high then(
+		print_message Verbose_high ("Current constraint after time past: " ^ (string_of_nnconvex_constraint debug_variable_names nnconvex_constraint ) ^ "");
+	);
+	
 	(* Free the variables involved in the reset *)
 	let result = nnconvex_hide variable_reset nnconvex_constraint in
+	
+	(* Print some information *)
+	if verbose_mode_greater Verbose_high then(
+		print_message Verbose_high ("Current constraint after anti-reset: " ^ (string_of_nnconvex_constraint debug_variable_names result ) ^ "");
+	);
 	
 	(* Perform intersection with z1 *)
 	nnconvex_intersection_assign result z1;

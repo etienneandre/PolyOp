@@ -113,7 +113,7 @@ opconstraint:
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }
 	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
-	| CT_ZONEPRED opconstraint COMMA opconstraint COMMA opconstraint COMMA variable_list_with_par_opt COMMA variable_list_with_par_opt { Parsop_zonepred ($2 , $4, $6, $8, $10) }
+	| CT_ZONEPRED opconstraint opconstraint opconstraint variable_list_with_par_opt variable_list_with_par_opt { Parsop_zonepred ($2 , $3, $4, $5, $6) }
 	| LPAREN opconstraint RPAREN { $2 }
 	| nnconvex_predicate { Parsop_convex $1 }
 ;
