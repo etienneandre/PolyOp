@@ -1210,14 +1210,23 @@ let nnconvex_constraint_exhibit_point nnconvex_constraint =
 
 (** Given two zones z1 and z2, such that z2 is the successor of z1, and given z a subset of z2, then nnconvex_constraint_zone_predecessor z1 z2 z t nott r computes the zone predecessor of z within z1, given the set t (nott) of variables sensitive (resp. insensitive) to time-elapsing, and r the variables reset between z1 and z2. *)
 (*** NOTE: no check is made that z2 is a successor of z1, nor that z is a subset of z2 ***)
-let nnconvex_constraint_zone_predecessor z1 z2 z variable_elapse variable_constant variable_reset =
+(*** NOTE: only works for constant resets of the form clock := constant ***)
+let nnconvex_constraint_zone_predecessor z1 z2 z variables_elapse variables_constant variable_reset =
 	(* Copy z, to avoid side-effects *)
 	let nnconvex_constraint = nnconvex_copy z in
 	
 	(* Compute time-past of z *)
+	nnconvex_time_past_assign variables_elapse variables_constant nnconvex_constraint;
 	
+	(* Free the variables involved in the reset *)
+	let result = nnconvex_hide variable_reset nnconvex_constraint in
 	
-	raise (InternalError "not implemented")
+	(* Perform intersection with z1 *)
+	nnconvex_intersection_assign result z1;
+	
+	(* Return result *)
+	result
+	
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
