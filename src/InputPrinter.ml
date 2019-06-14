@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/04
+ * Last modified: 2019/06/14
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -54,13 +54,38 @@ let string_of_operation variable_names operation =
 	
 	let rec string_of_constraint = function
 		| Op_and cp_list -> "and(" ^ (string_of_list_of_string_with_sep " , " (List.map string_of_constraint cp_list)) ^ ")"
+		
 		| Op_diff (c1, c2) -> "diff(" ^ (string_of_constraint c1) ^ " , " ^ (string_of_constraint c2) ^ ")"
+		
 		| Op_hide (vars, cp) -> "hide (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
+		
 		| Op_not c -> "not(" ^ (string_of_constraint c) ^ ")"
+		
 		| Op_simplify c -> "simplify(" ^ (string_of_constraint c) ^ ")"
+		
 		| Op_time_elapsing (vars, cp) -> "elapsing (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
+		
 		| Op_time_past (vars, cp) -> "past (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
-		| Op_zonepred (z1, z2, z, t, r) -> "zonepred (" ^ (string_of_constraint z1) ^ ", " ^ (string_of_constraint z2) ^ ", " ^ (string_of_constraint z) ^ ", " ^ (convert_vars t) ^ ", " ^ (convert_vars r) ^ ")"
+		
+		| Op_zonepred (z1, z2, z, t, r) -> "zonepred ("
+			^ (string_of_constraint z1) ^ ", "
+			^ (string_of_constraint z2) ^ ", "
+			^ (string_of_constraint z) ^ ", "
+			^ (convert_vars t) ^ ", "
+			^ (convert_vars r)
+			^ ")"
+		
+		| Op_zonepredgr (zn_minus_1, gn_minus_1, un_minus_1, zn, t, gn, un, zn_plus_1) -> "zonepredgr ("
+			^ (string_of_constraint zn_minus_1) ^ ", "
+			^ (string_of_constraint gn_minus_1) ^ ", "
+			^ (convert_vars un_minus_1) ^ ", "
+			^ (string_of_constraint zn) ^ ", "
+			^ (convert_vars t) ^ ", "
+			^ (string_of_constraint gn) ^ ", "
+			^ (convert_vars un) ^ ", "
+			^ (string_of_constraint zn_plus_1)
+			^ ")"
+		
 		| Op_convex cp -> LinearConstraint.string_of_nnconvex_constraint variable_names cp
 	in
 	

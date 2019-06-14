@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/04
+ * Last modified: 2019/06/14
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1242,6 +1242,39 @@ let nnconvex_constraint_zone_predecessor z1 z2 z variables_elapse variables_cons
 	
 	(* Return result *)
 	result
+
+
+(** Given `Zn-1` and `Zn` such that `Zn` is the successor zone of `Zn-1` by guard `g-1` and updating variables in `Un-1` to some values (that we do not need to know as we know the zone), given `Zn+1` a set of concrete points (valuations) successor of zone `Zn` by elapsing of a set of variables `t` and non-elapsing of others `nont`, by guard `gn`, updates `Rn`, then `zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1)` computes the subset of points in `Zn` that are predecessors of `Zn` (by updates of `Un`, guard `gn`, elapsing of `t`, non-elapsing of `nont`), and that are direct successors (without time elapsing) of `Zn-1` via `gn-1` and `Un-1`. *)
+(*** NOTE: no check is made that Zn is a successor of Zn-1, nor that Zn+1 is a subset of Zn ***)
+(*** NOTE: no check is made that t and nont represent exactly the set of variables used in the polyhedra. ***)
+let nnconvex_constraint_zone_predecessor_g_r zn_minus_1 gn_minus_1 updates_n_minus_1 zn variables_elapse variables_constant gn updates_n zn_plus_1 =
+(*	(* Copy zn_plus_1, to avoid side-effects *)
+	let nnconvex_constraint = nnconvex_copy zn_plus_1 in*)
+	
+	(* Step 1: compute the predecessors of zn_plus_1 in zn without time elapsing, i.e., the points zn' subset of zn such that zn' ^ g ^ updates = zn_plus_1 *)
+	(* Method: zn_plus_1 => free variables in updates_n => intersect with g => intersect with zn *)
+	
+	let zn' = nnconvex_hide updates_n zn_plus_1 in
+	nnconvex_intersection_assign zn' (nnconvex_intersection zn gn);
+	
+	
+	(* Step 2: compute the time predecessors of zn' in zn *)
+	(* Method: zn' => backward elapsing => intersection with zn *)
+	
+	nnconvex_time_past_assign variables_elapse variables_constant zn';
+	
+	(* Intersect again with zn *)
+	nnconvex_intersection_assign zn' zn;
+
+	
+	(* Step 3: compute the subset of zn' that comes from a direct update (without time elapsing) from zn-1 *)
+	(* Method: zn' => intersection with (zn-1 ^ gn-1 \ Un-1 *)
+	
+	nnconvex_intersection_assign zn' (nnconvex_hide updates_n_minus_1 (nnconvex_intersection zn_minus_1 gn_minus_1));
+
+	
+	(* Return the result *)
+	zn'
 	
 
 

@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/04
+ * Last modified: 2019/06/14
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -59,6 +59,8 @@ and op_constraint =
 	| Op_time_elapsing of variable_index list * op_constraint
 	| Op_time_past of variable_index list * op_constraint
 	| Op_zonepred of op_constraint * op_constraint * op_constraint * variable_index list * variable_index list
+	(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1) *)
+	| Op_zonepredgr of op_constraint * op_constraint * variable_index list * op_constraint * variable_index list * op_constraint * variable_index list * op_constraint
 	| Op_convex of LinearConstraint.nnconvex_constraint
 and op_point =
 	| Op_exhibit of op_constraint

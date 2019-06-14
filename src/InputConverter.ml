@@ -10,7 +10,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/04
+ * Last modified: 2019/06/14
  *
  ************************************************************)
 
@@ -281,6 +281,28 @@ let rec get_variable_names_in_constraint = function
 				(List.rev_append t r)
 			)
 		)
+	(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, gn, Un, Zn+1) *)
+	| Parsop_zonepredgr (zn_minus_1, gn_minus_1, un_minus_1, zn, t, gn, un, zn_plus_1) -> List.rev_append
+		(get_variable_names_in_constraint zn_minus_1)
+		(List.rev_append 
+			(get_variable_names_in_constraint gn_minus_1)
+			(List.rev_append 
+				un_minus_1
+				(List.rev_append
+					(get_variable_names_in_constraint zn)
+					(List.rev_append
+						t
+						(List.rev_append 
+							(get_variable_names_in_constraint gn)
+							(List.rev_append
+								un
+								(get_variable_names_in_constraint zn_plus_1)
+							)
+						)
+					)
+				)
+			)
+		)
 (* 	List.iter (fun cp ->  get_variable_names_in_convex_predicate cp *)
 
 
@@ -380,17 +402,43 @@ let abstract_input_of_parsed_operation parsed_operation =
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Convert the operation *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
-	let convert_var = List.map (index_of_variable_name index_of_variables) in
+	let convert_variables = List.map (index_of_variable_name index_of_variables) in
 	
 	let rec convert_constraint = function
 		| Parsop_and list_of_cp -> Op_and (List.map convert_constraint list_of_cp)
+		
 		| Parsop_diff (c1, c2) -> Op_diff (convert_constraint c1, convert_constraint c2)
-		| Parsop_hide (variable_names, c) -> Op_hide (convert_var variable_names, convert_constraint c)
+		
+		| Parsop_hide (variable_names, c) -> Op_hide (convert_variables variable_names, convert_constraint c)
+		
 		| Parsop_simplify c -> Op_simplify (convert_constraint c)
+		
 		| Parsop_not c -> Op_not (convert_constraint c)
-		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_var variable_names, convert_constraint c)
-		| Parsop_time_past (variable_names, c) -> Op_time_past (convert_var variable_names, convert_constraint c)
-		| Parsop_zonepred (z1, z2, z, t, r) -> Op_zonepred (convert_constraint z1, convert_constraint z2, convert_constraint z, convert_var t, convert_var r)
+		
+		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_variables variable_names, convert_constraint c)
+		
+		| Parsop_time_past (variable_names, c) -> Op_time_past (convert_variables variable_names, convert_constraint c)
+		
+		| Parsop_zonepred (z1, z2, z, t, r) -> Op_zonepred (
+			convert_constraint z1,
+			convert_constraint z2,
+			convert_constraint z,
+			convert_variables t,
+			convert_variables r
+			)
+		
+		(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, gn, Un, Zn+1) *)
+		| Parsop_zonepredgr (zn_minus_1, gn_minus_1, un_minus_1, zn, t, gn, un, zn_plus_1) -> Op_zonepredgr (
+			convert_constraint zn_minus_1,
+			convert_constraint gn_minus_1,
+			convert_variables un_minus_1,
+			convert_constraint zn,
+			convert_variables t,
+			convert_constraint gn,
+			convert_variables un,
+			convert_constraint zn_plus_1
+			)
+			
 		| Parsop_convex cp_list ->
 			(* Create false constraint *)
 			let c = LinearConstraint.false_nnconvex_constraint() in
