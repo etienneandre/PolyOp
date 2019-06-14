@@ -18,8 +18,8 @@ Some of the operations allowed by PolyOp:
 - time backward-elapsing ("past")
 - variable elimination (by existential quantification)
 - Boolean tests (inclusion, equality…)
-- exhibition of a concrete point in the polyhedron
-- computation of the predecessors of a subset of a zone within a source zone (given the set of variables subject to time-elapsing (typically clocks), and the set of variables reset between the two zones); this function is typically useful to reason about parametric zones in parametric timed automata or parametric time Petri nets
+- `exhibitpoint`: exhibition of a concrete point in the polyhedron
+- `zonepred`: computation of the predecessors of a subset of a zone within a source zone (given the set of variables subject to time-elapsing (typically clocks), and the set of variables reset between the two zones); this function is typically useful to reason about parametric zones in parametric timed automata or parametric time Petri nets
 
 From version 1.0, several operations can be performed sequentially using the same call to PolyOp
 
