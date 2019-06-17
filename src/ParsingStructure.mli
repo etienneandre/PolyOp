@@ -45,8 +45,8 @@ type relop = OP_L | OP_LEQ | OP_EQ | OP_GEQ | OP_G
 (** Linear expressions *)
 
 type linear_term =
-	| Constant of  NumConst.t
-	| Variable of  NumConst.t * variable_name
+	| Constant of NumConst.t
+	| Variable of NumConst.t * variable_name
 
 
 type linear_expression =
@@ -64,6 +64,10 @@ type linear_constraint =
 type convex_predicate = linear_constraint list
 
 type nnconvex_predicate = convex_predicate list
+
+(** Updates *)
+
+type parsed_updates = (variable_name * linear_expression) list
 
 
 (****************************************************************)
@@ -89,7 +93,7 @@ and parsop_constraint =
 	| Parsop_time_past of variable_name list * parsop_constraint
 	| Parsop_zonepred of parsop_constraint * parsop_constraint * parsop_constraint * variable_name list * variable_name list
 	(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, gn, Un, Zn+1) *)
-	| Parsop_zonepredgr of parsop_constraint * parsop_constraint * variable_name list * parsop_constraint * variable_name list * parsop_constraint * variable_name list * parsop_constraint
+	| Parsop_zonepredgr of parsop_constraint * parsop_constraint * parsed_updates * parsop_constraint * variable_name list * parsop_constraint * parsed_updates * parsop_constraint
 	| Parsop_convex of nnconvex_predicate
 and parsop_point =
 	| Parsop_exhibit of parsop_constraint

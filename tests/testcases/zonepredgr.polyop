@@ -6,7 +6,7 @@
  *
  * Author:        Étienne André
  * Created:       2019/06/14
- * Last modified: 2019/06/14
+ * Last modified: 2019/06/17
  *
  ************************************************************)
 
@@ -24,7 +24,7 @@ zonepredgr
 	(* zn_plus_1          *) (x = 0)
 
 
-(* Degenerated test: no time elpsing, updates to 0, no guard *)
+(*(* Degenerated test: no time elpsing, updates to 0, no guard *)
 zonepredgr
 	(* zn_minus_1         *) (x = 0)
 	(* gn_minus_1         *) (True)
@@ -72,7 +72,7 @@ zonepredgr
 	(* gn                 *) (x = 1)
 	(* updates_n          *) (x)
 	(* zn_plus_1          *) (x = 0)
-
+*)
 
 (* Simple test with one run in 2D: 0 => {x = 3 | x := 1} => {y = 5 | y := 0} *)
 

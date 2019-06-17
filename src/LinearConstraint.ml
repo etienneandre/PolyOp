@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/14
+ * Last modified: 2019/06/17
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1251,6 +1251,14 @@ let nnconvex_constraint_zone_predecessor_g_r zn_minus_1 gn_minus_1 updates_n_min
 (*	(* Copy zn_plus_1, to avoid side-effects *)
 	let nnconvex_constraint = nnconvex_copy zn_plus_1 in*)
 	
+	raise (InternalError ("work in progress"))
+	
+(*	(* Function to build updates *)
+	let make_updates updates =
+		let inequalities = List.map (fun (variable_index, linear_term) ->
+			
+		) in
+	
 	(* Step 1: compute the predecessors of zn_plus_1 in zn without time elapsing, i.e., the points zn' subset of zn such that zn' ^ g ^ updates = zn_plus_1 *)
 	(* Method: zn_plus_1 => free variables in updates_n => intersect with g => intersect with zn *)
 	
@@ -1274,7 +1282,7 @@ let nnconvex_constraint_zone_predecessor_g_r zn_minus_1 gn_minus_1 updates_n_min
 
 	
 	(* Return the result *)
-	zn'
+	zn'*)
 	
 
 
