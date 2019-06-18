@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/05/31
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -213,6 +213,22 @@ val nnconvex_constraint_exhibit_point : nnconvex_constraint -> (variable -> coef
 (** Given two zones z1 and z2, such that z2 is the successor of z1, and given z a subset of z2, then nnconvex_constraint_zone_predecessor z1 z2 z t nott r computes the zone predecessor of z within z1, given the set t (nott) of variables sensitive (resp. insensitive) to time-elapsing, and r the variables reset between z1 and z2. *)
 val nnconvex_constraint_zone_predecessor : nnconvex_constraint -> nnconvex_constraint -> nnconvex_constraint -> (variable list) -> (variable list) -> (variable list) -> nnconvex_constraint
 
+(** Given `Zn-1` and `Zn` such that `Zn` is the successor zone of `Zn-1` by guard `g-1` and updating variables in `Un-1` to some values (that we do not need to know as we know the zone), given `Zn+1` a set of concrete points (valuations) successor of zone `Zn` by elapsing of a set of variables `t` and non-elapsing of others `nont`, by guard `gn`, updates `Rn`, then `zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1)` computes the subset of points in `Zn` that are predecessors of `Zn` (by updates of `Un`, guard `gn`, elapsing of `t`, non-elapsing of `nont`), and that are direct successors (without time elapsing) of `Zn-1` via `gn-1` and `Un-1`. *)
+(*** NOTE: no check is made that Zn is a successor of Zn-1, nor that Zn+1 is a subset of Zn ***)
+(*** NOTE: no check is made that t and nont represent exactly the set of variables used in the polyhedra. ***)
+val nnconvex_constraint_zone_predecessor_g_r :
+	(* Zn-1 *) nnconvex_constraint ->
+	(* gn-1 *) nnconvex_constraint ->
+	(* Un-1 *) (variable * linear_term) list ->
+	(* Zn *)   nnconvex_constraint ->
+	(* t *)    (variable list) ->
+	(* nont *) (variable list) ->
+	(* gn *)   nnconvex_constraint ->
+	(* Un *)   (variable * linear_term) list ->
+	(* Zn+1 *) nnconvex_constraint ->
+	nnconvex_constraint
+
+
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Modifications} *)
@@ -255,6 +271,12 @@ val nnconvex_time_elapse : variable list -> variable list -> nnconvex_constraint
 (** Time elapsing function, in backward direction (corresponds to the "past" operation in, e.g., [JLR15]) *)
 val nnconvex_time_past : variable list -> variable list -> nnconvex_constraint -> nnconvex_constraint
 
+(*------------------------------------------------------------*)
+(* Compute the polyhedron p after replacing each variable v with the corresponding linear term *)
+(*------------------------------------------------------------*)
+(*** NOTE: each variable is assumed to appear once at most in the list of updates; otherwise the behavior is unspecified ***)
+(*------------------------------------------------------------*)
+val update : (variable * linear_term) list -> nnconvex_constraint -> nnconvex_constraint
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)

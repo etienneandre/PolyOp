@@ -1,0 +1,50 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Paris 13, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2019/06/18
+ * Last modified: 2019/06/18
+ *
+ ************************************************************)
+
+(* Degenerated operation *)
+update () in True
+
+(* Degenerated operation *)
+update () in (x=x)
+
+(* Degenerated operation *)
+update () in (x=0)
+
+(* Degenerated operation *)
+update (x := x) in (x=0)
+
+(* Degenerated operation (syntactic variant) *)
+update (x <- x) in (x=0)
+
+(* Simple operation *)
+update (x := 1) in x = 0
+
+(* Simple operation + testing parentheses *)
+update (((x := 1))) in ((((x > 0))))
+
+(* Simple operation in 2D *)
+update (x := 1, y := 2) in x = 0 & x = y
+
+(* Simple operation in 2D *)
+update (x := 1, y := 2) in True
+
+(* Operation in 2D *)
+update (x := 1) in (x = 2 & y < x)
+
+(* Operation in 3D *)
+update (y := 2046) in (x < y & y < z & z < 2047)
+
+(* Swapping *)
+update (y := x, x := y) in (x = 1 & y = 2)
+
+(* Sum *)
+update (y := x + 2 * y + 5, x := y) in (x = 1 & y = 2)

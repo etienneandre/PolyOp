@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/04
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ let parse_error s =
 %token LPAREN RPAREN LBRACE RBRACE LSQBRA RSQBRA
 %token AMPERSAND APOSTROPHE COLON COMMA /* DOUBLEPIPE PIPE */ SEMICOLON
 
-%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE CT_ZONEPRED
+%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE CT_UPDATE CT_ZONEPRED CT_ZONEPREDGR
 
 %token EOF
 
@@ -113,7 +113,11 @@ opconstraint:
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }
 	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
-	| CT_ZONEPRED opconstraint opconstraint opconstraint variable_list_with_par_opt variable_list_with_par_opt { Parsop_zonepred ($2 , $3, $4, $5, $6) }
+	| CT_UPDATE updates CT_IN opconstraint { Parsop_update ($2, $4) }
+	| CT_ZONEPRED opconstraint opconstraint opconstraint variable_list_with_par_opt_or_empty variable_list_with_par_opt_or_empty { Parsop_zonepred ($2 , $3, $4, $5, $6) }
+	| LPAREN opconstraint RPAREN { $2 }
+	/* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1) */
+	| CT_ZONEPREDGR opconstraint opconstraint updates opconstraint variable_list_with_par_opt_or_empty opconstraint updates opconstraint { Parsop_zonepredgr ($2 , $3, $4, $5, $6, $7, $8, $9) }
 	| LPAREN opconstraint RPAREN { $2 }
 	| nnconvex_predicate { Parsop_convex $1 }
 ;
@@ -121,6 +125,40 @@ opconstraint:
 oppoint:
 	| CT_EXHIBIT_POINT opconstraint { Parsop_exhibit $2 }
 ;
+
+/**********************************************/
+
+/*** WARNING: many conflicts around here! ***/
+
+variable_list_with_par_opt_or_empty:
+	| LPAREN non_empty_variable_list RPAREN { $2 }
+	| LPAREN RPAREN { [] }
+	| non_empty_variable_list { $1 }
+;
+
+non_empty_variable_list:
+	| NAME COMMA non_empty_variable_list { $1 :: $3 }
+	| NAME { [$1] }
+;
+
+
+/**********************************************/
+
+updates:
+	| LPAREN updates_without_par RPAREN { $2 }
+	| LPAREN RPAREN { [] }
+;
+
+updates_without_par:
+	| update COMMA updates_without_par { $1 :: $3 }
+	| update { [$1] }
+;
+
+update:
+	| LPAREN update RPAREN { $2 }
+	| NAME OP_ASSIGN linear_expression { $1 , $3 }
+;
+
 
 /**********************************************/
 variable_list_with_par_opt:
@@ -165,7 +203,7 @@ convex_predicate:
 ;
 
 linear_constraint:
-	linear_expression relop linear_expression { Linear_constraint ($1, $2, $3) }
+	| linear_expression relop linear_expression { Linear_constraint ($1, $2, $3) }
 	| CT_TRUE { True_constraint }
 	| CT_FALSE { False_constraint }
 ;
@@ -179,7 +217,7 @@ relop:
 ;
 
 linear_expression:
-	linear_term { Linear_term $1 }
+	| linear_term { Linear_term $1 }
 	| linear_expression OP_PLUS linear_term { Linear_plus_expression ($1, $3) }
 	| linear_expression OP_MINUS linear_term { Linear_minus_expression ($1, $3) } /* linear_term a la deuxieme place */
 ;

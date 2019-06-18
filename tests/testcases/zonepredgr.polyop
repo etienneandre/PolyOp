@@ -1,0 +1,122 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Paris 13, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2019/06/14
+ * Last modified: 2019/06/18
+ *
+ ************************************************************)
+
+(* Signature: nnconvex_constraint_zone_predecessor_g_r zn_minus_1 gn_minus_1 updates_n_minus_1 zn variables_elapse gn updates_n zn_plus_1 *)
+
+(* Degenerated test: no time elpsing, no updates, no guard *)
+zonepredgu
+	(* zn_minus_1         *) (x = 0)
+	(* gn_minus_1         *) (True)
+	(* updates_n_minus_1  *) ()
+	(* zn                 *) (x = 0)
+	(* variables_elapse   *) ()
+	(* gn                 *) (True)
+	(* updates_n          *) ()
+	(* zn_plus_1          *) (x = 0)
+
+
+(* Degenerated test: no time elpsing, updates to 0, no guard *)
+zonepredgu
+	(* zn_minus_1         *) (x = 0)
+	(* gn_minus_1         *) (True)
+	(* updates_n_minus_1  *) (x := 0)
+	(* zn                 *) (x = 0)
+	(* variables_elapse   *) ()
+	(* gn                 *) (True)
+	(* updates_n          *) (x := 0)
+	(* zn_plus_1          *) (x = 0)
+
+(* Degenerated test: no time elpsing, updates to id, no guard *)
+zonepredgu
+	(* zn_minus_1         *) (x = 0)
+	(* gn_minus_1         *) (True)
+	(* updates_n_minus_1  *) (x := x)
+	(* zn                 *) (x = 0)
+	(* variables_elapse   *) ()
+	(* gn                 *) (True)
+	(* updates_n          *) (x := x)
+	(* zn_plus_1          *) (x = 0)
+
+(* Simple test: gives x = 1 *)
+zonepredgu
+	(* zn_minus_1         *) (x >= 0)
+	(* gn_minus_1         *) (x = 3)
+	(* updates_n_minus_1  *) (x <- 1)
+	(* zn                 *) (x >= 1)
+	(* variables_elapse   *) (x)
+	(* gn                 *) (True)
+	(* updates_n          *) ()
+	(* zn_plus_1          *) (x = 2)
+
+(* Simple test: gives x = 1 & y = 3 *)
+zonepredgu
+	(* zn_minus_1         *) (x >= 0 & x = y)
+	(* gn_minus_1         *) (x = 3)
+	(* updates_n_minus_1  *) (x <- 1)
+	(* zn                 *) (x >= 1 & y - x = 2)
+	(* variables_elapse   *) (x, y)
+	(* gn                 *) (True)
+	(* updates_n          *) ()
+	(* zn_plus_1          *) (x = 2 & y = 4)
+
+
+(* Simple test: gives false because of gn_minus_1 and no reset and no elapse [in fact, zn_plus_1 is not a proper successor] *)
+zonepredgu
+	(* zn_minus_1         *) (x >= 0)
+	(* gn_minus_1         *) (x = 3)
+	(* updates_n_minus_1  *) ()
+	(* zn                 *) (x >= 1)
+	(* variables_elapse   *) ()
+	(* gn                 *) (True)
+	(* updates_n          *) ()
+	(* zn_plus_1          *) (x = 2)
+
+
+(* Simple test with one run in 1D: gives x=0 *)
+
+(*** TODO ***)
+zonepredgu
+	(* zn_minus_1         *) (x = 0)
+	(* gn_minus_1         *) (x = 0)
+	(* updates_n_minus_1  *) (x := 0)
+	(* zn                 *) (0 <= x & x <= 1)
+	(* variables_elapse   *) (x)
+	(* gn                 *) (x = 1)
+	(* updates_n          *) (x := 0)
+	(* zn_plus_1          *) (x = 0)
+
+
+(* Simple test with one run in 2D: 0 => {x = 3 | x := 1} => {y = 5 | y := 0} *)
+
+zonepredgu
+	(* zn_minus_1         *) (x = y & x >= 0)
+	(* gn_minus_1         *) (x = 3)
+	(* updates_n_minus_1  *) (x := 1)
+	(* zn                 *) (x >= 1 & y-x = 2)
+	(* variables_elapse   *) (x,y)
+	(* gn                 *) (y = 5)
+	(* updates_n          *) (y := 0)
+	(* zn_plus_1          *) (x = 3 & y = 0)
+
+
+(* Simple test with one run in 2D *)
+
+zonepredgu
+	(* zn_minus_1         *) (y >= 0 & x >= 0)
+	(* gn_minus_1         *) (x = 3)
+	(* updates_n_minus_1  *) (x := 1)
+	(* zn                 *) (x >= 1 & y-x = 2)
+	(* variables_elapse   *) (x,y)
+	(* gn                 *) (y = 5)
+	(* updates_n          *) (y := 0)
+	(* zn_plus_1          *) (x = 3 & y = 0)
+

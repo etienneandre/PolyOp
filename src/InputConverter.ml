@@ -10,7 +10,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/04
+ * Last modified: 2019/06/18
  *
  ************************************************************)
 
@@ -39,7 +39,7 @@ exception False_exception
 (*--------------------------------------------------*)
 (* Retrieve a variable_index from a variable_name *)
 (*--------------------------------------------------*)
-let index_of_variable_name index_of_variables variable_name =
+let index_of_variable_name index_of_variables (variable_name : variable_name) : variable_index =
 	try(
 		(* Find the variable_index *)
 		Hashtbl.find index_of_variables variable_name
@@ -48,7 +48,7 @@ let index_of_variable_name index_of_variables variable_name =
 (*--------------------------------------------------*)
 (* Convert a ParsingStructure.linear_expression into an array of coef and constant *)
 (*--------------------------------------------------*)
-let array_of_coef_of_linear_expression index_of_variables linear_expression =
+let array_of_coef_of_linear_expression index_of_variables (linear_expression : ParsingStructure.linear_expression) =
 	(* Create an array of coef *)
 	let array_of_coef = Array.make (Hashtbl.length index_of_variables) NumConst.zero in
 	(* Create a zero constant *)
@@ -65,7 +65,7 @@ let array_of_coef_of_linear_expression index_of_variables linear_expression =
 	in
 
 	(* Internal function to update the array for a linear expression *)
-	let rec update_array_linear_expression = function
+	let rec update_array_linear_expression : ParsingStructure.linear_expression -> unit  = function
 		| Linear_term lt -> update_array_linear_term NumConst.one lt
 		| Linear_plus_expression (le, lt) ->
 			(* Fill the array with le *)
@@ -87,7 +87,7 @@ let array_of_coef_of_linear_expression index_of_variables linear_expression =
 (*--------------------------------------------------*)
 (* Convert an array of variable coef into a linear term *)
 (*--------------------------------------------------*)
-let linear_term_of_array (array_of_coef, constant) =
+let linear_term_of_array (array_of_coef, constant) : LinearConstraint.linear_term =
 	(* Create an empty list of members *)
 	let members = ref [] in
 	(* Iterate on the coef *)
@@ -102,9 +102,9 @@ let linear_term_of_array (array_of_coef, constant) =
 	
 
 (*--------------------------------------------------*)
-(* Direct conversion of a ParsingStructure.linear_expression into a Linear_term.linear_term *)
+(* Direct conversion of a ParsingStructure.linear_expression into a LinearConstraint.linear_term *)
 (*--------------------------------------------------*)
-let linear_term_of_linear_expression index_of_variables linear_expression =
+let linear_term_of_linear_expression index_of_variables (linear_expression : ParsingStructure.linear_expression) : LinearConstraint.linear_term =
 	let array_of_coef, constant = array_of_coef_of_linear_expression index_of_variables linear_expression in
 	linear_term_of_array (array_of_coef, constant)
 
@@ -127,7 +127,7 @@ let sub_array array1 array2 =
 (*--------------------------------------------------*)
 (* Convert a ParsingStructure.linear_constraint into a Constraint.linear_inequality *)
 (*--------------------------------------------------*)
-let linear_inequality_of_linear_constraint index_of_variables (le1, relop, le2) =
+let linear_inequality_of_linear_constraint index_of_variables ((le1 : ParsingStructure.linear_expression), relop, (le2 : ParsingStructure.linear_expression)) : LinearConstraint.linear_inequality =
 	(* Get the array of variables and constant associated to the linear terms *)
 	let array1, constant1 = array_of_coef_of_linear_expression index_of_variables le1 in
 	let array2, constant2 = array_of_coef_of_linear_expression index_of_variables le2 in
@@ -199,15 +199,8 @@ let linear_inequality_of_linear_constraint index_of_variables (le1, relop, le2) 
 (* Convert a ParsingStructure.convex_predicate into a Constraint.linear_constraint *)
 (*--------------------------------------------------*)
 
-let linear_constraint_of_convex_predicate index_of_variables convex_predicate =
+let linear_constraint_of_convex_predicate index_of_variables (convex_predicate : ParsingStructure.convex_predicate) : LinearConstraint.linear_constraint =
 	try(
-	
-	
-(*	print_int (!i);
-	print_newline();
-	i := !i + 1;	
-	if (!i > 100) then (raise False_exception);*)
-	
 	(* Compute a list of inequalities *)
 	let linear_inequalities = List.fold_left
 		(fun linear_inequalities linear_inequality -> 
@@ -241,6 +234,11 @@ let rec get_variable_names_in_linear_expression = function
 			(get_variable_names_in_linear_term lt)
 
 
+let get_variable_names_in_updates = List.fold_left (fun current_list (variable_index, linear_term) ->
+	List.rev_append current_list (variable_index :: (get_variable_names_in_linear_expression linear_term))
+	) []
+
+
 let rec get_variable_names_in_linear_constraint = function
 	| True_constraint -> []
 	| False_constraint -> []
@@ -261,17 +259,24 @@ let rec get_variable_names_in_convex_predicate = function
 let rec get_variable_names_in_constraint = function
 	| Parsop_and cp_list ->
 		List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_constraint b)) [] cp_list
+		
 	| Parsop_diff (c1, c2) ->
 		List.rev_append
 			(get_variable_names_in_constraint c1)
 			(get_variable_names_in_constraint c2)
+			
 	| Parsop_hide (vars, c) | Parsop_time_elapsing (vars, c)  | Parsop_time_past (vars, c) ->
 		List.rev_append
 			vars
 			(get_variable_names_in_constraint c)
+			
 	| Parsop_not c | Parsop_simplify c ->
 		get_variable_names_in_constraint c
+		
 	| Parsop_convex disjunction_list -> List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_convex_predicate b)) [] disjunction_list
+	
+	| Parsop_update (updates, c) -> List.rev_append (get_variable_names_in_updates updates) (get_variable_names_in_constraint c)
+	
 	| Parsop_zonepred (z1, z2, z, t, r) -> List.rev_append
 		(get_variable_names_in_constraint z1)
 		(List.rev_append 
@@ -279,6 +284,28 @@ let rec get_variable_names_in_constraint = function
 			(List.rev_append 
 				(get_variable_names_in_constraint z)
 				(List.rev_append t r)
+			)
+		)
+	(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, gn, Un, Zn+1) *)
+	| Parsop_zonepredgr (zn_minus_1, gn_minus_1, un_minus_1, zn, t, gn, un, zn_plus_1) -> List.rev_append
+		(get_variable_names_in_constraint zn_minus_1)
+		(List.rev_append 
+			(get_variable_names_in_constraint gn_minus_1)
+			(List.rev_append 
+				(get_variable_names_in_updates un_minus_1)
+				(List.rev_append
+					(get_variable_names_in_constraint zn)
+					(List.rev_append
+						t
+						(List.rev_append 
+							(get_variable_names_in_constraint gn)
+							(List.rev_append
+								(get_variable_names_in_updates un)
+								(get_variable_names_in_constraint zn_plus_1)
+							)
+						)
+					)
+				)
 			)
 		)
 (* 	List.iter (fun cp ->  get_variable_names_in_convex_predicate cp *)
@@ -378,19 +405,53 @@ let abstract_input_of_parsed_operation parsed_operation =
 
 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
-	(* Convert the operation *) 
+	(* Convert the operations *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
-	let convert_var = List.map (index_of_variable_name index_of_variables) in
+	let convert_variables = List.map (index_of_variable_name index_of_variables) in
+	
+	let convert_updates : ParsingStructure.parsed_updates -> AbstractInput.updates =
+		List.map (fun (variable_name, parsed_linear_expression) ->
+			(index_of_variable_name index_of_variables variable_name,
+			linear_term_of_linear_expression index_of_variables parsed_linear_expression)
+	) in
 	
 	let rec convert_constraint = function
 		| Parsop_and list_of_cp -> Op_and (List.map convert_constraint list_of_cp)
+		
 		| Parsop_diff (c1, c2) -> Op_diff (convert_constraint c1, convert_constraint c2)
-		| Parsop_hide (variable_names, c) -> Op_hide (convert_var variable_names, convert_constraint c)
+		
+		| Parsop_hide (variable_names, c) -> Op_hide (convert_variables variable_names, convert_constraint c)
+		
 		| Parsop_simplify c -> Op_simplify (convert_constraint c)
+		
 		| Parsop_not c -> Op_not (convert_constraint c)
-		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_var variable_names, convert_constraint c)
-		| Parsop_time_past (variable_names, c) -> Op_time_past (convert_var variable_names, convert_constraint c)
-		| Parsop_zonepred (z1, z2, z, t, r) -> Op_zonepred (convert_constraint z1, convert_constraint z2, convert_constraint z, convert_var t, convert_var r)
+		
+		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_variables variable_names, convert_constraint c)
+		
+		| Parsop_time_past (variable_names, c) -> Op_time_past (convert_variables variable_names, convert_constraint c)
+		
+		| Parsop_update (updates, c) -> Op_update (convert_updates updates, convert_constraint c)
+		
+		| Parsop_zonepred (z1, z2, z, t, r) -> Op_zonepred (
+			convert_constraint z1,
+			convert_constraint z2,
+			convert_constraint z,
+			convert_variables t,
+			convert_variables r
+			)
+		
+		(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, gn, Un, Zn+1) *)
+		| Parsop_zonepredgr (zn_minus_1, gn_minus_1, un_minus_1, zn, t, gn, un, zn_plus_1) -> Op_zonepredgr (
+			convert_constraint zn_minus_1,
+			convert_constraint gn_minus_1,
+			convert_updates un_minus_1,
+			convert_constraint zn,
+			convert_variables t,
+			convert_constraint gn,
+			convert_updates un,
+			convert_constraint zn_plus_1
+			)
+			
 		| Parsop_convex cp_list ->
 			(* Create false constraint *)
 			let c = LinearConstraint.false_nnconvex_constraint() in

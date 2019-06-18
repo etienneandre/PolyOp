@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/04
+ * Last modified: 2019/06/18
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -240,25 +240,59 @@ List.map (fun parsed_operation ->
 
 	let rec perform_constraint = function
 		| Op_and lc_list -> LinearConstraint.nnconvex_intersection_list (List.map perform_constraint lc_list)
+		
 		| Op_diff (c1, c2) -> LinearConstraint.nnconvex_difference (perform_constraint c1) (perform_constraint c2)
+		
 		| Op_hide (variables, lc) -> LinearConstraint.nnconvex_hide variables (perform_constraint lc)
+		
 		| Op_not lc -> LinearConstraint.negate (perform_constraint lc)
+		
 		| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)
+		
 		| Op_time_elapsing (variables, lc) ->
 			(* Find constant (non elapsing) variables *)
 			let other_variables = list_diff abstract_input.variables variables in
 			(* Call the time elapsing function *)
 			LinearConstraint.nnconvex_time_elapse variables other_variables (perform_constraint lc)
+			
 		| Op_time_past (variables, lc) ->
 			(* Find constant (non elapsing) variables *)
 			let other_variables = list_diff abstract_input.variables variables in
 			(* Call the time past function *)
 			LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
+			
+		| Op_update (updates, lc) ->
+			(* Call the dedicated function *)
+			LinearConstraint.update updates (perform_constraint lc)
+			
 		| Op_zonepred(z1, z2, z, t, r) ->
 			(* Find constant (non elapsing) variables *)
 			let other_variables = list_diff abstract_input.variables t in
 			(* Call the dedicated function *)
-			LinearConstraint.nnconvex_constraint_zone_predecessor (perform_constraint z1) (perform_constraint z2) (perform_constraint z) t other_variables r
+			LinearConstraint.nnconvex_constraint_zone_predecessor
+				(perform_constraint z1)
+				(perform_constraint z2)
+				(perform_constraint z)
+				t
+				other_variables
+				r
+			
+		(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1) *)
+		| Op_zonepredgr(zn_minus_1, gn_minus_1, un_minus_1, zn, t, gn, un, zn_plus_1) ->
+			(* Find constant (non elapsing) variables *)
+			let other_variables = list_diff abstract_input.variables t in
+			(* Call the dedicated function *)
+			LinearConstraint.nnconvex_constraint_zone_predecessor_g_r
+				(perform_constraint zn_minus_1)
+				(perform_constraint gn_minus_1)
+				un_minus_1
+				(perform_constraint zn)
+				t
+				other_variables
+				(perform_constraint gn)
+				un
+				(perform_constraint zn_plus_1)
+			
 		| Op_convex lc -> lc
 	in
 

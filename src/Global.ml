@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/04
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ let round3_float d =
 (** Version string *)
 (****************************************************************)
 
-let version = "1.1"
+let version = "1.2"
 
 let version_string () = 
 	("PolyOp " ^ version)
