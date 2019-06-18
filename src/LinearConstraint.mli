@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/17
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -271,6 +271,12 @@ val nnconvex_time_elapse : variable list -> variable list -> nnconvex_constraint
 (** Time elapsing function, in backward direction (corresponds to the "past" operation in, e.g., [JLR15]) *)
 val nnconvex_time_past : variable list -> variable list -> nnconvex_constraint -> nnconvex_constraint
 
+(*------------------------------------------------------------*)
+(* Compute the polyhedron p after replacing each variable v with the corresponding linear term *)
+(*------------------------------------------------------------*)
+(*** NOTE: each variable is assumed to appear once at most in the list of updates; otherwise the behavior is unspecified ***)
+(*------------------------------------------------------------*)
+val update : (variable * linear_term) list -> nnconvex_constraint -> nnconvex_constraint
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)

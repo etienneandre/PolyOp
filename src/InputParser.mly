@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/17
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ let parse_error s =
 %token LPAREN RPAREN LBRACE RBRACE LSQBRA RSQBRA
 %token AMPERSAND APOSTROPHE COLON COMMA /* DOUBLEPIPE PIPE */ SEMICOLON
 
-%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE CT_ZONEPRED CT_ZONEPREDGR
+%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE CT_UPDATE CT_ZONEPRED CT_ZONEPREDGR
 
 %token EOF
 
@@ -113,6 +113,7 @@ opconstraint:
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }
 	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
+	| CT_UPDATE updates CT_IN opconstraint { Parsop_update ($2, $4) }
 	| CT_ZONEPRED opconstraint opconstraint opconstraint variable_list_with_par_opt_or_empty variable_list_with_par_opt_or_empty { Parsop_zonepred ($2 , $3, $4, $5, $6) }
 	| LPAREN opconstraint RPAREN { $2 }
 	/* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1) */
@@ -154,7 +155,8 @@ updates_without_par:
 ;
 
 update:
-	| LPAREN NAME OP_ASSIGN linear_expression RPAREN { $2 , $4 }
+	| LPAREN update RPAREN { $2 }
+	| NAME OP_ASSIGN linear_expression { $1 , $3 }
 ;
 
 

@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/14
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -71,6 +71,7 @@ rule token = parse
 	| "simplify"       { CT_SIMPLIFY }
 	| "true"           { CT_TRUE }
 	| "True"           { CT_TRUE }
+	| "update"         { CT_UPDATE }
 	| "zonepred"       { CT_ZONEPRED }
 	| "zonepredgr"     { CT_ZONEPREDGR }
 
@@ -85,6 +86,7 @@ rule token = parse
 	| '='              { OP_EQ }
 	| '>'              { OP_G }
 	| ":="             { OP_ASSIGN }
+	| "<-"             { OP_ASSIGN }
 
 	| '+'              { OP_PLUS }
 	| '-'              { OP_MINUS }

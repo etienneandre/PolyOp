@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/14
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -91,6 +91,7 @@ and parsop_constraint =
 	| Parsop_simplify of parsop_constraint
 	| Parsop_time_elapsing of variable_name list * parsop_constraint
 	| Parsop_time_past of variable_name list * parsop_constraint
+	| Parsop_update of parsed_updates * parsop_constraint
 	| Parsop_zonepred of parsop_constraint * parsop_constraint * parsop_constraint * variable_name list * variable_name list
 	(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, gn, Un, Zn+1) *)
 	| Parsop_zonepredgr of parsop_constraint * parsop_constraint * parsed_updates * parsop_constraint * variable_name list * parsop_constraint * parsed_updates * parsop_constraint

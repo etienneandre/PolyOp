@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/17
+ * Last modified: 2019/06/18
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -260,6 +260,10 @@ List.map (fun parsed_operation ->
 			let other_variables = list_diff abstract_input.variables variables in
 			(* Call the time past function *)
 			LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
+			
+		| Op_update (updates, lc) ->
+			(* Call the dedicated function *)
+			LinearConstraint.update updates (perform_constraint lc)
 			
 		| Op_zonepred(z1, z2, z, t, r) ->
 			(* Find constant (non elapsing) variables *)

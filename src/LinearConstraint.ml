@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/17
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -555,14 +555,14 @@ let hide_assign variables linear_constraint =
 
 
 (** rename variables in a constraint *)
-let rename_variables list_of_couples linear_constraint =
+let rename_variables list_of_pairs linear_constraint =
 	(* copy polyhedron, as ppl function has sideeffects *)
 	let poly = ppl_new_NNC_Polyhedron_from_NNC_Polyhedron linear_constraint in
 	(* add reverse mapping *)
-	let reverse_couples = List.map (fun (a,b) -> (b,a)) list_of_couples in
-	let joined_couples = List.rev_append list_of_couples reverse_couples in
+	let reverse_pairs = List.map (fun (a,b) -> (b,a)) list_of_pairs in
+	let joined_pairs = List.rev_append list_of_pairs reverse_pairs in
 	(* find all dimensions that will be mapped *)
-	let from, _  = List.split joined_couples in
+	let from, _  = List.split joined_pairs in
 	(* add identity pairs (x,x) for remaining dimensions *) 
 	let rec add_id list i = 
 		if i < 0 then list else
@@ -571,7 +571,7 @@ let rename_variables list_of_couples linear_constraint =
 			else
 				add_id list (i-1)
 		in 
-	let complete_list = add_id joined_couples (!total_dim - 1) in
+	let complete_list = add_id joined_pairs (!total_dim - 1) in
   (* Print some information *)
 	if verbose_mode_greater Verbose_high then (
 		let ndim = ppl_Polyhedron_space_dimension poly in
@@ -585,12 +585,12 @@ let rename_variables list_of_couples linear_constraint =
 
 				
 (** rename variables in a constraint, with side effects *)
-let rename_variables_assign list_of_couples linear_constraint =
+let rename_variables_assign list_of_pairs linear_constraint =
 	(* add reverse mapping *)
-	let reverse_couples = List.map (fun (a,b) -> (b,a)) list_of_couples in
-	let joined_couples = List.rev_append list_of_couples reverse_couples in
+	let reverse_pairs = List.map (fun (a,b) -> (b,a)) list_of_pairs in
+	let joined_pairs = List.rev_append list_of_pairs reverse_pairs in
 	(* find all dimensions that will be mapped *)
-	let from, _  = List.split joined_couples in
+	let from, _  = List.split joined_pairs in
 	(* add identity pairs (x,x) for remaining dimensions *) 
 	let rec add_id list i = 
 		if i < 0 then list else
@@ -599,7 +599,7 @@ let rename_variables_assign list_of_couples linear_constraint =
 			else
 				add_id list (i-1)
 		in 
-	let complete_list = add_id joined_couples (!total_dim - 1) in
+	let complete_list = add_id joined_pairs (!total_dim - 1) in
   (* Print some information *)
 	if verbose_mode_greater Verbose_high then (
 		let ndim = ppl_Polyhedron_space_dimension linear_constraint in
@@ -1081,6 +1081,167 @@ let adhoc_nnconvex_hide variables nnconvex_constraint =
 let nnconvex_hide = adhoc_nnconvex_hide
 
 
+
+(** rename variables in a constraint *)
+(*** WARNING: duplicate code from rename_variables ***)
+let nnconvex_rename_variables list_of_pairs (nnconvex_constraint : nnconvex_constraint) =
+	(* copy polyhedron, as ppl function has sideeffects *)
+	let poly = nnconvex_copy nnconvex_constraint in
+	(* add reverse mapping *)
+	let reverse_pairs = List.map (fun (a,b) -> (b,a)) list_of_pairs in
+	let joined_pairs = List.rev_append list_of_pairs reverse_pairs in
+	(* find all dimensions that will be mapped *)
+	let from, _  = List.split joined_pairs in
+	(* add identity pairs (x,x) for remaining dimensions *) 
+	let rec add_id list i = 
+		if i < 0 then list else
+			if not (List.mem i from) then
+				(i,i) :: add_id list (i-1)
+			else
+				add_id list (i-1)
+		in 
+	let complete_list = add_id joined_pairs (!total_dim - 1) in
+  (* Print some information *)
+	if verbose_mode_greater Verbose_high then (
+		let ndim = ppl_Pointset_Powerset_NNC_Polyhedron_space_dimension poly in
+		print_message Verbose_high ("mapping space dimensions, no. dimensions is " ^ string_of_int ndim);
+		List.iter (fun (a,b) -> (print_message Verbose_high ("map v" ^ string_of_int a ^ " -> v" ^ string_of_int b))) complete_list;
+	);
+	(* perfom the mapping *)
+	ppl_Pointset_Powerset_NNC_Polyhedron_map_space_dimensions poly complete_list;
+	poly
+
+
+(** Remove the highest nb_dimensions from a linear_constraint *)
+let nnconvex_remove_dimensions nb_dimensions nnconvex_constraint =
+	(* Compute the highest space dimension to keep *)
+	let current_space_dimension = ppl_Pointset_Powerset_NNC_Polyhedron_space_dimension nnconvex_constraint in
+	let new_space_dimension = current_space_dimension - nb_dimensions in
+
+	(* Print some information *)
+	if verbose_mode_greater Verbose_total then (
+		print_message Verbose_total ("Function 'remove_dimensions': removing " ^ (string_of_int nb_dimensions) ^ " from " ^ (string_of_int current_space_dimension) ^ ", i.e., keeping " ^ (string_of_int new_space_dimension) ^ ".");
+	);
+	
+	(* Projects the polyhedron referenced to by handle onto the first space_dimension dimensions *)
+	ppl_Pointset_Powerset_NNC_Polyhedron_remove_higher_space_dimensions nnconvex_constraint new_space_dimension
+
+
+
+(*------------------------------------------------------------*)
+(* Compute the polyhedron p after replacing each variable v with the corresponding linear term *)
+(*------------------------------------------------------------*)
+(*** NOTE: each variable is assumed to appear once at most in the list of updates; otherwise the behavior is unspecified ***)
+(*------------------------------------------------------------*)
+let update (updates : (variable * linear_term) list) nnconvex_constraint : nnconvex_constraint =
+
+	(* Copy to avoid side-effects *)
+	let nnconvex_constraint = nnconvex_copy nnconvex_constraint in
+	
+	let nb_variables = !total_dim in
+	
+	(* Compute the correspondance between variables v_i and renamed variables v_i' *)
+	let prime_of_variable = Hashtbl.create (List.length updates) in
+	let variable_of_prime = Hashtbl.create (List.length updates) in
+	
+	let variable_prime_id = ref nb_variables in
+	List.iter (fun (variable_id, _) ->
+		Hashtbl.add prime_of_variable variable_id !variable_prime_id;
+		Hashtbl.add variable_of_prime !variable_prime_id variable_id;
+		(* Debug message *)
+		if verbose_mode_greater Verbose_total then(
+			print_message Verbose_total ("\nThe primed index of variable '" ^ (debug_variable_names variable_id) ^ "' (index = " ^ (string_of_int variable_id) ^ ") is set to " ^ (string_of_int !variable_prime_id) ^ ".")
+		);
+		(* Increment the prime id for next variable *)
+		variable_prime_id := !variable_prime_id + 1;
+		()
+	) updates;
+	
+	let new_max_dimension = !variable_prime_id in
+	let extra_dimensions = new_max_dimension - nb_variables in
+	print_message Verbose_total ("\nNew dimension for constraints: " ^ (string_of_int new_max_dimension) ^ "; extra dimensions : " ^ (string_of_int extra_dimensions) ^ ".");
+	
+	(* Extend the number of dimensions for the whole manager *)
+	set_manager !int_dim (!total_dim + extra_dimensions);
+	(* Extend the constraint to enough dimensions too *)
+	ppl_Pointset_Powerset_NNC_Polyhedron_add_space_dimensions_and_project nnconvex_constraint extra_dimensions;
+
+	(* Create constraints v_i' = linear_term *)
+	let inequalities = List.map (fun (variable_id, linear_term) ->
+		(* Build linear_term - variable_id' = 0 *)
+		make_linear_inequality (
+			add_linear_terms
+				(* 1: The update linear term *)
+				linear_term
+				(* 2: - variable_id' *)
+				(make_linear_term [
+						NumConst.minus_one, (Hashtbl.find prime_of_variable variable_id);
+					] NumConst.zero)
+		) Op_eq
+	) updates in
+	(* Create the constraint *)
+	let inequalities = nnconvex_constraint_of_linear_constraint (make inequalities) in
+	(* Print some information *)
+	let print_constraint c =
+		if verbose_mode_greater Verbose_total then(
+			let all_variable_names = fun variable_id ->
+				if variable_id < nb_variables then
+					debug_variable_names variable_id
+				else
+					(debug_variable_names (Hashtbl.find variable_of_prime variable_id)) ^ "'"
+			in
+			print_message Verbose_total (string_of_nnconvex_constraint all_variable_names c);
+			()
+		)else(
+			()
+		)
+	in
+	print_constraint inequalities;
+
+	(* Add the constraints v_i' = linear_term *)
+	print_message Verbose_total ("\n -- Adding v_i' = linear_term for updated variables");
+	nnconvex_intersection_assign nnconvex_constraint inequalities;
+	(* Print some information *)
+	print_constraint nnconvex_constraint;
+
+	(* Remove the variables v_i *)
+	let list_of_variables_to_hide, _ = List.split updates in
+	(* Hide variables updated within the linear constraint, viz., exists v_i : lc, for v_i in updates *)
+	print_message Verbose_total ("\n -- Computing exists X : lc for updated variables");
+	let nnconvex_constraint = nnconvex_hide list_of_variables_to_hide nnconvex_constraint in
+	(* Print some information *)
+	if verbose_mode_greater Verbose_total then(
+		print_constraint nnconvex_constraint;
+	);
+
+	(* Renames clock v_i' into v_i *)
+	(** TO OPTIMIZE !! *)
+	(* Compute pairs (v_i', v_i) *)
+	let variables_and_primes = Hashtbl.fold (fun variable_id variable_prime_id pairs -> (variable_id, variable_prime_id) :: pairs) prime_of_variable [] in
+	print_message Verbose_total ("\n -- Renaming variables v_i' into v_i for updated variables");
+	let nnconvex_constraint = nnconvex_rename_variables variables_and_primes nnconvex_constraint in
+	(* Print some information *)
+	if verbose_mode_greater Verbose_total then(
+		print_constraint nnconvex_constraint;
+	);
+
+	(* Go back to the original number of dimensions *)
+	print_message Verbose_total ("\nGo back to standard dimension for constraints: #dimensions = " ^ (string_of_int nb_variables) ^ ".");
+	set_manager !int_dim (!total_dim - extra_dimensions);
+	print_message Verbose_total ("\nManager set to " ^ (string_of_int !int_dim ) ^ " integer and " ^ (string_of_int (!total_dim - extra_dimensions)) ^ " real dimensions.");
+	nnconvex_remove_dimensions extra_dimensions nnconvex_constraint;
+	
+	(* Print some information *)
+	if verbose_mode_greater Verbose_total then(
+		print_constraint nnconvex_constraint;
+	);
+	
+	(* The end *)
+	nnconvex_constraint
+
+
+	
+	
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Operations without modification} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)

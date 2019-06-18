@@ -10,7 +10,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/17
+ * Last modified: 2019/06/18
  *
  ************************************************************)
 
@@ -259,17 +259,24 @@ let rec get_variable_names_in_convex_predicate = function
 let rec get_variable_names_in_constraint = function
 	| Parsop_and cp_list ->
 		List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_constraint b)) [] cp_list
+		
 	| Parsop_diff (c1, c2) ->
 		List.rev_append
 			(get_variable_names_in_constraint c1)
 			(get_variable_names_in_constraint c2)
+			
 	| Parsop_hide (vars, c) | Parsop_time_elapsing (vars, c)  | Parsop_time_past (vars, c) ->
 		List.rev_append
 			vars
 			(get_variable_names_in_constraint c)
+			
 	| Parsop_not c | Parsop_simplify c ->
 		get_variable_names_in_constraint c
+		
 	| Parsop_convex disjunction_list -> List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_convex_predicate b)) [] disjunction_list
+	
+	| Parsop_update (updates, c) -> List.rev_append (get_variable_names_in_updates updates) (get_variable_names_in_constraint c)
+	
 	| Parsop_zonepred (z1, z2, z, t, r) -> List.rev_append
 		(get_variable_names_in_constraint z1)
 		(List.rev_append 
@@ -422,6 +429,8 @@ let abstract_input_of_parsed_operation parsed_operation =
 		| Parsop_time_elapsing (variable_names, c) -> Op_time_elapsing (convert_variables variable_names, convert_constraint c)
 		
 		| Parsop_time_past (variable_names, c) -> Op_time_past (convert_variables variable_names, convert_constraint c)
+		
+		| Parsop_update (updates, c) -> Op_update (convert_updates updates, convert_constraint c)
 		
 		| Parsop_zonepred (z1, z2, z, t, r) -> Op_zonepred (
 			convert_constraint z1,

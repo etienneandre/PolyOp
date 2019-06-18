@@ -13,7 +13,7 @@
 # File contributors : Étienne André
 #
 # Created           : 2019/05/31
-# Last modified     : 2019/06/04
+# Last modified     : 2019/06/18
 #************************************************************
 
 
@@ -715,5 +715,137 @@ END ANSWER
 	} # end test case
 			
 	,
-	### THE END
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2019/06/18
+		# Test last modified       : 2019/06/18
+		# Test for PolyOp version  : 1.0
+		'purpose'    : 'Test the update operation',
+		'input_files': ['updates.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'updates.polyop.res' , 'content' : """
+(* OPERATION 1: 
+update () in (true)
+*)
+BEGIN ANSWER
+true
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 2: 
+update () in (true)
+*)
+BEGIN ANSWER
+true
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 3: 
+update () in (  x = 0)
+*)
+BEGIN ANSWER
+  x = 0
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 4: 
+update (x := x + 0) in (  x = 0)
+*)
+BEGIN ANSWER
+  x = 0
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 5: 
+update (x := x + 0) in (  x = 0)
+*)
+BEGIN ANSWER
+  x = 0
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 6: 
+update (x := 1) in (  x = 0)
+*)
+BEGIN ANSWER
+  x = 1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 7: 
+update (x := 1) in (  x > 0)
+*)
+BEGIN ANSWER
+  x = 1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 8: 
+update (x := 1, y := 2) in (  y = 0
+& x = 0)
+*)
+BEGIN ANSWER
+  y = 2
+& x = 1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 9: 
+update (x := 1, y := 2) in (true)
+*)
+BEGIN ANSWER
+  y = 2
+& x = 1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 10: 
+update (x := 1) in (  2 > y
+& x = 2)
+*)
+BEGIN ANSWER
+  2 > y
+& x = 1
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 11: 
+update (y := 2046) in (  y > x
+& 2047 > z
+& z > y)
+*)
+BEGIN ANSWER
+  2047 > z
+& z > x
+& y = 2046
+END ANSWER
+			"""
+			} #end statespace file
+		] # end expectations
+	} # end test case
+			
+	,
+		### THE END
 ]

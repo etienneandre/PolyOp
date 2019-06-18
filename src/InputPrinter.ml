@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/17
+ * Last modified: 2019/06/18
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -68,6 +68,8 @@ let string_of_operation variable_names operation =
 		| Op_time_elapsing (vars, cp) -> "elapsing (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		
 		| Op_time_past (vars, cp) -> "past (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
+		
+		| Op_update (updates, cp) -> "update (" ^ (convert_updates updates) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		
 		| Op_zonepred (z1, z2, z, t, r) -> "zonepred ("
 			^ (string_of_constraint z1) ^ ", "
