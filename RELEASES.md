@@ -1,5 +1,5 @@
 *******************************************************
-# release 1.2    (2019-06-18, build 169)
+# release 1.2    (2019-06-18, build 170)
 
 ### Features
 * New operation: applies updates to a polyhedron (i.e. replacing their value with a linear combination of variables)
