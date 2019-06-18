@@ -73,7 +73,7 @@ rule token = parse
 	| "True"           { CT_TRUE }
 	| "update"         { CT_UPDATE }
 	| "zonepred"       { CT_ZONEPRED }
-	| "zonepredgr"     { CT_ZONEPREDGR }
+	| "zonepredgu"     { CT_ZONEPREDGR }
 
 	| ['a'-'z''A'-'Z']['a'-'z''A'-'Z''_''0'-'9']* as lxm { NAME lxm }
 	| ['0'-'9']*'.'['0'-'9']+ as lxm { FLOAT lxm } 

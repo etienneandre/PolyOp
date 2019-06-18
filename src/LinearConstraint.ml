@@ -1240,8 +1240,7 @@ let update (updates : (variable * linear_term) list) nnconvex_constraint : nncon
 	nnconvex_constraint
 
 
-	
-	
+
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
 (** {3 Operations without modification} *)
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -1405,27 +1404,32 @@ let nnconvex_constraint_zone_predecessor z1 z2 z variables_elapse variables_cons
 	result
 
 
-(** Given `Zn-1` and `Zn` such that `Zn` is the successor zone of `Zn-1` by guard `g-1` and updating variables in `Un-1` to some values (that we do not need to know as we know the zone), given `Zn+1` a set of concrete points (valuations) successor of zone `Zn` by elapsing of a set of variables `t` and non-elapsing of others `nont`, by guard `gn`, updates `Rn`, then `zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1)` computes the subset of points in `Zn` that are predecessors of `Zn` (by updates of `Un`, guard `gn`, elapsing of `t`, non-elapsing of `nont`), and that are direct successors (without time elapsing) of `Zn-1` via `gn-1` and `Un-1`. *)
+(** Given `Zn-1` and `Zn` such that `Zn` is the successor zone of `Zn-1` by guard `g-1` and updating variables in `Un-1` to some values, given `Zn+1` a set of concrete points (valuations) successor of zone `Zn` by elapsing of a set of variables `t` and non-elapsing of others `nont`, by guard `gn`, updates `Rn`, then `zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1)` computes the subset of points in `Zn` that are predecessors of `Zn` (by updates of `Un`, guard `gn`, elapsing of `t`, non-elapsing of `nont`), and that are direct successors (without time elapsing) of `Zn-1` via `gn-1` and `Un-1`. *)
 (*** NOTE: no check is made that Zn is a successor of Zn-1, nor that Zn+1 is a subset of Zn ***)
 (*** NOTE: no check is made that t and nont represent exactly the set of variables used in the polyhedra. ***)
 let nnconvex_constraint_zone_predecessor_g_r zn_minus_1 gn_minus_1 updates_n_minus_1 zn variables_elapse variables_constant gn updates_n zn_plus_1 =
-(*	(* Copy zn_plus_1, to avoid side-effects *)
-	let nnconvex_constraint = nnconvex_copy zn_plus_1 in*)
-	
-	raise (InternalError ("work in progress"))
-	
-(*	(* Function to build updates *)
-	let make_updates updates =
-		let inequalities = List.map (fun (variable_index, linear_term) ->
-			
-		) in
-	
 	(* Step 1: compute the predecessors of zn_plus_1 in zn without time elapsing, i.e., the points zn' subset of zn such that zn' ^ g ^ updates = zn_plus_1 *)
-	(* Method: zn_plus_1 => free variables in updates_n => intersect with g => intersect with zn *)
+	(* Method: zn_plus_1 => assign the updates to updates_n => free variables in updates_n => intersect with g => intersect with zn *)
+
+	(* Print some information *)
+	if verbose_mode_greater Verbose_high then(
+		print_message Verbose_high ("Initial constraint Zn+1: " ^ (string_of_nnconvex_constraint debug_variable_names zn_plus_1 ) ^ "");
+	);
+
+	(* Apply the updates to find the "initial" valuations of zn_plus_1 *)
+	let zn_plus_1' = update updates_n zn_plus_1 in
 	
-	let zn' = nnconvex_hide updates_n zn_plus_1 in
+	(* Hide the updated variables *)
+	let zn' = nnconvex_hide (let variables, _ = List.split updates_n in variables) zn_plus_1' in
+	
+	(* Intersect with the incoming guard *)
 	nnconvex_intersection_assign zn' (nnconvex_intersection zn gn);
 	
+	(* Print some information *)
+	if verbose_mode_greater Verbose_high then(
+		print_message Verbose_high ("Initial valuations of Zn+1: " ^ (string_of_nnconvex_constraint debug_variable_names zn' ) ^ "");
+	);
+
 	
 	(* Step 2: compute the time predecessors of zn' in zn *)
 	(* Method: zn' => backward elapsing => intersection with zn *)
@@ -1435,15 +1439,32 @@ let nnconvex_constraint_zone_predecessor_g_r zn_minus_1 gn_minus_1 updates_n_min
 	(* Intersect again with zn *)
 	nnconvex_intersection_assign zn' zn;
 
+	(* Print some information *)
+	if verbose_mode_greater Verbose_high then(
+		print_message Verbose_high ("Time predecessors of Zn+1 within Zn: " ^ (string_of_nnconvex_constraint debug_variable_names zn' ) ^ "");
+	);
+
 	
 	(* Step 3: compute the subset of zn' that comes from a direct update (without time elapsing) from zn-1 *)
-	(* Method: zn' => intersection with (zn-1 ^ gn-1 \ Un-1 *)
+	(* Method: zn' => assign the updates to Un-1 => intersection with (zn-1 ^ gn-1 \ Un-1) => intersection again with zn *)
 	
-	nnconvex_intersection_assign zn' (nnconvex_hide updates_n_minus_1 (nnconvex_intersection zn_minus_1 gn_minus_1));
+	(* Apply the updates to find the "initial" valuations of zn *)
+	let zn' = update updates_n_minus_1 zn' in
+	
+	(* Intersect with the points that pass the guard, and remove these variables *)
+	nnconvex_intersection_assign zn' (nnconvex_hide (let variables, _ = List.split updates_n_minus_1 in variables) (nnconvex_intersection zn_minus_1 gn_minus_1));
+
+	(* Intersect again with zn to make sure we are part of the zone *)
+	nnconvex_intersection_assign zn' zn;
+
+	(* Print some information *)
+	if verbose_mode_greater Verbose_high then(
+		print_message Verbose_high ("Initial valuations of Zn: " ^ (string_of_nnconvex_constraint debug_variable_names zn' ) ^ "");
+	);
 
 	
 	(* Return the result *)
-	zn'*)
+	zn'
 	
 
 

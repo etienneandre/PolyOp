@@ -52,7 +52,7 @@ let string_of_valuation variables variable_names valuation =
 let string_of_operation variable_names operation =
 	let convert_vars vars = string_of_list_of_string_with_sep ", " (List.map variable_names vars) in
 	
-	let convert_updates updates = string_of_list_of_string_with_sep ", " (List.map (fun (variable_index, linear_term) -> (variable_names variable_index) ^ " := " ^ (LinearConstraint.string_of_linear_term variable_names linear_term) ) updates) in
+	let convert_updates updates = "(" ^ (string_of_list_of_string_with_sep ", " (List.map (fun (variable_index, linear_term) -> (variable_names variable_index) ^ " := " ^ (LinearConstraint.string_of_linear_term variable_names linear_term) ) updates)) ^ ")" in
 	
 	let rec string_of_constraint = function
 		| Op_and cp_list -> "and(" ^ (string_of_list_of_string_with_sep " , " (List.map string_of_constraint cp_list)) ^ ")"
@@ -79,7 +79,7 @@ let string_of_operation variable_names operation =
 			^ (convert_vars r)
 			^ ")"
 		
-		| Op_zonepredgr (zn_minus_1, gn_minus_1, un_minus_1, zn, t, gn, un, zn_plus_1) -> "zonepredgr ("
+		| Op_zonepredgr (zn_minus_1, gn_minus_1, un_minus_1, zn, t, gn, un, zn_plus_1) -> "zonepredgu ("
 			^ (string_of_constraint zn_minus_1) ^ ", "
 			^ (string_of_constraint gn_minus_1) ^ ", "
 			^ (convert_updates un_minus_1) ^ ", "
