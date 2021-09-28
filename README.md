@@ -37,4 +37,4 @@ See examples of the input syntax in `examples/example.polyop`.
 
 For any information, please feel free to contact me:
 
-https://lipn.univ-paris13.fr/~andre/
+https://www.loria.science/andre/

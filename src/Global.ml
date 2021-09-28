@@ -5,10 +5,11 @@
  * National University of Singapore
  * École Centrale Nantes, France
  * Université Paris 13, LIPN, CNRS, France
+ * Université de Lorraine, CNRS, Inria, LORIA, Nancy, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2021/09/28
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -90,22 +91,23 @@ let print_header_string () =
 	
 	(* Build info *)
 	let build_info = "Build: " ^ BuildInfo.build_number ^ " (" ^ BuildInfo.build_time ^ ")" in
-	let length_header = 54 in
+	let length_header = 58 in
 	
 	let program_name = version_string () in
 	
-	"************************************************************\n"
+	"****************************************************************\n"
 	^ "*  " ^ program_name ^ (string_n_times (length_header - (String.length program_name)) " ") ^ "  *\n"
-	^ "*                                                          *\n"
-	^ "*          Interface to the Parma Polyhedra Library (PPL)  *\n"
-	^ "*                                           Étienne André  *\n"
-	^ "*                                             2011 - " ^ (BuildInfo.build_year) ^ "  *\n"
-	^ "*                        National University of Singapore  *\n"
-	^ "*                   IRCCyN, École Centrale Nantes, France  *\n"
-	^ "*                 Université Paris 13, LIPN, CNRS, France  *\n"
-	^ "*                                                          *\n"
+	^ "*                                                              *\n"
+	^ "*              Interface to the Parma Polyhedra Library (PPL)  *\n"
+	^ "*                                               Étienne André  *\n"
+	^ "*                                                 2011 - " ^ (BuildInfo.build_year) ^ "  *\n"
+	^ "*                            National University of Singapore  *\n"
+	^ "*                       IRCCyN, École Centrale Nantes, France  *\n"
+	^ "*                     Université Paris 13, LIPN, CNRS, France  *\n"
+	^ "*   Université de Lorraine, CNRS, Inria, LORIA, Nancy, France  *\n"
+	^ "*                                                              *\n"
 	^ "*  " ^ (string_n_times (length_header - (String.length build_info)) " ") ^ build_info ^ "  *\n"
-	^ "************************************************************\n"
+	^ "****************************************************************\n"
     ^ "This program comes with ABSOLUTELY NO WARRANTY.\n"
     ^ "This is free software, and you are welcome to redistribute it under certain conditions.\n\n"
 	
