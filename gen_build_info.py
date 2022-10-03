@@ -14,7 +14,7 @@
 # Created      : 2013/09/26
 # Last modified: 2014/03/22
 # Copied from IMITATOR: 2016/02/29
-# Last modified: 2019/05/31
+# Last modified: 2022/10/03
 #************************************************************
 
 
@@ -29,7 +29,7 @@ ml_file_name = "src/BuildInfo.ml"
 mli_file_name = "src/BuildInfo.mli"
 
 
-print "Python is now handling build information…"
+print("Python is now handling build information…")
 
 
 #************************************************************
@@ -67,7 +67,7 @@ def write_to_file(file_name, content):
 	#if os.path.exists(file_name):
 		#file_handler = file(file_name, "r+")
 	#else:
-	file_handler = file(file_name, "w")
+	file_handler = open(file_name, "w")
 	# Write content
 	file_handler.write(content)
 	# Close
@@ -114,6 +114,6 @@ val build_year : string
 """)
 
 
-print "Files '" + ml_file_name + "' and '" + mli_file_name + "' successfully generated."
+print("Files '" + ml_file_name + "' and '" + mli_file_name + "' successfully generated.")
 
 exit(0)

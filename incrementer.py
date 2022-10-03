@@ -14,7 +14,7 @@
 # Created      : 2013/05/22
 # Last modified: 2013/09/25
 # Copied from IMITATOR: 2016/02/29
-# Last modified: 2016/02/29
+# Last modified: 2022/10/03
 #************************************************************
 
 
@@ -26,7 +26,7 @@ from time import gmtime, strftime
 #************************************************************
 build_number_file_name = "build_number.txt"
 
-print "Incrementing build number…"
+print("Incrementing build number…")
 
 
 
@@ -59,6 +59,6 @@ file_handler.write(str(current_build + 1))
 # Close file
 file_handler.close()
 
-print "Current build number: " + (str) (current_build)
+print("Current build number: " + (str) (current_build))
 
 exit(0)
