@@ -1,0 +1,48 @@
+*.annot
+*.bcf
+*.fdb*
+*.fls
+*.out
+*.run.xml
+*.synctex.*
+*.cmo
+*.cma
+*.cmi
+*.a
+*.o
+*.cmx
+*.cmxs
+*.cmxa
+*.pyc
+*.txt
+
+# MAC users
+.DS_Store
+=
+
+# PyCharm configuration
+.idea
+
+# build files and folders
+_build
+_oasis
+_tags
+setup.data
+setup.ml
+setup.log
+myocamlbuild.ml
+src/BuildInfo.ml*
+
+# generated files
+
+*.log
+*.res
+
+# binaries
+*.native
+bin/polyop
+
+
+# IDE
+.vscode
+*kate-swp
