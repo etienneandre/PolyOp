@@ -4,11 +4,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2023/07/11
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -71,6 +71,7 @@ rule token = parse
 	| "simplify"       { CT_SIMPLIFY }
 	| "true"           { CT_TRUE }
 	| "True"           { CT_TRUE }
+	| "union"          { CT_UNION }
 	| "update"         { CT_UPDATE }
 	| "zonepred"       { CT_ZONEPRED }
 	| "zonepredgu"     { CT_ZONEPREDGR }

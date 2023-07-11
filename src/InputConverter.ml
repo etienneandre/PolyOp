@@ -6,11 +6,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2023/07/11
  *
  ************************************************************)
 
@@ -257,7 +257,8 @@ let rec get_variable_names_in_convex_predicate = function
 
 
 let rec get_variable_names_in_constraint = function
-	| Parsop_and cp_list ->
+	| Parsop_and cp_list
+	| Parsop_union cp_list ->
 		List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_constraint b)) [] cp_list
 		
 	| Parsop_diff (c1, c2) ->
@@ -275,6 +276,7 @@ let rec get_variable_names_in_constraint = function
 		
 	| Parsop_convex disjunction_list -> List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_convex_predicate b)) [] disjunction_list
 	
+
 	| Parsop_update (updates, c) -> List.rev_append (get_variable_names_in_updates updates) (get_variable_names_in_constraint c)
 	
 	| Parsop_zonepred (z1, z2, z, t, r) -> List.rev_append
@@ -430,6 +432,8 @@ let abstract_input_of_parsed_operation parsed_operation =
 		
 		| Parsop_time_past (variable_names, c) -> Op_time_past (convert_variables variable_names, convert_constraint c)
 		
+		| Parsop_union list_of_cp -> Op_union (List.map convert_constraint list_of_cp)
+
 		| Parsop_update (updates, c) -> Op_update (convert_updates updates, convert_constraint c)
 		
 		| Parsop_zonepred (z1, z2, z, t, r) -> Op_zonepred (

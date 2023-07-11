@@ -4,11 +4,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2023/07/11
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -48,9 +48,22 @@ let parse_error s =
 %token OP_L OP_LEQ OP_EQ OP_GEQ OP_G OP_ASSIGN
 
 %token LPAREN RPAREN LBRACE RBRACE LSQBRA RSQBRA
-%token AMPERSAND APOSTROPHE COLON COMMA /* DOUBLEPIPE PIPE */ SEMICOLON
+%token AMPERSAND APOSTROPHE COLON COMMA SEMICOLON
 
-%token CT_AND CT_DIFF CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT CT_FALSE CT_HIDE CT_IN CT_INCLUDED CT_NOT CT_NOTHING CT_OR CT_PAST CT_SATISFIABLE CT_SIMPLIFY CT_TRUE CT_UPDATE CT_ZONEPRED CT_ZONEPREDGR
+%token
+	CT_AND
+	CT_DIFF
+	CT_ELAPSING CT_EQUAL CT_EXHIBIT_POINT
+	CT_FALSE
+	CT_HIDE
+	CT_IN CT_INCLUDED
+	CT_NOT CT_NOTHING
+	CT_OR
+	CT_PAST
+	CT_SATISFIABLE CT_SIMPLIFY
+	CT_TRUE
+	CT_UNION CT_UPDATE
+	CT_ZONEPRED CT_ZONEPREDGR
 
 %token EOF
 
@@ -113,6 +126,7 @@ opconstraint:
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }
 	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
+	| CT_UNION convex_predicate_list_with_par { Parsop_union $2 }
 	| CT_UPDATE updates CT_IN opconstraint { Parsop_update ($2, $4) }
 	| CT_ZONEPRED opconstraint opconstraint opconstraint variable_list_with_par_opt_or_empty variable_list_with_par_opt_or_empty { Parsop_zonepred ($2 , $3, $4, $5, $6) }
 	| LPAREN opconstraint RPAREN { $2 }

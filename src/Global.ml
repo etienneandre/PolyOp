@@ -4,12 +4,12 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  * Université de Lorraine, CNRS, Inria, LORIA, Nancy, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2021/09/28
+ * Last modified: 2023/07/11
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ let round3_float d =
 (** Version string *)
 (****************************************************************)
 
-let version = "1.2"
+let version = "1.3"
 
 let version_string () = 
 	("PolyOp " ^ version)

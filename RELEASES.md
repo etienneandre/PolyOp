@@ -1,4 +1,11 @@
 *******************************************************
+# release 1.3    (2023-07-11, build xxx)
+
+### Features
+* New operation: union over a list of constraints
+
+
+*******************************************************
 # release 1.2    (2019-06-18, build 170)
 
 ### Features

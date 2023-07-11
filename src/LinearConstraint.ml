@@ -4,11 +4,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 20123/07/11
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -948,14 +948,23 @@ let nnconvex_union_with_linear_constraint nnconvex_constraint linear_constraint 
 	()
 
 
-
-
 (** Performs the union of a nnconvex_constraint with another nnconvex_constraint; the first nnconvex_constraint is modified, the second is not *)
-let nnconvex_union nnconvex_constraint nnconvex_constraint' =
+let nnconvex_union_assign nnconvex_constraint nnconvex_constraint' =
 	(* Get the disjuncts of the second nnconvex_constraint *)
 	let disjuncts = get_disjuncts nnconvex_constraint' in
 	(* Add each of them as a union *)
 	List.iter (nnconvex_union_with_linear_constraint nnconvex_constraint) disjuncts
+
+
+(** Performs the union of a list of nnconvex_constraint and return a new nnconvex_constraint (none of the arguments is modified) *)
+let nnconvex_union_list nnconvex_constraint_list =
+	(* First create false constraint *)
+	let nnconvex_constraint = false_nnconvex_constraint() in
+	(* Perform union with side effects *)
+	List.iter (fun nnconvex_constraint' -> nnconvex_union_assign nnconvex_constraint nnconvex_constraint') nnconvex_constraint_list;
+	(* Return copy *)
+	nnconvex_constraint
+
 
 
 (** Performs the difference between a first nnconvex_constraint and a second nnconvex_constraint; the first is modified, the second is not *)

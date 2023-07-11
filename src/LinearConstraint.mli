@@ -4,11 +4,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2023/07/11
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -256,8 +256,11 @@ val nnconvex_intersection_list : nnconvex_constraint list -> nnconvex_constraint
 val nnconvex_union_with_linear_constraint : nnconvex_constraint -> linear_constraint -> unit
 
 (** Performs the union of a nnconvex_constraint with another nnconvex_constraint; the first nnconvex_constraint is modified, the second is not *)
-val nnconvex_union : nnconvex_constraint -> nnconvex_constraint -> unit
+(* val nnconvex_union_assign : nnconvex_constraint -> nnconvex_constraint -> unit *)
 
+
+(** Performs the union of a list of nnconvex_constraint and return a new nnconvex_constraint (none of the arguments is modified) *)
+val nnconvex_union_list : nnconvex_constraint list -> nnconvex_constraint
 
 (** Performs the difference between a first px_nnconvex_constraint and a second px_nnconvex_constraint; the first is modified, the second is not *)
 val nnconvex_difference : nnconvex_constraint -> nnconvex_constraint -> nnconvex_constraint

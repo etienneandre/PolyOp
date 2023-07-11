@@ -2,7 +2,7 @@
 
 ## Operations on polyhedra
 
-###### v 1.2
+###### v 1.3
 
 Operations on non-necessarily closed, non-necessarily convex polyhedra: (relatively) simple layer on the [Parma Polyhedra Library](http://bugseng.com/products/ppl/) (PPL), with some hopefully useful additions.
 All operations use the `Pointset_Powerset NNC_Polyhedron` data structure from PPL
@@ -37,4 +37,4 @@ See examples of the input syntax in `examples/example.polyop`.
 
 For any information, please feel free to contact me:
 
-https://www.loria.science/andre/
+https://lipn.univ-paris13.fr/~andre/

@@ -4,11 +4,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2023/07/11
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -91,6 +91,7 @@ and parsop_constraint =
 	| Parsop_simplify of parsop_constraint
 	| Parsop_time_elapsing of variable_name list * parsop_constraint
 	| Parsop_time_past of variable_name list * parsop_constraint
+	| Parsop_union of parsop_constraint list
 	| Parsop_update of parsed_updates * parsop_constraint
 	| Parsop_zonepred of parsop_constraint * parsop_constraint * parsop_constraint * variable_name list * variable_name list
 	(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, gn, Un, Zn+1) *)

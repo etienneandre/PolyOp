@@ -4,11 +4,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2023/07/11
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -69,6 +69,8 @@ let string_of_operation variable_names operation =
 		
 		| Op_time_past (vars, cp) -> "past (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		
+		| Op_union cp_list -> "union(" ^ (string_of_list_of_string_with_sep " , " (List.map string_of_constraint cp_list)) ^ ")"
+
 		| Op_update (updates, cp) -> "update (" ^ (convert_updates updates) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		
 		| Op_zonepred (z1, z2, z, t, r) -> "zonepred ("

@@ -4,11 +4,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2023/07/11
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ and op_constraint =
 	| Op_simplify of op_constraint
 	| Op_time_elapsing of variable_index list * op_constraint
 	| Op_time_past of variable_index list * op_constraint
+	| Op_union of op_constraint list
 	| Op_update of updates * op_constraint
 	| Op_zonepred of op_constraint * op_constraint * op_constraint * variable_index list * variable_index list
 	(* zonepredgr(Zn-1, gn-1, Un-1, Zn, t, nont, gn, Un, Zn+1) *)

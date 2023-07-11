@@ -4,11 +4,11 @@
  *
  * National University of Singapore
  * École Centrale Nantes, France
- * Université Paris 13, LIPN, CNRS, France
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/18
+ * Last modified: 2023/07/11
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -261,6 +261,8 @@ List.map (fun parsed_operation ->
 			(* Call the time past function *)
 			LinearConstraint.nnconvex_time_past variables other_variables (perform_constraint lc)
 			
+		| Op_union lc_list -> LinearConstraint.nnconvex_union_list (List.map perform_constraint lc_list)
+
 		| Op_update (updates, lc) ->
 			(* Call the dedicated function *)
 			LinearConstraint.update updates (perform_constraint lc)
