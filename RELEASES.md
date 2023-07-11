@@ -1,8 +1,8 @@
 *******************************************************
-# release 1.3    (2023-07-11, build xxx)
+# release 1.3    (2023-07-11, build 180)
 
 ### Features
-* New operation: union over a list of constraints
+* New operation: union over a list of non-necessarily convex constraints
 
 
 *******************************************************
