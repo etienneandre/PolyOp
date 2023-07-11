@@ -1,0 +1,21 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2023/07/11
+ * Last modified: 2023/07/11
+ *
+ ************************************************************)
+
+union (a = 0 , a > 0)
+
+union (a = 0 , a > 0, a < 0)
+
+union (a = 0 , b = 1)
+
+union (a = 0 & b = 0, a > 0, b > 0)
+
+union (a = b, a > b, b > 0)

@@ -4,7 +4,7 @@
 #
 #                       PolyOp
 # 
-# Université Paris 13, LIPN, CNRS, France
+# Université Sorbonne Paris Nord, LIPN, CNRS, France
 # 
 # Script description: TESTATOR (script for non-regression tests)
 # 
@@ -12,7 +12,7 @@
 # Created           : 2012/05/??
 # Last modified     : 2017/03/21
 # Copied from IMITATOR: 2019/05/31
-# Last modified: 2019/05/31
+# Last modified: 2023/07/11
 # ************************************************************
 
 
@@ -186,7 +186,7 @@ def test(binary_name, tests, logfile, logfile_name):
         # Print something
         print_to_log(header_benchmark.format(benchmark_id=benchmark_id,
                                              purpose=test_case['purpose']))
-        print_to_screen(' Benchmark {}: {}..'.format(benchmark_id, test_case['purpose']))
+        print_to_screen(' Benchmark {}: {}.'.format(benchmark_id, test_case['purpose']))
 
         # Add the path to all input files
         # TODO: test for existence of files (just in case)
@@ -333,7 +333,7 @@ print_to_screen('{0.BOLD} PolyOp TESTATOR{0.NORMAL}                             
 print_to_log(' PolyOp TESTATOR                                       v0.1')
 print_to_screen_and_log('')
 print_to_screen_and_log(' Étienne André')
-print_to_screen_and_log(' Université Paris 13, LIPN, CNRS, France')
+print_to_screen_and_log(' Université Sorbonne Paris Nord, LIPN, CNRS, France')
 print_to_screen_and_log('############################################################')
 now = datetime.datetime.now()
 print_to_screen_and_log(now.strftime("%A %d. %B %Y %H:%M:%S %z"))

@@ -6,14 +6,14 @@
 #
 #             Data for non-regression tests
 #
-# Université Paris 13, LIPN, CNRS, France
+# Université Sorbonne Paris Nord, LIPN, CNRS, France
 #
 # File description: non-regression tests data
 #
 # File contributors : Étienne André
 #
 # Created           : 2019/05/31
-# Last modified     : 2019/06/18
+# Last modified     : 2023/07/11
 #************************************************************
 
 
@@ -133,6 +133,69 @@ END ANSWER
 			
 	,
 	
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2023/07/11
+		# Test last modified       : 2023/07/11
+		# Test for PolyOp version  : 1.3
+		'purpose'    : 'Simple disjunction tests',
+		'input_files': ['union.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'union.polyop.res' , 'content' : """
+ (* OPERATION 1:
+ union(  a = 0 ,   a > 0)
+ *)
+ BEGIN ANSWER
+   a >= 0
+ END ANSWER
+
+ (* OPERATION 2:
+ union(  a = 0 ,   a > 0 ,   0 > a)
+ *)
+ BEGIN ANSWER
+ true
+ END ANSWER
+
+ (* OPERATION 3:
+ union(  a = 0 ,   b = 1)
+ *)
+ BEGIN ANSWER
+   a = 0
+ or
+    b = 1
+ END ANSWER
+
+ (* OPERATION 4:
+ union(  a = 0
+ & b = 0 ,   a > 0 ,   b > 0)
+ *)
+ BEGIN ANSWER
+   a = 0
+ & b = 0
+ or
+    a > 0
+ or
+    b > 0
+ END ANSWER
+
+ (* OPERATION 5:
+ union(  a = b ,   a > b ,   b > 0)
+ *)
+ BEGIN ANSWER
+   a >= b
+ or
+    b > 0
+ END ANSWER
+
+			"""
+			} #end statespace file
+		] # end expectations
+	} # end test case
+
+	,
+
 	#------------------------------------------------------------
 	{
 		# Test version             : 1
