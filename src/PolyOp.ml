@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2023/07/11
+ * Last modified: 2023/12/01
  *
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -245,6 +245,11 @@ List.map (fun parsed_operation ->
 		
 		| Op_hide (variables, lc) -> LinearConstraint.nnconvex_hide variables (perform_constraint lc)
 		
+		| Op_project (variables, lc) ->
+			(* Compute variables to hide by negation *)
+			let variables_to_hide = list_diff abstract_input.variables variables in
+			LinearConstraint.nnconvex_hide variables_to_hide (perform_constraint lc)
+
 		| Op_not lc -> LinearConstraint.negate (perform_constraint lc)
 		
 		| Op_simplify lc -> LinearConstraint.simplify (perform_constraint lc)

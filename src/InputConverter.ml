@@ -10,7 +10,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2023/07/11
+ * Last modified: 2023/12/01
  *
  ************************************************************)
 
@@ -266,7 +266,7 @@ let rec get_variable_names_in_constraint = function
 			(get_variable_names_in_constraint c1)
 			(get_variable_names_in_constraint c2)
 			
-	| Parsop_hide (vars, c) | Parsop_time_elapsing (vars, c)  | Parsop_time_past (vars, c) ->
+	| Parsop_hide (vars, c) | Parsop_project (vars, c) | Parsop_time_elapsing (vars, c)  | Parsop_time_past (vars, c) ->
 		List.rev_append
 			vars
 			(get_variable_names_in_constraint c)
@@ -424,6 +424,8 @@ let abstract_input_of_parsed_operation parsed_operation =
 		
 		| Parsop_hide (variable_names, c) -> Op_hide (convert_variables variable_names, convert_constraint c)
 		
+		| Parsop_project (variable_names, c) -> Op_project (convert_variables variable_names, convert_constraint c)
+
 		| Parsop_simplify c -> Op_simplify (convert_constraint c)
 		
 		| Parsop_not c -> Op_not (convert_constraint c)
