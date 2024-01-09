@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2023/12/01
+ * Last modified: 2024/01/09
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -63,6 +63,7 @@ rule token = parse
 	| "included"       { CT_INCLUDED }
 	| "not"            { CT_NOT }
 	| "nothing"        { CT_NOTHING }
+	| "onto"           { CT_ONTO }
 	| "or"             { CT_OR }
 	| "OR"             { CT_OR }
 	| "||"             { CT_OR }

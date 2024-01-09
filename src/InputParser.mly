@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2023/12/01
+ * Last modified: 2024/01/09
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ let parse_error s =
 	CT_HIDE
 	CT_IN CT_INCLUDED
 	CT_NOT CT_NOTHING
-	CT_OR
+	CT_ONTO CT_OR
 	CT_PAST CT_PROJECT
 	CT_SATISFIABLE CT_SIMPLIFY
 	CT_TRUE
@@ -124,7 +124,7 @@ opconstraint:
 	| CT_ELAPSING variable_list_with_par_opt CT_IN opconstraint { Parsop_time_elapsing ($2, $4) }
 	| CT_PAST variable_list_with_par_opt CT_IN opconstraint { Parsop_time_past ($2, $4) }
 	| CT_HIDE variable_list_with_par_opt CT_IN opconstraint { Parsop_hide ($2, $4) }
-	| CT_PROJECT variable_list_with_par_opt CT_IN opconstraint { Parsop_project ($2, $4) }
+	| CT_PROJECT opconstraint CT_ONTO variable_list_with_par_opt { Parsop_project ($4, $2) }
 	| CT_NOT opconstraint { Parsop_not $2 }
 	| CT_SIMPLIFY opconstraint { Parsop_simplify $2 }
 	| CT_UNION convex_predicate_list_with_par { Parsop_union $2 }
