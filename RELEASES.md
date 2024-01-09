@@ -1,4 +1,11 @@
 *******************************************************
+# release 1.4    (2024-01-09, build 186)
+
+### Features
+* New operation: projection onto a variables set
+
+
+*******************************************************
 # release 1.3    (2023-07-11, build 180)
 
 ### Features
