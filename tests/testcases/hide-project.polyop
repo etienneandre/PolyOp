@@ -1,0 +1,25 @@
+(************************************************************
+ *
+ *                     PolyOp
+ *
+ * Université Sorbonne Paris Nord, LIPN, CNRS, France
+ *
+ * Author:        Étienne André
+ * Created:       2024/01/09
+ * Last modified: 2024/01/09
+ *
+ ************************************************************)
+
+hide p1 in true
+hide p1 in False
+hide (p1) in (False)
+
+hide p1 in p1 = 0
+
+hide p1 in p1 = 0 & p2 = 5
+project p1 = 0 & p2 = 5 onto p2
+
+hide p2 in (p1 <= p2 & p2 <= p3)
+project (p1 <= p2 & p2 <= p3) onto (p1, p3)
+project p1 <= p2 & p2 <= p3 onto (p1, p3)
+

@@ -13,7 +13,7 @@
 # File contributors : Étienne André
 #
 # Created           : 2019/05/31
-# Last modified     : 2023/07/11
+# Last modified     : 2024/01/09
 #************************************************************
 
 
@@ -37,7 +37,7 @@ tests = [
 		I am very proud to do nothing.
 		END ANSWER
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
@@ -100,7 +100,7 @@ or
 END ANSWER
 
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
@@ -127,7 +127,7 @@ BEGIN ANSWER
 p1 = p2
 END ANSWER
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
@@ -190,7 +190,7 @@ END ANSWER
  END ANSWER
 
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 
@@ -239,12 +239,97 @@ END ANSWER
 
 
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
 	,
 	
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/01/09
+		# Test last modified       : 2024/01/09
+		# Test for PolyOp version  : 1.4
+		'purpose'    : 'Test the hide and project operations',
+		'input_files': ['hide-project.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'hide-project.polyop.res' , 'content' : """
+ (* OPERATION 1:
+ hide (p1) in (true)
+ *)
+ BEGIN ANSWER
+ true
+ END ANSWER
+
+ (* OPERATION 2:
+ hide (p1) in (false)
+ *)
+ BEGIN ANSWER
+ false
+ END ANSWER
+
+ (* OPERATION 3:
+ hide (p1) in (false)
+ *)
+ BEGIN ANSWER
+ false
+ END ANSWER
+
+ (* OPERATION 4:
+ hide (p1) in (  p1 = 0)
+ *)
+ BEGIN ANSWER
+ true
+ END ANSWER
+
+ (* OPERATION 5:
+ hide (p1) in (  p1 = 0
+ & p2 = 5)
+ *)
+ BEGIN ANSWER
+   p2 = 5
+ END ANSWER
+
+ (* OPERATION 6:
+ project (  p2 = 5
+ & p1 = 0) onto (p2)
+ *)
+ BEGIN ANSWER
+   p2 = 5
+ END ANSWER
+
+ (* OPERATION 7:
+ hide (p2) in (  p2 >= p1
+ & p3 >= p2)
+ *)
+ BEGIN ANSWER
+   p3 >= p1
+ END ANSWER
+
+ (* OPERATION 8:
+ project (  p3 >= p2
+ & p2 >= p1) onto (p1, p3)
+ *)
+ BEGIN ANSWER
+   p3 >= p1
+ END ANSWER
+
+ (* OPERATION 9:
+ project (  p3 >= p2
+ & p2 >= p1) onto (p1, p3)
+ *)
+ BEGIN ANSWER
+   p3 >= p1
+ END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
 	#------------------------------------------------------------
 	{
 		# Test version             : 1
@@ -427,7 +512,7 @@ p1=1
 END ANSWER
 
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
@@ -529,7 +614,7 @@ END ANSWER
 
 
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
@@ -639,7 +724,7 @@ END ANSWER
 
 
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
@@ -773,7 +858,7 @@ BEGIN ANSWER
 END ANSWER
 
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
@@ -930,7 +1015,7 @@ END ANSWER
 
 
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
@@ -1047,7 +1132,7 @@ BEGIN ANSWER
 & y = 3
 END ANSWER
 			"""
-			} #end statespace file
+			} #end result file
 		] # end expectations
 	} # end test case
 			
