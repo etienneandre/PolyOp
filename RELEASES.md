@@ -1,4 +1,13 @@
 *******************************************************
+# release 1.5    (202x, build xxx)
+
+### Features
+
+### Minor modifications
+* Syntax `diff c1 , c2` allowed in addition to `diff c1 c2`
+
+
+*******************************************************
 # release 1.4    (2024-01-09, build 186)
 
 ### Features
