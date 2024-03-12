@@ -36,7 +36,7 @@ open InputPrinter
 
 
 
-let string_error = "error"
+let input_error_string = "error in the input file"
 
 (**************************************************)
 (* Parsing function *)
@@ -164,7 +164,7 @@ if !nb_args < 1 then(
 let output_file_name = !file ^ ".res" in
 
 (* If the input does not succeed: *)
-write_to_file output_file_name string_error;
+write_to_file output_file_name input_error_string;
 
 
 (**************************************************)
