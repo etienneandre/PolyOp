@@ -13,7 +13,7 @@
 # File contributors : Étienne André
 #
 # Created           : 2019/05/31
-# Last modified     : 2024/01/09
+# Last modified     : 2024/03/12
 #************************************************************
 
 
@@ -245,6 +245,74 @@ END ANSWER
 			
 	,
 	
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/03/12
+		# Test last modified       : 2024/03/12
+		# Test for PolyOp version  : 1.0
+		'purpose'    : 'Test the diff',
+		'input_files': ['diff.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'diff.polyop.res' , 'content' : """
+(* OPERATION 1:
+diff(  p >= 3
+& 10 >= p ,   p > 4
+& 5 >= p)
+*)
+BEGIN ANSWER
+  p > 5
+& 10 >= p
+or
+   p >= 3
+& 4 >= p
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 2:
+diff(  p >= 3
+& 10 >= p ,   p > 4
+& 5 >= p)
+*)
+BEGIN ANSWER
+  p > 5
+& 10 >= p
+or
+   p >= 3
+& 4 >= p
+END ANSWER
+
+
+(*--------------------*)
+
+(* OPERATION 3:
+diff(  p2 >= 0
+& p1 > p2 ,   3 > p2
+& p1 = 10)
+*)
+BEGIN ANSWER
+  p1 > 10
+& p2 >= 0
+& p1 > p2
+or
+   10 > p1
+& p2 >= 0
+& p1 > p2
+or
+   10 > p2
+& p2 >= 3
+& p1 = 10
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
 	#------------------------------------------------------------
 	{
 		# Test version             : 1
