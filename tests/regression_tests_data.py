@@ -1437,5 +1437,33 @@ END ANSWER
 
 	,
 
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (disjunction)',
+		'input_files': ['IH-union.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-union.polyop.res' , 'content' : """
+BEGIN ANSWER
+   y >= 1
+ & x >= 1
+ & 2 >= x
+ & 2 >= y
+ or
+    y >= 1
+ & 5 >= x
+ & x >= 3 + y
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
 			### THE END
 ]
