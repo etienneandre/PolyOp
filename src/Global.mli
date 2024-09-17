@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2016/02/29
+ * Last modified: 2024/09/17
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -124,6 +124,9 @@ val list_only_once : 'a list -> 'a list
 
 (** Filter the elements appearing several times in the list *)
 val elements_existing_several_times : 'a list -> 'a list
+
+(** Remove the first occurence of element e in list l; return the list unchanged if not found *)
+val list_remove_first_occurence : 'a -> 'a list -> 'a list
 
 
 (****************************************************************)

@@ -9,7 +9,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2024/01/09
+ * Last modified: 2024/09/17
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -281,6 +281,8 @@ let elements_existing_several_times l =
 	in
 	List.rev (elements_existing_several_times_rec [] l)
 
+(*** WARNING: not tested ***)
+let list_remove_first_occurence e l = ExtList.List.remove l e
 
 (****************************************************************)
 (** Useful functions on arrays *)
