@@ -13,7 +13,7 @@
 # File contributors : Étienne André
 #
 # Created           : 2019/05/31
-# Last modified     : 2024/03/12
+# Last modified     : 2024/09/17
 #************************************************************
 
 
@@ -1205,5 +1205,237 @@ END ANSWER
 	} # end test case
 			
 	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (Didier’s example)',
+		'input_files': ['IH-Didier.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-Didier.polyop.res' , 'content' : """
+BEGIN ANSWER
+   y >= 1
+ & 2*x >= 1 + y
+ & 13 >= 3*y + 2*x
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (Didier’s example, swapping variables id)',
+		'input_files': ['IH-Didier2.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-Didier2.polyop.res' , 'content' : """
+BEGIN ANSWER
+   2*x >= 1 + y
+ & y >= 1
+ & 13 >= 2*x + 3*y
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (square)',
+		'input_files': ['IH-square.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-square.polyop.res' , 'content' : """
+BEGIN ANSWER
+   x >= 1
+ & y >= 1
+ & 2 >= y
+ & 2 >= x
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (line)',
+		'input_files': ['IH-line.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-line.polyop.res' , 'content' : """
+BEGIN ANSWER
+   x >= 1
+ & 2 >= x
+ & y = 1
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (point)',
+		'input_files': ['IH-point.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-point.polyop.res' , 'content' : """
+BEGIN ANSWER
+   x = 1
+ & y = 1
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (triangle)',
+		'input_files': ['IH-triangle.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-triangle.polyop.res' , 'content' : """
+BEGIN ANSWER
+   x >= y
+ & y >= 1
+ & 2 >= x
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (square with strict constraint)',
+		'input_files': ['IH-square-strict.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-square-strict.polyop.res' , 'content' : """
+BEGIN ANSWER
+   y >= 1
+ & x >= 1
+ & 4 > 2*y
+ & 2 >= x
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (triangle with strict diagonal not hitting integers)',
+		'input_files': ['IH-triangle-strict1.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-triangle-strict1.polyop.res' , 'content' : """
+BEGIN ANSWER
+   x >= y
+ & y >= 1
+ & 2 >= x
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (triangle with strict side)',
+		'input_files': ['IH-triangle-strict2.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-triangle-strict2.polyop.res' , 'content' : """
+BEGIN ANSWER
+   y >= 1
+ & x >= y
+ & 4 > 2*x
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
+	#------------------------------------------------------------
+	{
+		# Test version             : 1
+		# Test since               : 2024/09/17
+		# Test last modified       : 2024/09/17
+		# Test for PolyOp version  : 1.5
+		'purpose'    : 'Test IH (triangle with strict diagonal hitting integers)',
+		'input_files': ['IH-triangle-strict3.polyop'],
+		'options'    : '',
+		'expectations' : [
+			{'file': 'IH-triangle-strict3.polyop.res' , 'content' : """
+BEGIN ANSWER
+   y >= 1
+ & 8 > 4*x
+ & 4*x > 4*y
+END ANSWER
+			"""
+			} #end result file
+		] # end expectations
+	} # end test case
+
+	,
+
 			### THE END
 ]
