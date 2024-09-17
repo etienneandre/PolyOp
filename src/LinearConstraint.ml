@@ -895,6 +895,24 @@ let time_past_assign variables_elapse variables_constant linear_constraint =
 	(* Take intersection *)
 	intersection_assign linear_constraint [(make inequalities_nonnegative)]
 
+(*------------------------------------------------------------*)
+(* Dimensions *)
+(*------------------------------------------------------------*)
+
+(** Remove the highest nb_dimensions from a linear_constraint *)
+let remove_dimensions nb_dimensions linear_constraint =
+	(* Compute the highest space dimension to keep *)
+	let current_space_dimension = ppl_Polyhedron_space_dimension linear_constraint in
+	let new_space_dimension = current_space_dimension - nb_dimensions in
+
+	(* Print some information *)
+	if verbose_mode_greater Verbose_total then (
+		print_message Verbose_total ("Function `remove_dimensions`: removing " ^ (string_of_int nb_dimensions) ^ " from " ^ (string_of_int current_space_dimension) ^ ", i.e., keeping " ^ (string_of_int new_space_dimension) ^ ".");
+	);
+
+	(* Projects the polyhedron referenced to by handle onto the first space_dimension dimensions *)
+	ppl_Polyhedron_remove_higher_space_dimensions linear_constraint new_space_dimension
+
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 (* {3 Computation of the integer hull (IH) of a polyhedron} *)
@@ -1097,8 +1115,6 @@ let ih (linear_constraint : linear_constraint) =
 		) non_integer_points;
 	);
 
-		(*
-
 	(* For each non-integer point *)
 	List.iter (fun (linear_generator : ppl_linear_generator) ->
 		(* Convert to valuation *)
@@ -1215,13 +1231,13 @@ let ih (linear_constraint : linear_constraint) =
 
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  IMPORTANT: Extending dimensions from " ^ (string_of_int !total_dim) ^ " to " ^ (string_of_int (!total_dim + additional_dimensions) ^ ", in order to cope for " ^ (string_of_int additional_dimensions) ^ " extra variable" ^ (s_of_int additional_dimensions));
+			print_message Verbose_high ("  IMPORTANT: Extending dimensions from " ^ (string_of_int !total_dim) ^ " to " ^ (string_of_int (!total_dim + additional_dimensions)) ^ ", in order to cope for " ^ (string_of_int additional_dimensions) ^ " extra variable" ^ (s_of_int additional_dimensions));
 		);
 
-		set_manager !int_dim (old_nb_dimensions + additional_dimensions);
+		set_manager (old_nb_dimensions + additional_dimensions);
 
 		(* C++: PPL_Convex_Polyhedron R(Q); *)
-		let r_linear_constraint : linear_constraint = make_px_constraint !q in
+		let r_linear_constraint : linear_constraint = make !q in
 
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
@@ -1229,7 +1245,7 @@ let ih (linear_constraint : linear_constraint) =
 		);
 
 		(* C++: R.unconstrain(toRemove); *)
-		px_hide_assign to_remove r_linear_constraint;
+		hide_assign to_remove r_linear_constraint;
 
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
@@ -1238,7 +1254,7 @@ let ih (linear_constraint : linear_constraint) =
 
 		(* Retrieve the inequalities from the aforementioned constraint *)
 		(* C++: PPL_Constraint_System D = R.minimized_constraints(); *)
-		let d_inequalities : linear_inequality list = get_minimized_inequalities r_linear_constraint in
+		let d_inequalities : linear_inequality list = ppl_Polyhedron_get_minimized_constraints r_linear_constraint in
 
 		List.iter (fun (j_linear_inequality : linear_inequality) ->
 			(* Print some information *)
@@ -1304,7 +1320,7 @@ let ih (linear_constraint : linear_constraint) =
 
 		(* Remove all slack variables *)
 		(* C++: PPL_Convex_Polyhedron T(Q); *)
-		let t = make_px_constraint !q in
+		let t = make !q in
 
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
@@ -1312,10 +1328,10 @@ let ih (linear_constraint : linear_constraint) =
 		);
 
 		(* C++: T.remove_higher_space_dimensions(T.space_dimension() - extra_vars); *)
-		let nb_dimensions_to_remove = (!extra_var - old_nb_px_dimensions) in
+		let nb_dimensions_to_remove = (!extra_var - old_nb_dimensions) in
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  About to remove " ^ (string_of_int nb_dimensions_to_remove) ^ " dimension" ^ (s_of_int nb_dimensions_to_remove) ^ " (" ^ (string_of_int !extra_var) ^ " dimension" ^ (s_of_int !extra_var) ^ " including extra variables, minus " ^ (string_of_int old_nb_px_dimensions) ^ " original dimension" ^ (s_of_int old_nb_px_dimensions) ^ ") in constraint T");
+			print_message Verbose_high ("  About to remove " ^ (string_of_int nb_dimensions_to_remove) ^ " dimension" ^ (s_of_int nb_dimensions_to_remove) ^ " (" ^ (string_of_int !extra_var) ^ " dimension" ^ (s_of_int !extra_var) ^ " including extra variables, minus " ^ (string_of_int old_nb_dimensions) ^ " original dimension" ^ (s_of_int old_nb_dimensions) ^ ") in constraint T");
 		);
 		remove_dimensions nb_dimensions_to_remove t;
 
@@ -1328,11 +1344,11 @@ let ih (linear_constraint : linear_constraint) =
 		if verbose_mode_greater Verbose_high then(
 			print_message Verbose_high ("  IMPORTANT: Removing " ^ (string_of_int !extra_var) ^ " extra dimension" ^ (s_of_int !extra_var));
 		);
-		set_dimensions old_nb_parameters old_nb_clocks !nb_rationals; (*** NOTE: nb_rationals unchanged ***)
+		set_manager old_nb_dimensions;
 
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Dimensions = (" ^ (string_of_int !nb_parameters) ^ "/" ^ (string_of_int (!nb_clocks)) ^ "/" ^ (string_of_int !nb_rationals) ^ "), i.e., " ^ (string_of_int !px_dim) ^ " px-dimensions.");
+			print_message Verbose_high ("  Dimensions = " ^ (string_of_int old_nb_dimensions) ^ " px-dimensions.");
 		);
 
 		(* C++: T.add_space_dimensions_and_embed(P.space_dimension() - T.space_dimension()); *)
@@ -1350,8 +1366,6 @@ let ih (linear_constraint : linear_constraint) =
 		()
 
 	) non_integer_points;
-
-	*)
 
 	(* Print some information *)
 	if verbose_mode_greater Verbose_high then(
