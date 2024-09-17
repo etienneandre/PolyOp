@@ -7,7 +7,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/03
+ * Last modified: 2024/09/17
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,74 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************)
  
+
+(**************************************************)
+(**************************************************)
+(* GMP multi-precision integers *)
+(**************************************************)
+(**************************************************)
+
+(**************************************************)
+(* Type definition *)
+(**************************************************)
+type gmpz = Gmp.Z.t
+
+(**************************************************)
+(** {2 Constants} *)
+(**************************************************)
+
+(* 0, 1, -1 *)
+val gmpz_zero      : gmpz
+val gmpz_one       : gmpz
+val gmpz_minus_one : gmpz
+
+(**************************************************)
+(** {2 Conversion functions} *)
+(**************************************************)
+
+(* Convert an integer to a Gmp.Z *)
+val gmpz_of_int : int -> gmpz
+
+(* Convert a Gmp.Z to a string *)
+val string_of_gmpz : gmpz -> string
+
+(**************************************************)
+(** {2 Arithmetic functions} *)
+(**************************************************)
+
+(* Negation *)
+val gmpz_neg : gmpz -> gmpz
+
+(* Compute ceiling division *)
+val gmpz_cdiv : gmpz -> gmpz -> gmpz
+
+(* Compute floor division *)
+val gmpz_fdiv : gmpz -> gmpz -> gmpz
+
+(* Absolute *)
+val gmpz_abs : gmpz -> gmpz
+
+
+(**************************************************)
+(** {2 Comparison functions} *)
+(**************************************************)
+
+(* Equal *)
+val gmpz_equal : gmpz -> gmpz -> bool
+
+(* Not equal *)
+val gmpz_neq : gmpz -> gmpz -> bool
+
+val gmpz_is_one : gmpz -> bool
+
+
+
+(**************************************************)
+(**************************************************)
+(* GMP multi-precision rationals *)
+(**************************************************)
+(**************************************************)
+
 (**************************************************)
 (* Type definition *)
 (**************************************************)

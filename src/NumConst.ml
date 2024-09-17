@@ -7,7 +7,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2019/06/03
+ * Last modified: 2024/09/17
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,80 @@
 ************************************************************)
 
 (**************************************************)
+(**************************************************)
+(* GMP multi-precision integers *)
+(**************************************************)
+(**************************************************)
+
+(**************************************************)
 (* Type definition *)
+(**************************************************)
+type gmpz = Gmp.Z.t
+
+(**************************************************)
+(** {2 Constants} *)
+(**************************************************)
+
+(* 0 *)
+let gmpz_zero = Gmp.Z.zero
+(* 1 *)
+let gmpz_one = Gmp.Z.one
+(* -1 *)
+let gmpz_minus_one = Gmp.Z.from_int (-1)
+
+(**************************************************)
+(** {2 Conversion functions} *)
+(**************************************************)
+
+(* Convert an integer to a Gmp.Z *)
+let gmpz_of_int = Gmp.Z.from_int
+
+(* Convert a Gmp.Z to a string *)
+let string_of_gmpz = Gmp.Z.to_string
+
+(**************************************************)
+(** {2 Arithmetic functions} *)
+(**************************************************)
+
+(* Negation *)
+let gmpz_neg  = Gmp.Z.neg
+
+(* Compute ceiling division *)
+let gmpz_cdiv (n : gmpz) (d : gmpz) : gmpz =
+	(* Apply cdiv *)
+	Gmp.Z.cdiv_q n d
+
+(* Compute floor division *)
+let gmpz_fdiv (n : gmpz) (d : gmpz) : gmpz =
+	(* Apply fdiv *)
+	Gmp.Z.fdiv_q n d
+
+(* Absolute *)
+let gmpz_abs a =
+	if Gmp.Z.cmp a gmpz_zero >= 0 then a
+	else gmpz_neg a
+
+
+(**************************************************)
+(** {2 Comparison functions} *)
+(**************************************************)
+
+(* Equal *)
+let gmpz_equal (a : gmpz) (b : gmpz) : bool =
+	(Gmp.Z.cmp a b) = 0
+
+(* Not equal *)
+let gmpz_neq (a : gmpz) (b : gmpz) : bool =
+	(Gmp.Z.cmp a b) <> 0
+
+let gmpz_is_one (gmp_z : gmpz) : bool =
+	gmpz_equal gmp_z gmpz_one
+
+
+(**************************************************)
+(**************************************************)
+(* GMP multi-precision rationals *)
+(**************************************************)
 (**************************************************)
 
 open Gmp.Q.Infixes
