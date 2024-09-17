@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2023/07/11
+ * Last modified: 2024/09/17
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -248,6 +248,11 @@ val nnconvex_intersection : nnconvex_constraint -> nnconvex_constraint -> nnconv
 
 (** Performs the intersection of a list of nnconvex_constraint and return a new nnconvex_constraint (none of the arguments is modified) *)
 val nnconvex_intersection_list : nnconvex_constraint list -> nnconvex_constraint
+
+(*------------------------------------------------------------*)
+(** Compute the integer hull of a px_nnconvex_constraint [JLR15] *)
+(*------------------------------------------------------------*)
+val nnconvex_ih : nnconvex_constraint -> nnconvex_constraint
 
 
 (** Performs the union of a nnconvex_constraint with a linear_constraint; the nnconvex_constraint is modified, the linear_constraint is not *)
