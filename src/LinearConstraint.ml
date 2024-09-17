@@ -1102,275 +1102,291 @@ let ih (linear_constraint : linear_constraint) =
 	(* Copy the constraint, into what will become the result *)
 	let p : linear_constraint = copy linear_constraint in
 
-	(* Retrieve the non-integer points *)
-	let non_integer_points : ppl_linear_generator list = non_integer_points linear_constraint in
+	let some_more_noninteger_points = ref true in
 
-	(* Print some information *)
-	if verbose_mode_greater Verbose_high then(
-		print_message Verbose_high ("  List of all " ^ (string_of_int (List.length non_integer_points)) ^ " non-integer points:");
-		List.iter ( fun linear_generator ->
-			match linear_generator with
-			| Ppl.Point _ -> debug_print_point Verbose_high linear_generator
-			| _ -> ()
+	while !some_more_noninteger_points do(
+
+		if verbose_mode_greater Verbose_high then(
+			print_message Verbose_high ("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
+			print_message Verbose_high "New loop: there are still some non-integer points";
+		);
+
+		some_more_noninteger_points := false;
+
+		(* Retrieve the non-integer points *)
+		let non_integer_points : ppl_linear_generator list = non_integer_points p in
+
+		(* Print some information *)
+		if verbose_mode_greater Verbose_high then(
+			print_message Verbose_high ("  List of all " ^ (string_of_int (List.length non_integer_points)) ^ " non-integer points:");
+			List.iter ( fun linear_generator ->
+				match linear_generator with
+				| Ppl.Point _ -> debug_print_point Verbose_high linear_generator
+				| _ -> ()
+			) non_integer_points;
+		);
+
+		(* For each non-integer point *)
+		List.iter (fun (linear_generator : ppl_linear_generator) ->
+			(* We still have some non-integer points *)
+			some_more_noninteger_points := true;
+
+			(* Convert to valuation *)
+			let valuation = valuation_of_Ppl_Point linear_generator in
+
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high "------------------------------------------------------------";
+				print_message Verbose_high "  Considering the following valuation: ";
+				print_message Verbose_high (debug_string_of_valuation valuation);
+			);
+
+			(* Get inequalities *)
+			let inequalities : linear_inequality list = ppl_Polyhedron_get_minimized_constraints p in
+
+			(* Filter only those inequalities which are tight for this point *)
+
+			let tight_inequalities : linear_inequality list = List.filter (is_linear_inequality_tight valuation) inequalities in
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high "  Tight inequalities:";
+				List.iter (fun ineq -> print_message Verbose_high (string_of_linear_inequality debug_variable_names ineq)) tight_inequalities;
+			);
+
+			(* `extra_var` is an extra dimension for each inequality *)
+			let extra_var = ref current_nb_dimensions in
+
+			(* For each inequality *)
+			let q : linear_inequality list ref = ref (List.map (fun linear_inequality : linear_inequality ->
+
+				if verbose_mode_greater Verbose_high then(
+					print_message Verbose_high "  -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ";
+					print_message Verbose_high "    Considering the following inequality: ";
+					print_message Verbose_high (string_of_linear_inequality debug_variable_names linear_inequality);
+				);
+
+				(* Get the linear term from the linear_inequality *)
+				let (ppl_linear_term : ppl_linear_term), (op : ppl_op) = linear_term_geq_and_op_of_linear_inequality linear_inequality in
+
+				(* From an inequality lt1 >= 0, we will create lt1 - extra_var = 0, where extra_var is a fresh variable for each such inequality *)
+
+				match op with
+				(* Equality: keep unchanged *)
+				| Equal_RS -> linear_inequality
+
+				(* lt1 >= 0 ---> lt1 - extra_var = 0 *)
+				| Greater_Than_RS
+				| Greater_Or_Equal_RS
+					->
+					let lt_minus_s : ppl_linear_term = Minus (ppl_linear_term , Variable (!extra_var)) in
+					(* Increment the extra dimension *)
+					incr extra_var;
+					Equal (lt_minus_s , zero_term)
+
+				(* lt1 <= 0 ---> impossible situation *)
+				| Less_Or_Equal_RS
+				| Less_Than_RS
+					-> raise (InternalError "Inequality >=, >, = expected in ih")
+
+			) tight_inequalities) in
+
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high "  -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n";
+			);
+
+			let additional_dimensions = !extra_var - current_nb_dimensions in
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Transformed inequalities (including " ^ (string_of_int additional_dimensions) ^ " new extra variables) Q:");
+				List.iter (fun ineq -> print_message Verbose_high (string_of_linear_inequality debug_variable_names ineq)) !q;
+			);
+
+			(*** TODO: reintroduce this construction (the other one going down is rather for testing) ***)
+			(* Find a variable such that its value at the vertex is not integral *)
+			(*** NOTE: exists necessarily as the current point is not an integer point ***)
+	(*		let var = ref 0 in
+			let noninteger_found = ref false in
+	(* 		C++: for (var = 0; var < nv && i.coefficient(PPL_Variable(var)) % i.divisor() == 0; var++); *)
+			while not !noninteger_found && !var < current_nb_dimensions do
+				if not (NumConst.is_integer ((valuation_of_Ppl_Point linear_generator) !var)) then(
+					noninteger_found := true
+				)else(
+					incr var;
+				);
+			done;*)
+
+			let var = ref (current_nb_dimensions - 1) in
+			let noninteger_found = ref false in
+	(* 		C++: for (var = 0; var < nv && i.coefficient(PPL_Variable(var)) % i.divisor() == 0; var++); *)
+			while not !noninteger_found && !var >= 0 do
+				if not (NumConst.is_integer ((valuation_of_Ppl_Point linear_generator) !var)) then(
+					noninteger_found := true
+				)else(
+					decr var;
+				);
+			done;
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Found variable " ^ (string_of_int !var) ^ " with non-integer coefficient " ^ (NumConst.string_of_numconst ((valuation_of_Ppl_Point linear_generator) !var)) ^ "");
+			);
+
+			(* Prepare to remove all variable dimensions except var (and the extra variables) *)
+			let to_remove = Global.list_remove_first_occurence !var (Global.list_of_interval 0 (current_nb_dimensions - 1)) in
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  List of variables to remove: [" ^ (string_of_list_of_string_with_sep " - " (List.map string_of_int to_remove) ^ "]"));
+			);
+
+			(*** WARNING: huge HACK: we locally change the dimensions ***)
+			let old_nb_dimensions = !total_dim in
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  IMPORTANT: Extending dimensions from " ^ (string_of_int !total_dim) ^ " to " ^ (string_of_int (!total_dim + additional_dimensions)) ^ ", in order to cope for " ^ (string_of_int additional_dimensions) ^ " extra variable" ^ (s_of_int additional_dimensions));
+			);
+
+			set_dimensions (old_nb_dimensions + additional_dimensions);
+
+			(* C++: PPL_Convex_Polyhedron R(Q); *)
+			let r_linear_constraint : linear_constraint = make !q in
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Constraint R before removal: " ^ (string_of_linear_constraint debug_variable_names r_linear_constraint));
+			);
+
+			(* C++: R.unconstrain(toRemove); *)
+			hide_assign to_remove r_linear_constraint;
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Constraint R after removal: " ^ (string_of_linear_constraint debug_variable_names r_linear_constraint));
+			);
+
+			(* Retrieve the inequalities from the aforementioned constraint *)
+			(* C++: PPL_Constraint_System D = R.minimized_constraints(); *)
+			let d_inequalities : linear_inequality list = ppl_Polyhedron_get_minimized_constraints r_linear_constraint in
+
+			List.iter (fun (j_linear_inequality : linear_inequality) ->
+				(* Print some information *)
+				if verbose_mode_greater Verbose_high then(
+					print_message Verbose_high "    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - ";
+					print_message Verbose_high "    Considering the following linear inequality:";
+					print_message Verbose_high (string_of_linear_inequality debug_variable_names j_linear_inequality);
+				);
+
+				(* C++: if (abs(j.coefficient(v)) != 0) *)
+				let (j_lt : ppl_linear_term) , _ = linear_term_geq_and_op_of_linear_inequality j_linear_inequality in
+
+				(* Print some information *)
+				if verbose_mode_greater Verbose_high then(
+					print_message Verbose_high "    Linear term:";
+					print_message Verbose_high (string_of_linear_term_ppl debug_variable_names j_lt);
+				);
+
+				let coef_v : coef_ppl = get_variable_coef_in_linear_term !var j_lt in
+				let abs_coef_v : coef_ppl = NumConst.gmpz_abs coef_v in
+
+				(* Print some information *)
+				if verbose_mode_greater Verbose_high then(
+					print_message Verbose_high ("    Absolute coefficient of variable " ^ (string_of_int !var) ^ ": " ^ (NumConst.string_of_gmpz abs_coef_v));
+				);
+
+				if NumConst.gmpz_neq abs_coef_v NumConst.gmpz_zero then(
+					(* C++: PPL_Linear_Expression e = ppl_linear_expression(j); *)
+					let e : ppl_linear_term = j_lt in
+
+					(* C++: Q.insert(divide_and_floor((e <= 0), abs(j.coefficient(v)))); *)
+					let e_leq_0 : linear_inequality = Less_Or_Equal (e , zero_term) in
+
+					(* Print some information *)
+					if verbose_mode_greater Verbose_high then(
+						print_message Verbose_high "    Pass the following linear inequality to divide_and_floor:";
+						print_message Verbose_high (string_of_linear_inequality debug_variable_names e_leq_0);
+					);
+
+					let new_linear_inequality : linear_inequality = divide_and_floor e_leq_0 abs_coef_v in
+
+					(* Print some information *)
+					if verbose_mode_greater Verbose_high then(
+						print_message Verbose_high "    Add the following linear inequality to Q:";
+						print_message Verbose_high (string_of_linear_inequality debug_variable_names new_linear_inequality);
+					);
+
+					q := new_linear_inequality :: !q;
+
+					()
+
+				);
+			) d_inequalities;
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high "    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - \n";
+			);
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Q = ");
+				List.iter (fun ineq -> print_message Verbose_high (string_of_linear_inequality debug_variable_names ineq)) !q;
+			);
+
+			(* Remove all slack variables *)
+			(* C++: PPL_Convex_Polyhedron T(Q); *)
+			let t = make !q in
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Constraint T: " ^ (string_of_linear_constraint debug_variable_names t));
+			);
+
+			(* C++: T.remove_higher_space_dimensions(T.space_dimension() - extra_vars); *)
+			let nb_dimensions_to_remove = (!extra_var - old_nb_dimensions) in
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  About to remove " ^ (string_of_int nb_dimensions_to_remove) ^ " dimension" ^ (s_of_int nb_dimensions_to_remove) ^ " (" ^ (string_of_int !extra_var) ^ " dimension" ^ (s_of_int !extra_var) ^ " including extra variables, minus " ^ (string_of_int old_nb_dimensions) ^ " original dimension" ^ (s_of_int old_nb_dimensions) ^ ") in constraint T");
+			);
+			remove_dimensions nb_dimensions_to_remove t;
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Constraint T after dimensions removal: " ^ (string_of_linear_constraint debug_variable_names t));
+			);
+
+			(*** WARNING: huge HACK: we locally change the dimensions ***)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  IMPORTANT: Removing " ^ (string_of_int nb_dimensions_to_remove) ^ " extra dimension" ^ (s_of_int nb_dimensions_to_remove));
+			);
+			set_dimensions old_nb_dimensions;
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Dimensions = " ^ (string_of_int old_nb_dimensions) ^ " dimensions.");
+			);
+
+			(* C++: T.add_space_dimensions_and_embed(P.space_dimension() - T.space_dimension()); *)
+			(* Not necessary here *)
+
+			(* add the new constraints to P *)
+			(* C++: P.intersection_assign(T); *)
+			intersection_assign p [t];
+
+			(* Print some information *)
+			if verbose_mode_greater Verbose_high then(
+				print_message Verbose_high ("  Constraint P after intersection with T: " ^ (string_of_linear_constraint debug_variable_names p));
+			);
+
+			()
+
 		) non_integer_points;
-	);
-
-	(* For each non-integer point *)
-	List.iter (fun (linear_generator : ppl_linear_generator) ->
-		(* Convert to valuation *)
-		let valuation = valuation_of_Ppl_Point linear_generator in
-
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high "------------------------------------------------------------";
-			print_message Verbose_high "  Considering the following valuation: ";
-			print_message Verbose_high (debug_string_of_valuation valuation);
-		);
-
-		(* Get inequalities *)
-		let inequalities : linear_inequality list = ppl_Polyhedron_get_minimized_constraints p in
-
-		(* Filter only those inequalities which are tight for this point *)
-
-		let tight_inequalities : linear_inequality list = List.filter (is_linear_inequality_tight valuation) inequalities in
 
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high "  Tight inequalities:";
-			List.iter (fun ineq -> print_message Verbose_high (string_of_linear_inequality debug_variable_names ineq)) tight_inequalities;
+			print_message Verbose_high ("  Final constraint P at the end of the loop: " ^ (string_of_linear_constraint debug_variable_names p));
 		);
 
-		(* `extra_var` is an extra dimension for each inequality *)
-		let extra_var = ref current_nb_dimensions in
-
-		(* For each inequality *)
-		let q : linear_inequality list ref = ref (List.map (fun linear_inequality : linear_inequality ->
-
-			if verbose_mode_greater Verbose_high then(
-				print_message Verbose_high "  -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ";
-				print_message Verbose_high "    Considering the following inequality: ";
-				print_message Verbose_high (string_of_linear_inequality debug_variable_names linear_inequality);
-			);
-
-			(* Get the linear term from the linear_inequality *)
-			let (ppl_linear_term : ppl_linear_term), (op : ppl_op) = linear_term_geq_and_op_of_linear_inequality linear_inequality in
-
-			(* From an inequality lt1 >= 0, we will create lt1 - extra_var = 0, where extra_var is a fresh variable for each such inequality *)
-
-			match op with
-			(* Equality: keep unchanged *)
-			| Equal_RS -> linear_inequality
-
-			(* lt1 >= 0 ---> lt1 - extra_var = 0 *)
-			| Greater_Than_RS
-			| Greater_Or_Equal_RS
-				->
-				let lt_minus_s : ppl_linear_term = Minus (ppl_linear_term , Variable (!extra_var)) in
-				(* Increment the extra dimension *)
-				incr extra_var;
-				Equal (lt_minus_s , zero_term)
-
-			(* lt1 <= 0 ---> impossible situation *)
-			| Less_Or_Equal_RS
-			| Less_Than_RS
-				-> raise (InternalError "Inequality >=, >, = expected in ih")
-
-		) tight_inequalities) in
-
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high "  -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n";
-		);
-
-		let additional_dimensions = !extra_var - current_nb_dimensions in
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Transformed inequalities (including " ^ (string_of_int additional_dimensions) ^ " new extra variables) Q:");
-			List.iter (fun ineq -> print_message Verbose_high (string_of_linear_inequality debug_variable_names ineq)) !q;
-		);
-
-		(*** TODO: reintroduce this construction (the other one going down is rather for testing) ***)
-		(* Find a variable such that its value at the vertex is not integral *)
-		(*** NOTE: exists necessarily as the current point is not an integer point ***)
-(*		let var = ref 0 in
-		let noninteger_found = ref false in
-(* 		C++: for (var = 0; var < nv && i.coefficient(PPL_Variable(var)) % i.divisor() == 0; var++); *)
-		while not !noninteger_found && !var < current_nb_dimensions do
-			if not (NumConst.is_integer ((valuation_of_Ppl_Point linear_generator) !var)) then(
-				noninteger_found := true
-			)else(
-				incr var;
-			);
-		done;*)
-
-		let var = ref (current_nb_dimensions - 1) in
-		let noninteger_found = ref false in
-(* 		C++: for (var = 0; var < nv && i.coefficient(PPL_Variable(var)) % i.divisor() == 0; var++); *)
-		while not !noninteger_found && !var >= 0 do
-			if not (NumConst.is_integer ((valuation_of_Ppl_Point linear_generator) !var)) then(
-				noninteger_found := true
-			)else(
-				decr var;
-			);
-		done;
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Found variable " ^ (string_of_int !var) ^ " with non-integer coefficient " ^ (NumConst.string_of_numconst ((valuation_of_Ppl_Point linear_generator) !var)) ^ "");
-		);
-
-		(* Prepare to remove all variable dimensions except var (and the extra variables) *)
-		let to_remove = Global.list_remove_first_occurence !var (Global.list_of_interval 0 (current_nb_dimensions - 1)) in
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  List of variables to remove: [" ^ (string_of_list_of_string_with_sep " - " (List.map string_of_int to_remove) ^ "]"));
-		);
-
-		(*** WARNING: huge HACK: we locally change the dimensions ***)
-		let old_nb_dimensions = !total_dim in
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  IMPORTANT: Extending dimensions from " ^ (string_of_int !total_dim) ^ " to " ^ (string_of_int (!total_dim + additional_dimensions)) ^ ", in order to cope for " ^ (string_of_int additional_dimensions) ^ " extra variable" ^ (s_of_int additional_dimensions));
-		);
-
-		set_dimensions (old_nb_dimensions + additional_dimensions);
-
-		(* C++: PPL_Convex_Polyhedron R(Q); *)
-		let r_linear_constraint : linear_constraint = make !q in
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Constraint R before removal: " ^ (string_of_linear_constraint debug_variable_names r_linear_constraint));
-		);
-
-		(* C++: R.unconstrain(toRemove); *)
-		hide_assign to_remove r_linear_constraint;
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Constraint R after removal: " ^ (string_of_linear_constraint debug_variable_names r_linear_constraint));
-		);
-
-		(* Retrieve the inequalities from the aforementioned constraint *)
-		(* C++: PPL_Constraint_System D = R.minimized_constraints(); *)
-		let d_inequalities : linear_inequality list = ppl_Polyhedron_get_minimized_constraints r_linear_constraint in
-
-		List.iter (fun (j_linear_inequality : linear_inequality) ->
-			(* Print some information *)
-			if verbose_mode_greater Verbose_high then(
-				print_message Verbose_high "    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - ";
-				print_message Verbose_high "    Considering the following linear inequality:";
-				print_message Verbose_high (string_of_linear_inequality debug_variable_names j_linear_inequality);
-			);
-
-			(* C++: if (abs(j.coefficient(v)) != 0) *)
-			let (j_lt : ppl_linear_term) , _ = linear_term_geq_and_op_of_linear_inequality j_linear_inequality in
-
-			(* Print some information *)
-			if verbose_mode_greater Verbose_high then(
-				print_message Verbose_high "    Linear term:";
-				print_message Verbose_high (string_of_linear_term_ppl debug_variable_names j_lt);
-			);
-
-			let coef_v : coef_ppl = get_variable_coef_in_linear_term !var j_lt in
-			let abs_coef_v : coef_ppl = NumConst.gmpz_abs coef_v in
-
-			(* Print some information *)
-			if verbose_mode_greater Verbose_high then(
-				print_message Verbose_high ("    Absolute coefficient of variable " ^ (string_of_int !var) ^ ": " ^ (NumConst.string_of_gmpz abs_coef_v));
-			);
-
-			if NumConst.gmpz_neq abs_coef_v NumConst.gmpz_zero then(
-				(* C++: PPL_Linear_Expression e = ppl_linear_expression(j); *)
-				let e : ppl_linear_term = j_lt in
-
-				(* C++: Q.insert(divide_and_floor((e <= 0), abs(j.coefficient(v)))); *)
-				let e_leq_0 : linear_inequality = Less_Or_Equal (e , zero_term) in
-
-				(* Print some information *)
-				if verbose_mode_greater Verbose_high then(
-					print_message Verbose_high "    Pass the following linear inequality to divide_and_floor:";
-					print_message Verbose_high (string_of_linear_inequality debug_variable_names e_leq_0);
-				);
-
-				let new_linear_inequality : linear_inequality = divide_and_floor e_leq_0 abs_coef_v in
-
-				(* Print some information *)
-				if verbose_mode_greater Verbose_high then(
-					print_message Verbose_high "    Add the following linear inequality to Q:";
-					print_message Verbose_high (string_of_linear_inequality debug_variable_names new_linear_inequality);
-				);
-
-				q := new_linear_inequality :: !q;
-
-				()
-
-			);
-		) d_inequalities;
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high "    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - \n";
-		);
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Q = ");
-			List.iter (fun ineq -> print_message Verbose_high (string_of_linear_inequality debug_variable_names ineq)) !q;
-		);
-
-		(* Remove all slack variables *)
-		(* C++: PPL_Convex_Polyhedron T(Q); *)
-		let t = make !q in
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Constraint T: " ^ (string_of_linear_constraint debug_variable_names t));
-		);
-
-		(* C++: T.remove_higher_space_dimensions(T.space_dimension() - extra_vars); *)
-		let nb_dimensions_to_remove = (!extra_var - old_nb_dimensions) in
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  About to remove " ^ (string_of_int nb_dimensions_to_remove) ^ " dimension" ^ (s_of_int nb_dimensions_to_remove) ^ " (" ^ (string_of_int !extra_var) ^ " dimension" ^ (s_of_int !extra_var) ^ " including extra variables, minus " ^ (string_of_int old_nb_dimensions) ^ " original dimension" ^ (s_of_int old_nb_dimensions) ^ ") in constraint T");
-		);
-		remove_dimensions nb_dimensions_to_remove t;
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Constraint T after dimensions removal: " ^ (string_of_linear_constraint debug_variable_names t));
-		);
-
-		(*** WARNING: huge HACK: we locally change the dimensions ***)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  IMPORTANT: Removing " ^ (string_of_int nb_dimensions_to_remove) ^ " extra dimension" ^ (s_of_int nb_dimensions_to_remove));
-		);
-		set_dimensions old_nb_dimensions;
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Dimensions = " ^ (string_of_int old_nb_dimensions) ^ " dimensions.");
-		);
-
-		(* C++: T.add_space_dimensions_and_embed(P.space_dimension() - T.space_dimension()); *)
-		(* Not necessary here *)
-
-		(* add the new constraints to P *)
-		(* C++: P.intersection_assign(T); *)
-		intersection_assign p [t];
-
-		(* Print some information *)
-		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Constraint P after intersection with T: " ^ (string_of_linear_constraint debug_variable_names p));
-		);
-
-		()
-
-	) non_integer_points;
-
-	(* Print some information *)
-	if verbose_mode_greater Verbose_high then(
-		print_message Verbose_high ("  Almost final constraint P: " ^ (string_of_linear_constraint debug_variable_names p));
-	);
+	) done;
 
 	(* If strict constraints: intersect with the original polyhedron *)
 	(*** NOTE: out of simplicity, let's do it anyway ***)
