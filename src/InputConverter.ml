@@ -271,9 +271,9 @@ let rec get_variable_names_in_constraint = function
 			vars
 			(get_variable_names_in_constraint c)
 			
-	| Parsop_not c | Parsop_simplify c ->
+	| Parsop_ih c | Parsop_not c | Parsop_simplify c ->
 		get_variable_names_in_constraint c
-		
+
 	| Parsop_convex disjunction_list -> List.fold_left (fun a b -> List.rev_append a (get_variable_names_in_convex_predicate b)) [] disjunction_list
 	
 
