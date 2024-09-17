@@ -4,16 +4,16 @@
 #
 #  National University of Singapore
 #  École Centrale de Nantes
-#  Université Paris 13, LIPN, CNRS, France
+#  Université Sorbonne Paris Nord, LIPN, CNRS, France
 #
 #  _oasis authors: Étienne André
 #  Created:        2016/02/29
-#  Last modified:  2022/10/03
+#  Last modified:  2024/09/17
 ###############################################################
 
 OASISFormat: 0.3
 Name:        PolyOp
-Version:     0.1
+Version:     1.4
 Synopsis:    shortdescription
 Authors:     Étienne André
 License:     GPL-3.0
@@ -27,7 +27,7 @@ Executable polyop
   Path:       .
   BuildTools: ocamlbuild
   MainIs:     src/PolyOp.ml
-  BuildDepends: gmp, extlib, ppl, str, unix, threads
+  BuildDepends: gmp, extlib, ppl, str, unix
   CCLib: -static '-lppl -ltinfo -lppl_ocaml -lstdc++ -lgmp -lgmpxx'
 
   CompiledObject: best
