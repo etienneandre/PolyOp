@@ -1788,7 +1788,7 @@ let nnconvex_ih (nnconvex_constraint : nnconvex_constraint) =
 	(* 1) Get disjuncts *)
 	let disjuncts = get_disjuncts nnconvex_constraint in
 
-	(* 2) Hide in each disjuncts *)
+	(* 2) Apply IH to each disjuncts *)
 	let modified_disjuncts = List.map ih disjuncts in
 
 	(* 3) Recreate the nnconvex_constraint *)
