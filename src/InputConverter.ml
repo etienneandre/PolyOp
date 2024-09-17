@@ -400,10 +400,7 @@ let abstract_input_of_parsed_operation parsed_operation =
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
 	(* Set the LinearConstraint manager *) 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)
-	let nb_integer_variables = 0 in
-	(* 'nb_variables' represent the total number of variables *)
-	let nb_real_variables = nb_variables in
-	LinearConstraint.set_manager nb_integer_variables nb_real_variables;
+	LinearConstraint.set_manager nb_variables;
 
 
 	(**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*)

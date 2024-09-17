@@ -137,8 +137,8 @@ type linear_constraint = Ppl_ocaml.polyhedron
 (** Create a linear constraint from a list of linear inequalities *)
 val make : linear_inequality list -> linear_constraint
 
-(** 'set_manager int_dim real_dim' sets the constraint manager by giving the number of dimensions. *)
-val set_manager : int -> int -> unit
+(** 'set_manager real_dim' sets the constraint manager by giving the number of dimensions. *)
+val set_manager : int -> unit
 
 (** Create a false constraint *)
 val false_constraint : unit -> linear_constraint

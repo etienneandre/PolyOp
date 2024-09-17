@@ -611,10 +611,8 @@ let make inequalities =
   poly
 	
 (** Set the constraint manager *)
-let set_manager int_d real_d =
-	int_dim   := int_d;
-	real_dim  := real_d;
-	total_dim := int_d + real_d
+let set_manager real_d =
+	total_dim := real_d
 
 
 (*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**)
@@ -1821,7 +1819,7 @@ let update (updates : (variable * linear_term) list) nnconvex_constraint : nncon
 	print_message Verbose_total ("\nNew dimension for constraints: " ^ (string_of_int new_max_dimension) ^ "; extra dimensions : " ^ (string_of_int extra_dimensions) ^ ".");
 	
 	(* Extend the number of dimensions for the whole manager *)
-	set_manager !int_dim (!total_dim + extra_dimensions);
+	set_manager (!total_dim + extra_dimensions);
 	(* Extend the constraint to enough dimensions too *)
 	ppl_Pointset_Powerset_NNC_Polyhedron_add_space_dimensions_and_project nnconvex_constraint extra_dimensions;
 
@@ -1886,8 +1884,8 @@ let update (updates : (variable * linear_term) list) nnconvex_constraint : nncon
 
 	(* Go back to the original number of dimensions *)
 	print_message Verbose_total ("\nGo back to standard dimension for constraints: #dimensions = " ^ (string_of_int nb_variables) ^ ".");
-	set_manager !int_dim (!total_dim - extra_dimensions);
-	print_message Verbose_total ("\nManager set to " ^ (string_of_int !int_dim ) ^ " integer and " ^ (string_of_int (!total_dim - extra_dimensions)) ^ " real dimensions.");
+	set_manager (!total_dim - extra_dimensions);
+	print_message Verbose_total ("\nManager set to " ^ (string_of_int (!total_dim - extra_dimensions)) ^ " dimensions.");
 	nnconvex_remove_dimensions extra_dimensions nnconvex_constraint;
 	
 	(* Print some information *)
