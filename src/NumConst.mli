@@ -85,7 +85,6 @@ val gmpz_neq : gmpz -> gmpz -> bool
 val gmpz_is_one : gmpz -> bool
 
 
-
 (**************************************************)
 (**************************************************)
 (* GMP multi-precision rationals *)
@@ -155,3 +154,11 @@ val l : t -> t -> bool
 val le : t -> t -> bool
 val ge : t -> t -> bool
 val g : t -> t -> bool
+
+
+(**************************************************)
+(* {2 Test Functions} *)
+(**************************************************)
+(** Check if a NumConst is an integer *)
+val is_integer : t -> bool
+

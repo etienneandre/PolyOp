@@ -248,6 +248,29 @@ let min a b =
 let max a b =
 	if ge a b then a else b
 
+(**************************************************)
+(** {2 Test Functions} *)
+(**************************************************)
+(* Check if a NumConst is an integer *)
+let is_integer n =
+	(* Zero is an integer! *)
+	(*** WARNING: added one as well, because the cmp test below did not work for one *)
+	equal n zero || equal n one ||
+	(* Then check denominator = 1 *)
+	(
+		(*print_string (string_of_gmpz (get_num n));
+		print_string "/";
+		print_string (string_of_gmpz (get_num n));
+		print_string "\n";
+		print_string ("  Check num = den: " ^ (string_of_bool ((get_num n) = (get_den n))));
+		print_string "\n";
+		print_string ("  Check cmp (num , den): " ^ (string_of_int (Gmp.Z.cmp (get_num n) (get_den n))));
+		print_string "\n";*)
+		(*** WARNING: should not use directly (get_num n) = (get_den n), because got strange results ***)
+(* 		(Gmp.Z.cmp (get_num n) (get_den n)) > 0 *)
+		(Gmp.Z.cmp (get_den n) (gmpz_of_int 1)) = 0
+	)
+
 
 (**************************************************)
 (* Tests *)
