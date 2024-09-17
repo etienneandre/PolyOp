@@ -2,6 +2,7 @@
 # release 1.5    (202x, build xxx)
 
 ### Features
+* New operation: integer hull [JLR15]
 
 ### Minor modifications
 * Syntax `diff c1 , c2` allowed in addition to `diff c1 c2`
