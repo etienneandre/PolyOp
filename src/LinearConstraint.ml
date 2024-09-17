@@ -611,7 +611,7 @@ let make inequalities =
   poly
 	
 (** Set the constraint manager *)
-let set_manager real_d =
+let set_dimensions real_d =
 	total_dim := real_d
 
 
@@ -1234,7 +1234,7 @@ let ih (linear_constraint : linear_constraint) =
 			print_message Verbose_high ("  IMPORTANT: Extending dimensions from " ^ (string_of_int !total_dim) ^ " to " ^ (string_of_int (!total_dim + additional_dimensions)) ^ ", in order to cope for " ^ (string_of_int additional_dimensions) ^ " extra variable" ^ (s_of_int additional_dimensions));
 		);
 
-		set_manager (old_nb_dimensions + additional_dimensions);
+		set_dimensions (old_nb_dimensions + additional_dimensions);
 
 		(* C++: PPL_Convex_Polyhedron R(Q); *)
 		let r_linear_constraint : linear_constraint = make !q in
@@ -1344,7 +1344,7 @@ let ih (linear_constraint : linear_constraint) =
 		if verbose_mode_greater Verbose_high then(
 			print_message Verbose_high ("  IMPORTANT: Removing " ^ (string_of_int !extra_var) ^ " extra dimension" ^ (s_of_int !extra_var));
 		);
-		set_manager old_nb_dimensions;
+		set_dimensions old_nb_dimensions;
 
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
@@ -1833,7 +1833,7 @@ let update (updates : (variable * linear_term) list) nnconvex_constraint : nncon
 	print_message Verbose_total ("\nNew dimension for constraints: " ^ (string_of_int new_max_dimension) ^ "; extra dimensions : " ^ (string_of_int extra_dimensions) ^ ".");
 	
 	(* Extend the number of dimensions for the whole manager *)
-	set_manager (!total_dim + extra_dimensions);
+	set_dimensions (!total_dim + extra_dimensions);
 	(* Extend the constraint to enough dimensions too *)
 	ppl_Pointset_Powerset_NNC_Polyhedron_add_space_dimensions_and_project nnconvex_constraint extra_dimensions;
 
@@ -1898,7 +1898,7 @@ let update (updates : (variable * linear_term) list) nnconvex_constraint : nncon
 
 	(* Go back to the original number of dimensions *)
 	print_message Verbose_total ("\nGo back to standard dimension for constraints: #dimensions = " ^ (string_of_int nb_variables) ^ ".");
-	set_manager (!total_dim - extra_dimensions);
+	set_dimensions (!total_dim - extra_dimensions);
 	print_message Verbose_total ("\nManager set to " ^ (string_of_int (!total_dim - extra_dimensions)) ^ " dimensions.");
 	nnconvex_remove_dimensions extra_dimensions nnconvex_constraint;
 	
