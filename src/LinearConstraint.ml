@@ -940,7 +940,7 @@ let valuation_of_Ppl_Point (linear_generator : ppl_linear_generator) : valuation
 	in
 	(* For each variable *)
 	(fun variable ->
-		(*** WARNING: no verification that the variable belongs to [px] variables ***)
+		(*** WARNING: no verification that the variable belongs to the variables ***)
 		(* Get the coefficient in the generator *)
 		let numerator = get_variable_coef_in_linear_term variable linear_expression in
 		(*** TODO: strange to convert to NumConst first? ***)
@@ -1342,13 +1342,13 @@ let ih (linear_constraint : linear_constraint) =
 
 		(*** WARNING: huge HACK: we locally change the dimensions ***)
 		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  IMPORTANT: Removing " ^ (string_of_int !extra_var) ^ " extra dimension" ^ (s_of_int !extra_var));
+			print_message Verbose_high ("  IMPORTANT: Removing " ^ (string_of_int nb_dimensions_to_remove) ^ " extra dimension" ^ (s_of_int nb_dimensions_to_remove));
 		);
 		set_dimensions old_nb_dimensions;
 
 		(* Print some information *)
 		if verbose_mode_greater Verbose_high then(
-			print_message Verbose_high ("  Dimensions = " ^ (string_of_int old_nb_dimensions) ^ " px-dimensions.");
+			print_message Verbose_high ("  Dimensions = " ^ (string_of_int old_nb_dimensions) ^ " dimensions.");
 		);
 
 		(* C++: T.add_space_dimensions_and_embed(P.space_dimension() - T.space_dimension()); *)
