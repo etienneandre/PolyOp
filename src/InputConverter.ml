@@ -10,7 +10,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2023/12/01
+ * Last modified: 2024/09/17
  *
  ************************************************************)
 
@@ -423,7 +423,9 @@ let abstract_input_of_parsed_operation parsed_operation =
 		| Parsop_diff (c1, c2) -> Op_diff (convert_constraint c1, convert_constraint c2)
 		
 		| Parsop_hide (variable_names, c) -> Op_hide (convert_variables variable_names, convert_constraint c)
-		
+
+		| Parsop_ih c -> Op_ih (convert_constraint c)
+
 		| Parsop_project (variable_names, c) -> Op_project (convert_variables variable_names, convert_constraint c)
 
 		| Parsop_simplify c -> Op_simplify (convert_constraint c)

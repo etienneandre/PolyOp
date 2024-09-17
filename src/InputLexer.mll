@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2024/01/09
+ * Last modified: 2024/09/17
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -59,6 +59,8 @@ rule token = parse
 	| "false"          { CT_FALSE }
 	| "False"          { CT_FALSE }
 	| "hide"           { CT_HIDE }
+	| "ih"             { CT_IH }
+	| "IH"             { CT_IH }
 	| "in"             { CT_IN }
 	| "included"       { CT_INCLUDED }
 	| "not"            { CT_NOT }

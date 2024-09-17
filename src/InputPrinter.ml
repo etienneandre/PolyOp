@@ -8,7 +8,7 @@
  *
  * Author:        Étienne André
  * Created:       2011/04/27
- * Last modified: 2024/01/09
+ * Last modified: 2024/09/17
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -61,6 +61,8 @@ let string_of_operation variable_names operation =
 		
 		| Op_hide (vars, cp) -> "hide (" ^ (convert_vars vars) ^ ") in (" ^ (string_of_constraint cp) ^ ")"
 		
+		| Op_ih c -> "IH(" ^ (string_of_constraint c) ^ ")"
+
 		| Op_project (vars, cp) -> "project (" ^ (string_of_constraint cp) ^ ") onto (" ^ (convert_vars vars) ^ ")"
 
 		| Op_not c -> "not(" ^ (string_of_constraint c) ^ ")"
