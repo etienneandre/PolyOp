@@ -133,7 +133,7 @@ let rec set_verbose_mode_ref verbose_mode =
 (* Options *)
 and speclist = [
 	("-verbose", String set_verbose_mode_ref, " Print more or less information. Can be set to 'nodebug', 'standard', 'low', 'medium', 'high', 'total'. Default: 'nodebug'");
-	("-version", Unit (fun _ -> print_string (version_string ()); exit 0), " Print version string and exit.");
+	("-version", Unit (fun _ -> print_string ((version_string ()) ^ "\n"); exit 0), " Print version string and exit.");
 
 ] in
 		
