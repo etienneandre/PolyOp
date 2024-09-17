@@ -840,6 +840,27 @@ let minimize linear_constraint =
 	make list_of_inequalities
 
 
+
+(*------------------------------------------------------------*)
+(* Strict to non-strict *)
+(*------------------------------------------------------------*)
+
+(* Transform a strict inequality into a non-strict inequality *)
+let strict_to_not_strict_inequality inequality =
+	match inequality with
+		| Less_Than (x,y) -> Less_Or_Equal (x,y)
+		| Greater_Than (x,y) -> Greater_Or_Equal (x,y)
+		|_ -> inequality
+
+
+(** Replace all strict inequalities with non-strict (and keeps others unchanged) within a linear_constraint *)
+let render_non_strict_linear_constraint (k : linear_constraint) =
+	(* Get the list of inequalities *)
+	let inequality_list = ppl_Polyhedron_get_minimized_constraints k in
+	(* Replace inequelities and convert back to a linear_constraint *)
+	make (List.map strict_to_not_strict_inequality inequality_list)
+
+
 (*------------------------------------------------------------*)
 (* Time elapsing and time past *)
 (*------------------------------------------------------------*)
@@ -1099,8 +1120,14 @@ let ih (linear_constraint : linear_constraint) =
 		print_message Verbose_high ("  Dimensions = " ^ (string_of_int current_nb_dimensions) ^ " dimensions.");
 	);
 
-	(* Copy the constraint, into what will become the result *)
-	let p : linear_constraint = copy linear_constraint in
+	(* Copy the constraint (and make it non-strict), into what will become the result *)
+	let p : linear_constraint = render_non_strict_linear_constraint linear_constraint in
+
+	(* Print some information *)
+	if verbose_mode_greater Verbose_high then(
+		print_message Verbose_high "Linear constraint being non-strict:";
+		print_message Verbose_high (string_of_linear_constraint debug_variable_names p);
+	);
 
 	let some_more_noninteger_points = ref true in
 
