@@ -1,5 +1,5 @@
 *******************************************************
-# release 1.5    (2024-09-, build 210)
+# release 1.5    (2024-09-18, build 210)
 
 ### Features
 * New operation: integer hull [JLR15]
