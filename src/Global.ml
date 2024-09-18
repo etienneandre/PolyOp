@@ -78,7 +78,7 @@ let round3_float d =
 (** Version string *)
 (****************************************************************)
 
-let version = "1.4"
+let version = "1.5"
 
 let version_string () = 
 	("PolyOp " ^ version)
